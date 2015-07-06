@@ -1,4 +1,4 @@
-package org.team3637.model;
+package com.team3637.model;
 
 public class Match {
 

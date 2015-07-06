@@ -1,8 +1,8 @@
-package org.team3637.service;
+package com.team3637.service;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.team3637.mapper.ScheduleMapper;
-import org.team3637.model.Schedule;
+import com.team3637.mapper.ScheduleMapper;
+import com.team3637.model.Schedule;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Field;

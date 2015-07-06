@@ -1,7 +1,7 @@
-package org.team3637.mapper;
+package com.team3637.mapper;
 
 import org.springframework.jdbc.core.RowMapper;
-import org.team3637.model.Match;
+import com.team3637.model.Match;
 
 import java.lang.reflect.Field;
 import java.sql.ResultSet;

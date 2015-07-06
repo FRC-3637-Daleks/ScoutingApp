@@ -1,6 +1,6 @@
-package org.team3637.service;
+package com.team3637.service;
 
-import org.team3637.model.Match;
+import com.team3637.model.Match;
 
 import javax.sql.DataSource;
 import java.util.List;

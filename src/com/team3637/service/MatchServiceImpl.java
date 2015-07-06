@@ -1,8 +1,8 @@
-package org.team3637.service;
+package com.team3637.service;
 
+import com.team3637.mapper.MatchMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.team3637.mapper.MatchMapper;
-import org.team3637.model.Match;
+import com.team3637.model.Match;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
