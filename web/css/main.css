@@ -36,6 +36,13 @@ html {
     height: 100%;
 }
 
+table a {
+    display:block;
+    text-decoration: none;
+    color: black;
+    text-align: center;
+}
+
 #getNameTag {
     padding-top: 10px;
 }

@@ -1,4 +1,4 @@
-package com.team3637.controller;
+package com.team3637.scheduleController;
 
 import com.team3637.service.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class ScheduleController {
     }
 
     @RequestMapping("/t/{teamNum}")
-    public String team(Model model, @PathVariable("teamNum") String teamNum) {
+    public String team(@PathVariable("teamNum") String teamNum, Model model) {
         model.addAttribute("teamNum", teamNum);
         try {
             Integer team = Integer.parseInt(teamNum);

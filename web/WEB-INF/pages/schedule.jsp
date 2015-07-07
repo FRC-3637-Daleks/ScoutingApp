@@ -4,7 +4,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <%@ include file="/includes.html" %>
+    <%@ include file="/includes.jsp" %>
 </head>
 <body>
 <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -16,12 +16,12 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand page-scroll" href="/">Team 3637 Scouting App</a>
+            <a class="navbar-brand page-scroll" href="${pageContext.request.contextPath}/">Team 3637 Scouting App</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
             </ul>
-            <form class="navbar-form navbar-right" action="/s/t/">
+            <form class="navbar-form navbar-right" action="${pageContext.request.contextPath}/s/t/">
                 <div class="form-group" role="search">
                     <input type="text" class="form-control" placeholder="Search" name="teamNum">
                 </div>
@@ -49,12 +49,12 @@
                 <c:forEach var="match" items="${schedule}">
                     <tr>
                         <td>${match.matchNum}</td>
-                        <td>${match.b1}</td>
-                        <td>${match.b2}</td>
-                        <td>${match.b3}</td>
-                        <td>${match.r1}</td>
-                        <td>${match.r2}</td>
-                        <td>${match.r3}</td>
+                        <td><a href="${pageContext.request.contextPath}/m/add.jsp?teamNum=${match.b1}&matchNum=${match.matchNum}">${match.b1}</a></td>
+                        <td><a href="${pageContext.request.contextPath}/m/add.jsp?teamNum=${match.b2}&matchNum=${match.matchNum}">${match.b2}</a></td>
+                        <td><a href="${pageContext.request.contextPath}/m/add.jsp?teamNum=${match.b3}&matchNum=${match.matchNum}">${match.b3}</a></td>
+                        <td><a href="${pageContext.request.contextPath}/m/add.jsp?teamNum=${match.r1}&matchNum=${match.matchNum}">${match.r1}</a></td>
+                        <td><a href="${pageContext.request.contextPath}/m/add.jsp?teamNum=${match.r2}&matchNum=${match.matchNum}">${match.r2}</a></td>
+                        <td><a href="${pageContext.request.contextPath}/m/add.jsp?teamNum=${match.r3}&matchNum=${match.matchNum}">${match.r3}</a></td>
                     </tr>
                 </c:forEach>
                 </tbody>
