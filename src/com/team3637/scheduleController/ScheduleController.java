@@ -1,12 +1,15 @@
 package com.team3637.scheduleController;
 
+import com.team3637.model.Schedule;
 import com.team3637.service.ScheduleService;
+import com.team3637.wrapper.ScheduleWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class ScheduleController {
@@ -21,23 +24,56 @@ public class ScheduleController {
     }
 
     @RequestMapping("/t/")
-    public String teamRedirect(@RequestParam("teamNum")String teamNum) {
-        if(teamNum != null && !teamNum.equals(""))
+    public String teamRedirect(@RequestParam(value = "teamNum", required = false) String teamNum) {
+        if (teamNum != null && !teamNum.equals(""))
             return "redirect:/s/t/" + teamNum;
         else
-            return "redirect:/s/t/";
+            return "redirect:/s/";
     }
 
     @RequestMapping("/t/{teamNum}")
-    public String team(@PathVariable("teamNum") String teamNum, Model model) {
+    public String team(@PathVariable("teamNum") Integer teamNum, Model model) {
         model.addAttribute("teamNum", teamNum);
-        try {
-            Integer team = Integer.parseInt(teamNum);
-            model.addAttribute("schedule", scheduleService.getTeamsMatches(team));
-        } catch (NumberFormatException e) {
-            return "redirect:/s/";
-        }
+        model.addAttribute("schedule", scheduleService.getTeamsMatches(teamNum));
         return "schedule";
     }
+
+    @RequestMapping(value = "/edit", method = RequestMethod.GET)
+    public String edit(Model model) {
+        List<Schedule> matches = scheduleService.getSchedule();
+        model.addAttribute("wrapper", new ScheduleWrapper(matches, new boolean[matches.size()]));
+        return "schedule-edit";
+    }
+
+    @RequestMapping("/edit/t/")
+    public String teamEditRedirect(@RequestParam(value = "teamNum", required = false) String teamNum) {
+        if (teamNum != null && !teamNum.equals(""))
+            return "redirect:/s/edit/t/" + teamNum;
+        else
+            return "redirect:/s/edit/";
+    }
+
+    @RequestMapping("/edit/t/{teamNum}")
+    public String editTeam(@PathVariable("teamNum") Integer teamNum, Model model) {
+        List<Schedule> matches = scheduleService.getTeamsMatches(teamNum);
+        model.addAttribute("wrapper", new ScheduleWrapper(matches, new boolean[matches.size()]));
+        return "schedule-edit";
+    }
+
+    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+    public String editSummit(@ModelAttribute("schedule") ScheduleWrapper wrapper) {
+        if (wrapper.getSchedule() != null && wrapper.getSchedule().size() > 0) {
+            for (int i = 0; i < wrapper.getSchedule().size(); i++) {
+                if (wrapper.getDeleted()[i]) {
+                    scheduleService.delete(wrapper.getSchedule().get(i).getMatchNum());
+                } else {
+                    scheduleService.update(wrapper.getSchedule().get(i));
+                }
+            }
+        }
+        return "redirect:/s/";
+    }
+
+
 
 }

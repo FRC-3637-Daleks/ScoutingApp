@@ -8,6 +8,8 @@ public class Match {
 
     private Integer team;
 
+    private Boolean showed;
+
     private Boolean autoRobot;
 
     private Boolean autoTote;
@@ -80,6 +82,14 @@ public class Match {
 
     public void setTeam(Integer team) {
         this.team = team;
+    }
+
+    public Boolean getShowed() {
+        return showed;
+    }
+
+    public void setShowed(Boolean showed) {
+        this.showed = showed;
     }
 
     public Boolean getAutoRobot() {

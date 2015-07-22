@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @Controller
 public class MatchController {
 
@@ -22,26 +24,31 @@ public class MatchController {
         return "redirect:/";
     }
 
-    @ModelAttribute("match")
-    public Match getMatch() {
-        return new Match();
-    }
-
-    @RequestMapping(value = "/add.jsp", method = RequestMethod.GET)
+    @RequestMapping(value = "/add", method = RequestMethod.GET)
     public String newMatch(@RequestParam("teamNum") Integer teamNum,
                            @RequestParam("matchNum") Integer matchNum,
                            Model model) {
 
+        List<Match> matches = matchService.getForMatchAndTeam(matchNum, teamNum);
+        Match match;
+        if (matches.size() == 0) {
+            match = new Match();
+        } else {
+            match = matches.get(0);
+        }
+        model.addAttribute("match", match);
         model.addAttribute("teamNum", teamNum);
         model.addAttribute("matchNum", matchNum);
 
-        return "match-add";
+        return "match";
     }
 
-    @RequestMapping(value = "/add.jsp", method = RequestMethod.POST)
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
     public String submitNewMatch(@ModelAttribute("match") Match match, BindingResult bindingResult) {
-
-        matchService.create(match);
+        if (matchService.checkForId(match.getId()))
+            matchService.update(match);
+        else
+            matchService.create(match);
 
         return "redirect:/s/";
     }

@@ -10,5 +10,11 @@ public interface MatchService {
     void create(Match match);
     Match getMatch(Integer id);
     List<Match> getMatches();
+    List<Match> getForMatch(Integer teamNum);
+    List<Match> getForTeam(Integer matchNum);
+    List<Match> getForMatchAndTeam(Integer matchNum, Integer teamNum);
+    void update(Match match);
     void delete(Integer id);
+
+    boolean checkForId(Integer id);
 }

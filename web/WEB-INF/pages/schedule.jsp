@@ -5,6 +5,7 @@
 <html>
 <head>
     <%@ include file="/includes.jsp" %>
+    <link href="${pageContext.request.contextPath}/css/schedule.css" rel="stylesheet"/>
 </head>
 <body>
 <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -20,6 +21,7 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
+                <li><a href="${pageContext.request.contextPath}/s/edit/">Edit</a></li>
             </ul>
             <form class="navbar-form navbar-right" action="${pageContext.request.contextPath}/s/t/">
                 <div class="form-group" role="search">
@@ -49,12 +51,12 @@
                 <c:forEach var="match" items="${schedule}">
                     <tr>
                         <td>${match.matchNum}</td>
-                        <td><a href="${pageContext.request.contextPath}/m/add.jsp?teamNum=${match.b1}&matchNum=${match.matchNum}">${match.b1}</a></td>
-                        <td><a href="${pageContext.request.contextPath}/m/add.jsp?teamNum=${match.b2}&matchNum=${match.matchNum}">${match.b2}</a></td>
-                        <td><a href="${pageContext.request.contextPath}/m/add.jsp?teamNum=${match.b3}&matchNum=${match.matchNum}">${match.b3}</a></td>
-                        <td><a href="${pageContext.request.contextPath}/m/add.jsp?teamNum=${match.r1}&matchNum=${match.matchNum}">${match.r1}</a></td>
-                        <td><a href="${pageContext.request.contextPath}/m/add.jsp?teamNum=${match.r2}&matchNum=${match.matchNum}">${match.r2}</a></td>
-                        <td><a href="${pageContext.request.contextPath}/m/add.jsp?teamNum=${match.r3}&matchNum=${match.matchNum}">${match.r3}</a></td>
+                        <td><a href="${pageContext.request.contextPath}/m/add?teamNum=${match.b1}&matchNum=${match.matchNum}">${match.b1}</a></td>
+                        <td><a href="${pageContext.request.contextPath}/m/add?teamNum=${match.b2}&matchNum=${match.matchNum}">${match.b2}</a></td>
+                        <td><a href="${pageContext.request.contextPath}/m/add?teamNum=${match.b3}&matchNum=${match.matchNum}">${match.b3}</a></td>
+                        <td><a href="${pageContext.request.contextPath}/m/add?teamNum=${match.r1}&matchNum=${match.matchNum}">${match.r1}</a></td>
+                        <td><a href="${pageContext.request.contextPath}/m/add?teamNum=${match.r2}&matchNum=${match.matchNum}">${match.r2}</a></td>
+                        <td><a href="${pageContext.request.contextPath}/m/add?teamNum=${match.r3}&matchNum=${match.matchNum}">${match.r3}</a></td>
                     </tr>
                 </c:forEach>
                 </tbody>

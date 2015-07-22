@@ -1,5 +1,6 @@
 package com.team3637.service;
 
+import com.team3637.model.Match;
 import org.springframework.jdbc.core.JdbcTemplate;
 import com.team3637.mapper.ScheduleMapper;
 import com.team3637.model.Schedule;
@@ -23,22 +24,31 @@ public class ScheduleServiceImpl implements ScheduleService {
     public void create(Schedule schedule) {
         Field[] fields = Schedule.class.getDeclaredFields();
         String fieldsSting = "", valuesSting = "", SQL;
+        List<Object> values = new ArrayList<>();
         try {
-            for (int i = 0; i < fields.length; i++) {
+            for (int i = 1; i < fields.length; i++) {
+                fields[i].setAccessible(true);
+                values.add(fields[i].get(schedule));
                 if (i == fields.length - 1) {
                     fieldsSting += fields[i].getName();
-                    valuesSting += fields[i].get(schedule);
+                    valuesSting += "?";
                 } else {
                     fieldsSting += fields[i].getName() + ", ";
-                    valuesSting += fields[i].get(schedule) + ", ";
+                    valuesSting += "?, ";
                 }
             }
         } catch (IllegalAccessException e){
             e.printStackTrace();
         }
-        SQL = "INSERT INTO schedule (" + fieldsSting + ") VALUES (" + valuesSting + ")";
+        SQL = "INSERT INTO matches (" + fieldsSting + ") VALUES (" + valuesSting + ");";
 
-        jdbcTemplateObject.update(SQL);
+        jdbcTemplateObject.update(SQL, values.toArray());
+    }
+
+    @Override
+    public Schedule getMathById(Integer id) {
+        String SQL = "SELECT * FROM schedule WHERE id = ?";
+        return jdbcTemplateObject.queryForObject(SQL, new Object[]{id}, new ScheduleMapper());
     }
 
     @Override
@@ -61,8 +71,36 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
+    public void update(Schedule schedule) {
+        Field[] fields = Schedule.class.getDeclaredFields();
+        String valuesSting = "", SQL;
+        List<Object> values = new ArrayList<>();
+        try {
+            for (int i = 1; i < fields.length; i++) {
+                fields[i].setAccessible(true);
+                values.add(fields[i].get(schedule));
+                if (i == fields.length - 1) {
+                    valuesSting += fields[i].getName() + "=?";
+                } else {
+                    valuesSting += fields[i].getName() + "=?, ";
+                }
+            }
+        } catch (IllegalAccessException e){
+            e.printStackTrace();
+        }
+        SQL = "UPDATE schedule SET " + valuesSting + " WHERE id=" + schedule.getId() + ";";
+        jdbcTemplateObject.update(SQL, values.toArray());
+    }
+
+    @Override
     public void delete(Integer matchNum) {
         String SQL = "delete from schedule where matchNum = ?";
         jdbcTemplateObject.update(SQL, matchNum);
+    }
+
+    @Override
+    public void deleteById(Integer id) {
+        String SQL = "delete from schedule where id = ?";
+        jdbcTemplateObject.update(SQL, id);
     }
 }

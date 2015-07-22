@@ -1,6 +1,8 @@
 package com.team3637.model;
 
 public class Schedule {
+    private Integer id;
+
     private Integer matchNum = null;
 
     private Integer b1 = null;
@@ -14,6 +16,14 @@ public class Schedule {
     private Integer r2 = null;
 
     private Integer r3 = null;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public Integer getMatchNum() {
         return matchNum;
