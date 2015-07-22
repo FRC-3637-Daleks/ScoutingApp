@@ -20,7 +20,7 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="${pageContext.request.contextPath}/s/">Schedule</a></li>
+                <li><a href="${pageContext.request.contextPath}/s/">Back</a></li>
             </ul>
         </div>
     </div>
@@ -203,7 +203,7 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    <input type="submit" value="Submit" class="btn btn-success">
+                    <input type="submit" value="Save" class="btn btn-success">
                 </td>
             </tr>
         </table>
