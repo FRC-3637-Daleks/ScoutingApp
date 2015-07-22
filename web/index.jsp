@@ -2,6 +2,7 @@
 <html>
 <head>
     <%@ include file="includes.jsp" %>
+    <script src="${pageContext.request.contextPath}/js/main.js"></script>
 </head>
 <body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
 <nav class="navbar navbar-inverse navbar-fixed-top">

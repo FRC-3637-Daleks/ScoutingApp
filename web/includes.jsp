@@ -21,4 +21,4 @@
 <script src="${pageContext.request.contextPath}/js/jquery.easing.min.js"></script>
 <script src="${pageContext.request.contextPath}/js/scrolling-nav.js"></script>
 <script src="${pageContext.request.contextPath}/js/selectize.js"></script>
-<script src="${pageContext.request.contextPath}/js/main.js"></script>
+<script src="${pageContext.request.contextPath}/js/jquery.tablesorter.min.js"></script>

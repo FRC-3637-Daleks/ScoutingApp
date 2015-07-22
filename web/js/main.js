@@ -1,31 +1,3 @@
-var $start;
-var $end;
-
-function loadRooms() {
-    $.getJSON("js/rooms.json", function(data) {
-        var rooms = data;
-    });
-}
-
-function getData(f) {
-    $.ajax({url: "navigator.html",
-        data: {
-            "start": $('#start').val(),
-            "end": $('#end').val()
-        },
-        success: function (data, textStatus, jqXHR) {
-            console.log(data);
-            f(data);
-        }
-    });
-}
-
-function scroll(id) {
-    $('html, body').stop().animate({
-                scrollTop: $($('a[href=' + id +']').attr('href')).offset().top
-            }, 1500, 'easeInOutExpo');
-}
-
 function preview() {
     var name = $('#name').val();
         $.ajax({url: "preview.html",

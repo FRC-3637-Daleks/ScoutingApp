@@ -17,4 +17,6 @@ public interface MatchService {
     void delete(Integer id);
 
     boolean checkForId(Integer id);
+
+    void exportCSV(String outputFile);
 }

@@ -23,24 +23,18 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="${pageContext.request.contextPath}/s/edit/">Edit</a></li>
+                <li><a href="${pageContext.request.contextPath}/s/">Schedule</a></li>
             </ul>
-            <form class="navbar-form navbar-right" action="${pageContext.request.contextPath}/s/t/">
-                <div class="form-group" role="search">
-                    <input type="text" class="form-control" placeholder="Search" name="teamNum">
-                </div>
-                <button type="submit" class="btn btn-info">Search</button>
-            </form>
         </div>
     </div>
 </nav>
 <div class="container main">
     <form:form method="post" action="/m/list" modelAttribute="wrapper">
-        <table class="table table-striped table-bordered">
+        <table id="match-list" class="table table-striped table-bordered">
             <thead>
             <tr>
-                <th>Team #</th>
-                <th>Match #</th>
+                <th>Team # <span class="glyphicon glyphicon-sort"></span></th>
+                <th>Match # <span class="glyphicon glyphicon-sort"></span></th>
                 <th>Actions</th>
             </tr>
             </thead>
@@ -58,12 +52,29 @@
                     </td>
                 </tr>
             </c:forEach>
+            </tbody>
+            <tfoot>
             <tr>
                 <td colspan="3"><input class="btn btn-success" type="submit" value="Save"/></td>
             </tr>
-            </tbody>
+            </tfoot>
         </table>
     </form:form>
 </div>
+<script>
+    $(document).ready(function () {
+                $("#match-list").tablesorter({
+                    headers: {
+                        2: {
+                            sorter: false
+                        }
+                    },
+                    sortList: [
+                        [0,0]
+                    ]
+                });
+            }
+    );
+</script>
 </body>
 </html>

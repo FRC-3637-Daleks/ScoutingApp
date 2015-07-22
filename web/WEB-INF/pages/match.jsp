@@ -20,7 +20,8 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="${pageContext.request.contextPath}/s/">Back</a></li>
+                <li><a href="${pageContext.request.contextPath}/s/">Schedule</a></li>
+                <li><a href="${pageContext.request.contextPath}/m/list">Matches</a></li>
             </ul>
         </div>
     </div>

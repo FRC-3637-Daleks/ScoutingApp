@@ -1,17 +1,17 @@
 package com.team3637.matchController;
 
 import com.team3637.model.Match;
+import com.team3637.service.ExporterService;
 import com.team3637.service.MatchService;
 import com.team3637.wrapper.MatchWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletContext;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -19,6 +19,10 @@ public class MatchController {
 
     @Autowired
     private MatchService matchService;
+    @Autowired
+    private ExporterService exporterService;
+    @Autowired
+    private ServletContext context;
 
     @RequestMapping("/")
     public String index() {
@@ -71,5 +75,20 @@ public class MatchController {
             }
         }
         return "redirect:/s/";
+    }
+
+    @RequestMapping("/export/csv")
+    @ResponseBody
+    public String exportCSV() {
+        String directory = "export";
+        String file = "matches.csv";
+        String filePath = context.getContextPath() + "/" + directory + "/" + file;
+        File exportDirectory = new File(context.getRealPath("/") + "/export");
+        if (!exportDirectory.exists())
+            exportDirectory.mkdir();
+
+        exporterService.exportCSV(exportDirectory.getAbsolutePath() + "/" + file, new ArrayList<>(matchService.getMatches()), Match.class);
+
+        return filePath;
     }
 }

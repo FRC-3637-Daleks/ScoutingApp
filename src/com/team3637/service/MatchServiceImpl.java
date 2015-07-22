@@ -108,4 +108,10 @@ public class MatchServiceImpl implements MatchService {
         Integer count = jdbcTemplateObject.queryForObject(SQL, Integer.class, id);
         return count != null && count > 0;
     }
+
+    @Override
+    public void exportCSV(String outputFile) {
+        String SQL = "SELECT * FROM matches INTO OUTFILE ? FIELDS TERMINATED BY ','\n ENCLOSED BY '\"' LINES TERMINATED BY '\\n'";
+        jdbcTemplateObject.query(SQL, new MatchMapper(), outputFile);
+    }
 }
