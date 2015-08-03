@@ -9,7 +9,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MatchServiceImpl implements MatchService {
+public class MatchServiceMySQLImpl implements MatchService {
 
 
     private JdbcTemplate jdbcTemplateObject;
@@ -39,7 +39,7 @@ public class MatchServiceImpl implements MatchService {
         } catch (IllegalAccessException e){
             e.printStackTrace();
         }
-        SQL = "INSERT INTO matches (" + fieldsSting + ") VALUES (" + valuesSting + ");";
+        SQL = "INSERT INTO schedule (" + fieldsSting + ") VALUES (" + valuesSting + ");";
 
         jdbcTemplateObject.update(SQL, values.toArray());
     }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,17 @@ public class ScheduleController {
 
     @Autowired
     private ScheduleService scheduleService;
+
+    @RequestMapping("/import")
+    @ResponseBody
+    public String importCSV() {
+        File file = new File("C:\\Users\\Zethra\\Projects\\Daleks\\ScoutingApp\\web\\scheduleOut.csv");
+        if(file.exists()) {
+            scheduleService.importCSV(file.getAbsolutePath());
+            return "File found";
+        } else
+            return "File not found";
+    }
 
     @RequestMapping("/")
     public String schedule(Model model) {

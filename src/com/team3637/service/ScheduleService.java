@@ -15,4 +15,6 @@ public interface ScheduleService {
     void update(Schedule schedule);
     void delete(Integer matchNum);
     void deleteById(Integer id);
+
+    void importCSV(String file);
 }

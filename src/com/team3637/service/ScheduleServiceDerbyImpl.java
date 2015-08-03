@@ -1,17 +1,15 @@
 package com.team3637.service;
 
-import com.team3637.model.Match;
-import org.springframework.jdbc.core.JdbcTemplate;
 import com.team3637.mapper.ScheduleMapper;
 import com.team3637.model.Schedule;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
-public class ScheduleServiceImpl implements ScheduleService {
+public class ScheduleServiceDerbyImpl implements ScheduleService {
 
     private JdbcTemplate jdbcTemplateObject;
 
@@ -40,7 +38,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         } catch (IllegalAccessException e){
             e.printStackTrace();
         }
-        SQL = "INSERT INTO matches (" + fieldsSting + ") VALUES (" + valuesSting + ");";
+        SQL = "INSERT INTO schedule (" + fieldsSting + ") VALUES (" + valuesSting + ");";
 
         jdbcTemplateObject.update(SQL, values.toArray());
     }
@@ -65,6 +63,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public List<Schedule> getSchedule() {
+        jdbcTemplateObject.update("INSERT INTO schedule (matchNum, b1, b2, b3, r1, r2, r3) VALUES (CURRENT SCHEMA, 1, 2, 3, 4, 5, 6)");
         String SQL = "SELECT * FROM schedule";
         List<Schedule> schedule = jdbcTemplateObject.query(SQL, new ScheduleMapper());
         return schedule;
@@ -100,7 +99,13 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public void deleteById(Integer id) {
-        String SQL = "delete from schedule where id = ?";
+        String SQL = "DELETE FROM schedule WHERE id = ?";
         jdbcTemplateObject.update(SQL, id);
+    }
+
+    @Override
+    public void importCSV(String file) {
+        String sql = "CALL SYSCS_UTIL.SYSCS_IMPORT_TABLE (null, 'schedule', '" + file + "', '\n', ',', null ,0)";
+        jdbcTemplateObject.execute(sql);
     }
 }
