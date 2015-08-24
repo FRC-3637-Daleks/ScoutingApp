@@ -1,7 +1,6 @@
 package com.team3637.matchController;
 
 import com.team3637.model.Match;
-import com.team3637.service.ExporterService;
 import com.team3637.service.MatchService;
 import com.team3637.wrapper.MatchWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +18,6 @@ public class MatchController {
 
     @Autowired
     private MatchService matchService;
-    @Autowired
-    private ExporterService exporterService;
     @Autowired
     private ServletContext context;
 
@@ -87,7 +84,7 @@ public class MatchController {
         if (!exportDirectory.exists())
             exportDirectory.mkdir();
 
-        exporterService.exportCSV(exportDirectory.getAbsolutePath() + "/" + file, new ArrayList<>(matchService.getMatches()), Match.class);
+        matchService.exportCSV(exportDirectory.getAbsolutePath() + "/" + file, new ArrayList<>(matchService.getMatches()));
 
         return filePath;
     }

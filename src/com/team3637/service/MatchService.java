@@ -18,5 +18,7 @@ public interface MatchService {
 
     boolean checkForId(Integer id);
 
-    void exportCSV(String outputFile);
+//    void exportCSV(String outputFile);
+
+    void exportCSV(String outputFile, List<Match> data);
 }

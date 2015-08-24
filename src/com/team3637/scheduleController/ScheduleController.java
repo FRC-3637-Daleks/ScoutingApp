@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletContext;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,17 +18,8 @@ public class ScheduleController {
 
     @Autowired
     private ScheduleService scheduleService;
-
-    @RequestMapping("/import")
-    @ResponseBody
-    public String importCSV() {
-        File file = new File("C:\\Users\\Zethra\\Projects\\Daleks\\ScoutingApp\\web\\scheduleOut.csv");
-        if(file.exists()) {
-            scheduleService.importCSV(file.getAbsolutePath());
-            return "File found";
-        } else
-            return "File not found";
-    }
+    @Autowired
+    private ServletContext context;
 
     @RequestMapping("/")
     public String schedule(Model model) {
@@ -86,6 +78,19 @@ public class ScheduleController {
         return "redirect:/s/";
     }
 
+    @RequestMapping("/export/csv")
+    @ResponseBody
+    public String exportCSV() {
+        String directory = "export";
+        String file = "matches.csv";
+        String filePath = context.getContextPath() + "/" + directory + "/" + file;
+        File exportDirectory = new File(context.getRealPath("/") + "/export");
+        if (!exportDirectory.exists())
+            exportDirectory.mkdir();
 
+        scheduleService.exportCSV(exportDirectory.getAbsolutePath() + "/" + file, new ArrayList<>(scheduleService.getSchedule()));
+
+        return filePath;
+    }
 
 }

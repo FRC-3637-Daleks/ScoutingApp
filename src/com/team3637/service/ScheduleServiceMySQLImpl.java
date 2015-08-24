@@ -1,11 +1,15 @@
 package com.team3637.service;
 
 import com.team3637.model.Match;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import com.team3637.mapper.ScheduleMapper;
 import com.team3637.model.Schedule;
 
 import javax.sql.DataSource;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -105,7 +109,35 @@ public class ScheduleServiceMySQLImpl implements ScheduleService {
     }
 
     @Override
-    public void importCSV(String file) {
-
+    public void exportCSV(String outputFile, List<Schedule> data) {
+        FileWriter fileWriter = null;
+        CSVPrinter csvFilePrinter = null;
+        try {
+            fileWriter = new FileWriter(outputFile);
+            csvFilePrinter = new CSVPrinter(fileWriter, CSVFormat.DEFAULT.withRecordSeparator("\n"));
+            for(int i = 0; i < data.size(); i++) {
+                List<Object> line = new ArrayList<>();
+                for(Field field : Match.class.getDeclaredFields()) {
+                    field.setAccessible(true);
+                    Object value = field.get(data.get(i));
+                    line.add(value);
+                }
+                csvFilePrinter.printRecord(line);
+            }
+        } catch (IOException | IllegalAccessException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (fileWriter != null) {
+                    fileWriter.flush();
+                    fileWriter.close();
+                }
+                if (csvFilePrinter != null) {
+                    csvFilePrinter.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
