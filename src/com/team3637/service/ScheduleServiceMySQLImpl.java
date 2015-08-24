@@ -117,7 +117,7 @@ public class ScheduleServiceMySQLImpl implements ScheduleService {
             csvFilePrinter = new CSVPrinter(fileWriter, CSVFormat.DEFAULT.withRecordSeparator("\n"));
             for(int i = 0; i < data.size(); i++) {
                 List<Object> line = new ArrayList<>();
-                for(Field field : Match.class.getDeclaredFields()) {
+                for(Field field : Schedule.class.getDeclaredFields()) {
                     field.setAccessible(true);
                     Object value = field.get(data.get(i));
                     line.add(value);

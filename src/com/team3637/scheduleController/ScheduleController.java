@@ -82,8 +82,9 @@ public class ScheduleController {
     @ResponseBody
     public String exportCSV() {
         String directory = "export";
-        String file = "matches.csv";
+        String file = "schedule.csv";
         String filePath = context.getContextPath() + "/" + directory + "/" + file;
+
         File exportDirectory = new File(context.getRealPath("/") + "/export");
         if (!exportDirectory.exists())
             exportDirectory.mkdir();
