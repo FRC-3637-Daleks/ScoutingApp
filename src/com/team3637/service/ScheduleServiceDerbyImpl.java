@@ -104,8 +104,7 @@ public class ScheduleServiceDerbyImpl implements ScheduleService {
     }
 
     @Override
-    public void importCSV(String file) {
-        String sql = "CALL SYSCS_UTIL.SYSCS_IMPORT_TABLE (null, 'schedule', '" + file + "', '\n', ',', null ,0)";
-        jdbcTemplateObject.execute(sql);
+    public void exportCSV(String outputFile, List<Schedule> data) {
+
     }
 }
