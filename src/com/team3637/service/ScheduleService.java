@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface ScheduleService {
     void setDataSource(DataSource dataSource);
+    void initDB(String initScript);
     void create(Schedule schedule);
     Schedule getMathById(Integer id);
     Schedule getMatch(Integer matchNum);

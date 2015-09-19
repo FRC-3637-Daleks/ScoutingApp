@@ -23,6 +23,7 @@ public class ScheduleController {
 
     @RequestMapping("/")
     public String schedule(Model model) {
+
         model.addAttribute("schedule", scheduleService.getSchedule());
         return "schedule";
     }

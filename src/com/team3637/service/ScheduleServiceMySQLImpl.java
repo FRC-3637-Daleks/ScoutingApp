@@ -8,12 +8,15 @@ import com.team3637.mapper.ScheduleMapper;
 import com.team3637.model.Schedule;
 
 import javax.sql.DataSource;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 
 public class ScheduleServiceMySQLImpl implements ScheduleService {
 
@@ -22,6 +25,19 @@ public class ScheduleServiceMySQLImpl implements ScheduleService {
     @Override
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplateObject = new JdbcTemplate(dataSource);
+    }
+
+    @Override
+    public void initDB(String initScript) {
+        String script = "";
+        try {
+            Scanner sc = new Scanner(new File(initScript));
+            while (sc.hasNext())
+                script += sc.nextLine();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        jdbcTemplateObject.execute(script);
     }
 
     @Override
