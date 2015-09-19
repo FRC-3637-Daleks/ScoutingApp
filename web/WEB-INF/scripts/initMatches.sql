@@ -1,5 +1,5 @@
 DROP PROCEDURE IF EXISTS addCols;
-DELIMITER //
+DELIMITER // 
 CREATE PROCEDURE addCols(IN newCols INT)
 BEGIN
 	SET @cols = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'scoutingtags' AND table_name = 'matches') - 4;
@@ -11,5 +11,3 @@ BEGIN
 	END WHILE;
 END //
 DELIMITER ;
-
-call addCols(1);

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import java.io.File;
 import java.util.ArrayList;
@@ -21,9 +22,13 @@ public class ScheduleController {
     @Autowired
     private ServletContext context;
 
+    @PostConstruct
+    public void init() {
+//        scheduleService.initDB(context.getRealPath("/web/WEB-INF/script/initSchedule.sql"));
+    }
+
     @RequestMapping("/")
     public String schedule(Model model) {
-
         model.addAttribute("schedule", scheduleService.getSchedule());
         return "schedule";
     }

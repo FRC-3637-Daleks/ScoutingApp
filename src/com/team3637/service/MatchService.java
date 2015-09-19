@@ -7,6 +7,9 @@ import java.util.List;
 
 public interface MatchService {
     void setDataSource(DataSource dataSource);
+
+    void initDB(String initScript);
+
     void create(Match match);
     Match getMatch(Integer id);
     List<Match> getMatches();

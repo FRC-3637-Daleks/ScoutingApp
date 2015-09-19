@@ -7,11 +7,14 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import com.team3637.model.Match;
 
 import javax.sql.DataSource;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class MatchServiceMySQLImpl implements MatchService {
 
@@ -21,6 +24,20 @@ public class MatchServiceMySQLImpl implements MatchService {
     @Override
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplateObject = new JdbcTemplate(dataSource);
+    }
+
+    @Override
+    public void initDB(String initScript) {
+        String script = "";
+        try {
+            Scanner sc = new Scanner(new File(initScript));
+            while (sc.hasNext())
+                script += sc.nextLine() + "\n";
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        System.out.print(script);
+        jdbcTemplateObject.execute(script);
     }
 
     @Override
