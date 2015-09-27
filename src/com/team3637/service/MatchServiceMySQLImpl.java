@@ -10,14 +10,11 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
 import javax.sql.DataSource;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class MatchServiceMySQLImpl implements MatchService {
 
@@ -46,7 +43,8 @@ public class MatchServiceMySQLImpl implements MatchService {
         }
         SQL = "INSERT INTO matches (" + fieldsSting + ") VALUES (" +
                 valuesSting + ");";
-        SqlParameterSource in = new MapSqlParameterSource().addValue("newCols", match.getTags().size());
+        SqlParameterSource in = new MapSqlParameterSource().addValue("newCols", match.getTags().size()).addValue
+                ("tableName", "matches");
         jdbcCall.execute(in);
         jdbcTemplateObject.update(SQL, values.toArray());
     }
@@ -95,7 +93,8 @@ public class MatchServiceMySQLImpl implements MatchService {
             values.add(match.getTags().get(i));
         }
         SQL = "UPDATE matches SET " + valuesSting + " WHERE id=" + match.getId() + ";";
-        SqlParameterSource in = new MapSqlParameterSource().addValue("newCols", match.getTags().size());
+        SqlParameterSource in = new MapSqlParameterSource().addValue("newCols", match.getTags().size()).addValue
+                ("tableName", "matches");;
         jdbcCall.execute(in);
         jdbcTemplateObject.update(SQL, values.toArray());
     }
@@ -120,11 +119,11 @@ public class MatchServiceMySQLImpl implements MatchService {
         try {
             fileWriter = new FileWriter(outputFile);
             csvFilePrinter = new CSVPrinter(fileWriter, CSVFormat.DEFAULT.withRecordSeparator("\n"));
-            for(int i = 0; i < data.size(); i++) {
+            for (Match match : data) {
                 List<Object> line = new ArrayList<>();
-                for(Field field : Match.class.getDeclaredFields()) {
+                for (Field field : Match.class.getDeclaredFields()) {
                     field.setAccessible(true);
-                    Object value = field.get(data.get(i));
+                    Object value = field.get(match);
                     line.add(value);
                 }
                 csvFilePrinter.printRecord(line);

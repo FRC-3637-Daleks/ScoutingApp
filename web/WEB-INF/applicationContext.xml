@@ -15,13 +15,17 @@
         <jdbc:script location="WEB-INF/scripts/scheduleCreate.sql"/>
     </jdbc:embedded-database>-->
 
-        <bean id="dataSource"
-              class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-            <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-            <property name="url" value="jdbc:mysql://localhost:3306/scoutingtags"/>
-            <property name="username" value="team3637"/>
-            <property name="password" value="turing"/>
-        </bean>
+    <bean id="dataSource"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/scoutingtags"/>
+        <property name="username" value="team3637"/>
+        <property name="password" value="turing"/>
+    </bean>
+
+    <jdbc:initialize-database data-source="dataSource">
+        <jdbc:script separator="#" location="classpath:com/team3637/scripts/addCols.sql"/>
+    </jdbc:initialize-database>
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/pages/"/>
