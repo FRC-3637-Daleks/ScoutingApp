@@ -84,22 +84,19 @@ public class MatchServiceMySQLImpl implements MatchService {
     @Override
     public void update(Match match) {
         Field[] fields = Match.class.getDeclaredFields();
-        String valuesSting = "", SQL;
+        String valuesSting = "id=?, matchNum=?, team=?, score=?", SQL;
         List<Object> values = new ArrayList<>();
-        try {
-            for (int i = 1; i < fields.length; i++) {
-                fields[i].setAccessible(true);
-                values.add(fields[i].get(match));
-                if (i == fields.length - 1) {
-                    valuesSting += fields[i].getName() + "=?";
-                } else {
-                    valuesSting += fields[i].getName() + "=?, ";
-                }
-            }
-        } catch (IllegalAccessException e){
-            e.printStackTrace();
+        values.add(match.getId());
+        values.add(match.getMatchNum());
+        values.add(match.getTeam());
+        values.add(match.getTeam());
+        for(int i = 0; i < match.getTags().size(); i++) {
+            valuesSting += ", tag" + i + "=?";
+            values.add(match.getTags().get(i));
         }
         SQL = "UPDATE matches SET " + valuesSting + " WHERE id=" + match.getId() + ";";
+        SqlParameterSource in = new MapSqlParameterSource().addValue("newCols", match.getTags().size());
+        jdbcCall.execute(in);
         jdbcTemplateObject.update(SQL, values.toArray());
     }
 
