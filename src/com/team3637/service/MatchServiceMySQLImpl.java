@@ -5,6 +5,9 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import com.team3637.model.Match;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
 import javax.sql.DataSource;
 import java.io.File;
@@ -20,34 +23,31 @@ public class MatchServiceMySQLImpl implements MatchService {
 
 
     private JdbcTemplate jdbcTemplateObject;
+    private SimpleJdbcCall jdbcCall;
 
     @Override
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplateObject = new JdbcTemplate(dataSource);
+        this.jdbcCall = new SimpleJdbcCall(dataSource).withProcedureName("addCols");
     }
 
     @Override
     public void create(Match match) {
-        Field[] fields = Match.class.getDeclaredFields();
-        String fieldsSting = "", valuesSting = "", SQL;
+        String fieldsSting = "id, matchNum, team, score", valuesSting = "?, ?, ?, ?", SQL;
         List<Object> values = new ArrayList<>();
-        try {
-            for (int i = 1; i < fields.length; i++) {
-                fields[i].setAccessible(true);
-                values.add(fields[i].get(match));
-                if (i == fields.length - 1) {
-                    fieldsSting += fields[i].getName();
-                    valuesSting += "?";
-                } else {
-                    fieldsSting += fields[i].getName() + ", ";
-                    valuesSting += "?, ";
-                }
-            }
-        } catch (IllegalAccessException e){
-            e.printStackTrace();
+        values.add(match.getId());
+        values.add(match.getMatchNum());
+        values.add(match.getTeam());
+        values.add(match.getTeam());
+        for(int i = 0; i < match.getTags().size(); i++) {
+            fieldsSting += ", tag" + i;
+            valuesSting += ", ?";
+            values.add(match.getTags().get(i));
         }
-        SQL = "INSERT INTO schedule (" + fieldsSting + ") VALUES (" + valuesSting + ");";
-
+        SQL = "INSERT INTO matches (" + fieldsSting + ") VALUES (" +
+                valuesSting + ");";
+        SqlParameterSource in = new MapSqlParameterSource().addValue("newCols", match.getTags().size());
+        jdbcCall.execute(in);
         jdbcTemplateObject.update(SQL, values.toArray());
     }
 
