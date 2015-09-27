@@ -27,20 +27,6 @@ public class MatchServiceMySQLImpl implements MatchService {
     }
 
     @Override
-    public void initDB(String initScript) {
-        String script = "";
-        try {
-            Scanner sc = new Scanner(new File(initScript));
-            while (sc.hasNext())
-                script += sc.nextLine() + "\n";
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        System.out.print(script);
-        jdbcTemplateObject.execute(script);
-    }
-
-    @Override
     public void create(Match match) {
         Field[] fields = Match.class.getDeclaredFields();
         String fieldsSting = "", valuesSting = "", SQL;

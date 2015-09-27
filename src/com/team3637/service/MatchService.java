@@ -8,8 +8,6 @@ import java.util.List;
 public interface MatchService {
     void setDataSource(DataSource dataSource);
 
-    void initDB(String initScript);
-
     void create(Match match);
     Match getMatch(Integer id);
     List<Match> getMatches();
@@ -20,8 +18,6 @@ public interface MatchService {
     void delete(Integer id);
 
     boolean checkForId(Integer id);
-
-//    void exportCSV(String outputFile);
 
     void exportCSV(String outputFile, List<Match> data);
 }

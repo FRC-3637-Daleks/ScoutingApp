@@ -5,27 +5,21 @@ import com.team3637.model.Match;
 
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 public class MatchMapper implements RowMapper<Match> {
     @Override
-    public Match mapRow(ResultSet resultSet, int i) throws SQLException {
+    public Match mapRow(ResultSet resultSet, int rowNum) throws SQLException {
         Match match = new Match();
-        for(Field field : Match.class.getDeclaredFields()) {
-            try {
-                field.setAccessible(true);
-                if (field.getType() == Boolean.class) {
-                    field.set(match, resultSet.getBoolean(field.getName()));
-                } else if (field.getType() == Integer.class) {
-                    field.set(match, resultSet.getInt(field.getName()));
-                } else if (field.getType() == Float.class) {
-                    field.set(match, resultSet.getFloat(field.getName()));
-                } else if (field.getType() == String.class) {
-                    field.set(match, resultSet.getString(field.getName()));
-                }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
+        match.setId(resultSet.getInt("id"));
+        match.setMatchNum(resultSet.getInt("matchNum"));
+        match.setTeam(resultSet.getInt("team"));
+        match.setScore(resultSet.getInt("score"));
+        ResultSetMetaData rsmd = resultSet.getMetaData();
+        int columns = rsmd.getColumnCount();
+        for(int i = 5; i <= columns; i++) {
+            match.getTags().add(resultSet.getString(i));
         }
         return match;
     }

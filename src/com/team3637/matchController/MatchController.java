@@ -24,7 +24,12 @@ public class MatchController {
 
     @PostConstruct
     public void init() {
-        matchService.initDB(context.getRealPath("/WEB-INF/scripts/initMatches.sql"));
+    }
+
+    @RequestMapping("/test")
+    @ResponseBody
+    public String test() {
+        return "";
     }
 
     @RequestMapping("/")
