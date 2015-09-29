@@ -25,6 +25,7 @@
 
     <jdbc:initialize-database data-source="dataSource">
         <jdbc:script separator="#" location="classpath:com/team3637/scripts/addCols.sql"/>
+        <jdbc:script separator="#" location="classpath:com/team3637/scripts/addTag.sql"/>
     </jdbc:initialize-database>
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
