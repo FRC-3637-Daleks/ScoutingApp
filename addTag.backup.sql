@@ -1,26 +1,24 @@
-DROP PROCEDURE IF EXISTS addTags;
+DROP PROCEDURE IF EXISTS addTag;
 delimiter //
-CREATE PROCEDURE addTags (
-	IN _id INT,
-    in colNum INT
+CREATE PROCEDURE addTag (
+	IN tagName VARCHAR(45)
 )
 BEGIN
-	SET @getCol = CONCAT('SELECT @col := tag',colNum ,' FROM matches WHERE `id` = ?;');
-    PREPARE stmt FROM @getCol;
-    SET @id = _id;
-    EXECUTE stmt USING @id;
-    DEALLOCATE PREPARE stmt;
-    SELECT @col;
-    SET @isTag = IFNULL((SELECT tag FROM tags WHERE tag = @col), 0);
-    SELECT @isTag;
-    IF @isTag = 0 THEN
-		SET @addTag = CONCAT('INSERT INTO tags (tag) VALUES (\'', @col, '\');');
-        SELECT @addTag;
-        PREPARE stmt FROM @addTag;
-        EXECUTE stmt;
-        DEALLOCATE PREPARE stmt;
-        SELECT CONCAT('Added: ', @col);
+    #SELECT tagName;
+    #SET @isTag = IFNULL((SELECT tag FROM tags WHERE tag = tagName), 0);
+    #SELECT @isTag;
+    #SET @tagName = (SELECT tag FROM tags WHERE tag = tagName);
+    #SELECT @tagName;
+    IF (SELECT tag FROM tags WHERE tag = tagName) IS NULL THEN
+      SET @addTag = CONCAT('INSERT INTO tags (tag) VALUES (\'', tagName, '\');');
+      SELECT @addTag;
+      PREPARE stmt FROM @addTag;
+      EXECUTE stmt;
+      DEALLOCATE PREPARE stmt;
+      SELECT CONCAT('Added tag \'', tagName, '\'');
+	ELSE
+		SELECT CONCAT('Tag \'',tagName ,'\' already exists');
     END IF;
 END//
 delimiter ;
-CALL addTags(3, 0);
+CALL addTag('Pi');

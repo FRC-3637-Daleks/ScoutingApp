@@ -1,10 +1,10 @@
 package com.team3637.service;
 
 import com.team3637.mapper.MatchMapper;
+import com.team3637.model.Match;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.springframework.jdbc.core.JdbcTemplate;
-import com.team3637.model.Match;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
@@ -20,12 +20,14 @@ public class MatchServiceMySQLImpl implements MatchService {
 
 
     private JdbcTemplate jdbcTemplateObject;
-    private SimpleJdbcCall jdbcCall;
+    private SimpleJdbcCall addCols;
+    private SimpleJdbcCall addTag;
 
     @Override
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplateObject = new JdbcTemplate(dataSource);
-        this.jdbcCall = new SimpleJdbcCall(dataSource).withProcedureName("addCols");
+        this.addCols = new SimpleJdbcCall(dataSource).withProcedureName("addCols");
+        this.addTag = new SimpleJdbcCall(dataSource).withProcedureName("addTag");
     }
 
     @Override
@@ -35,18 +37,21 @@ public class MatchServiceMySQLImpl implements MatchService {
         values.add(match.getId());
         values.add(match.getMatchNum());
         values.add(match.getTeam());
-        values.add(match.getTeam());
+        values.add(match.getScore());
         for(int i = 0; i < match.getTags().size(); i++) {
             fieldsSting += ", tag" + i;
             valuesSting += ", ?";
             values.add(match.getTags().get(i));
         }
-        SQL = "INSERT INTO matches (" + fieldsSting + ") VALUES (" +
-                valuesSting + ");";
-        SqlParameterSource in = new MapSqlParameterSource().addValue("newCols", match.getTags().size()).addValue
+        SqlParameterSource addColsArg = new MapSqlParameterSource().addValue("newCols", match.getTags().size()).addValue
                 ("tableName", "matches");
-        jdbcCall.execute(in);
+        addCols.execute(addColsArg);
+        SQL = "INSERT INTO matches (" + fieldsSting + ") VALUES (" + valuesSting + ");";
         jdbcTemplateObject.update(SQL, values.toArray());
+        for(String tagName : match.getTags()) {
+            SqlParameterSource addTagArg = new MapSqlParameterSource().addValue("tagName", tagName);
+            addTag.execute(addTagArg);
+        }
     }
 
     @Override
@@ -95,8 +100,12 @@ public class MatchServiceMySQLImpl implements MatchService {
         SQL = "UPDATE matches SET " + valuesSting + " WHERE id=" + match.getId() + ";";
         SqlParameterSource in = new MapSqlParameterSource().addValue("newCols", match.getTags().size()).addValue
                 ("tableName", "matches");;
-        jdbcCall.execute(in);
+        addCols.execute(in);
         jdbcTemplateObject.update(SQL, values.toArray());
+        for(String tagName : match.getTags()) {
+            SqlParameterSource addTagArg = new MapSqlParameterSource().addValue("tagName", tagName);
+            addTag.execute(addTagArg);
+        }
     }
 
     @Override
