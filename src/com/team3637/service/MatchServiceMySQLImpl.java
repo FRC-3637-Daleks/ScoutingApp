@@ -22,12 +22,14 @@ public class MatchServiceMySQLImpl implements MatchService {
     private JdbcTemplate jdbcTemplateObject;
     private SimpleJdbcCall addCols;
     private SimpleJdbcCall addTag;
+    private SimpleJdbcCall mergeTags;
 
     @Override
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplateObject = new JdbcTemplate(dataSource);
         this.addCols = new SimpleJdbcCall(dataSource).withProcedureName("addCols");
         this.addTag = new SimpleJdbcCall(dataSource).withProcedureName("addTag");
+        this.mergeTags = new SimpleJdbcCall(dataSource).withProcedureName("mergeTags");
     }
 
     @Override
@@ -86,7 +88,6 @@ public class MatchServiceMySQLImpl implements MatchService {
 
     @Override
     public void update(Match match) {
-        Field[] fields = Match.class.getDeclaredFields();
         String valuesSting = "id=?, matchNum=?, team=?, score=?", SQL;
         List<Object> values = new ArrayList<>();
         values.add(match.getId());
@@ -98,8 +99,9 @@ public class MatchServiceMySQLImpl implements MatchService {
             values.add(match.getTags().get(i));
         }
         SQL = "UPDATE matches SET " + valuesSting + " WHERE id=" + match.getId() + ";";
-        SqlParameterSource in = new MapSqlParameterSource().addValue("newCols", match.getTags().size()).addValue
-                ("tableName", "matches");;
+        SqlParameterSource in = new MapSqlParameterSource()
+                .addValue("newCols", match.getTags().size())
+                .addValue("tableName", "matches");
         addCols.execute(in);
         jdbcTemplateObject.update(SQL, values.toArray());
         for(String tagName : match.getTags()) {
@@ -119,6 +121,15 @@ public class MatchServiceMySQLImpl implements MatchService {
         String SQL = "SELECT count(*) FROM matches WHERE id = ?";
         Integer count = jdbcTemplateObject.queryForObject(SQL, Integer.class, id);
         return count != null && count > 0;
+    }
+
+    @Override
+    public void mergeTags(String oldTag, String newTag) {
+        SqlParameterSource args = new MapSqlParameterSource()
+                .addValue("tableName", "matches")
+                .addValue("oldTag", oldTag)
+                .addValue("newTag", newTag);
+        mergeTags.execute(args);
     }
 
     @Override

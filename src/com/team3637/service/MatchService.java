@@ -16,8 +16,7 @@ public interface MatchService {
     List<Match> getForMatchAndTeam(Integer matchNum, Integer teamNum);
     void update(Match match);
     void delete(Integer id);
-
     boolean checkForId(Integer id);
-
+    void mergeTags(String oldTag, String newTag);
     void exportCSV(String outputFile, List<Match> data);
 }
