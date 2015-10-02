@@ -1,7 +1,9 @@
 package com.team3637.matchController;
 
 import com.team3637.model.Match;
+import com.team3637.model.Team;
 import com.team3637.service.MatchService;
+import com.team3637.service.TeamService;
 import com.team3637.wrapper.MatchWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +21,8 @@ public class MatchController {
 
     @Autowired
     private MatchService matchService;
+    @Autowired
+    private TeamService teamService;
     @Autowired
     private ServletContext context;
 
@@ -43,13 +47,21 @@ public class MatchController {
                            Model model) {
 
         List<Match> matches = matchService.getForMatchAndTeam(matchNum, teamNum);
+        List<Team> teams = teamService.getTeamByNumber(teamNum);
         Match match;
+        Team team;
         if (matches.size() == 0) {
             match = new Match();
         } else {
             match = matches.get(0);
         }
+        if(teams.size() == 0) {
+            team = new Team();
+        } else {
+            team = teams.get(0);
+        }
         model.addAttribute("match", match);
+        model.addAttribute("team", team);
         model.addAttribute("teamNum", teamNum);
         model.addAttribute("matchNum", matchNum);
 

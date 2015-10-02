@@ -19,7 +19,9 @@ public class MatchMapper implements RowMapper<Match> {
         ResultSetMetaData rsmd = resultSet.getMetaData();
         int columns = rsmd.getColumnCount();
         for(int i = 5; i <= columns; i++) {
-            match.getTags().add(resultSet.getString(i));
+            if(resultSet.getString(i) != null) {
+                match.getTags().add(resultSet.getString(i));
+            }
         }
         return match;
     }

@@ -1,4 +1,4 @@
-DROP PROCEDURE IF EXISTS addCols#
+DROP PROCEDURE IF EXISTS addCols|
 CREATE PROCEDURE addCols(
   IN tableName VARCHAR(20),
   IN newCols INTEGER
@@ -12,4 +12,4 @@ BEGIN
 		DEALLOCATE PREPARE stmt;
 		SET @cols = @cols + 1;
 	END WHILE;
-END #
+END |

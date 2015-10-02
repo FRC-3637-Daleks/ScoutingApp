@@ -1,7 +1,9 @@
 package com.team3637.service;
 
 import com.team3637.mapper.MatchMapper;
+import com.team3637.mapper.TeamMapper;
 import com.team3637.model.Match;
+import com.team3637.model.Team;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,7 +18,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MatchServiceMySQLImpl implements MatchService {
+public class TeamServiceMySQLImpl implements TeamService {
 
     private JdbcTemplate jdbcTemplateObject;
     private SimpleJdbcCall addCols;
@@ -32,78 +34,62 @@ public class MatchServiceMySQLImpl implements MatchService {
     }
 
     @Override
-    public void create(Match match) {
-        String fieldsSting = "id, matchNum, team, score", valuesSting = "?, ?, ?, ?", SQL;
+    public void create(Team team) {
+        String fieldsSting = "id", valuesSting = "?", SQL;
         List<Object> values = new ArrayList<>();
-        values.add(match.getId());
-        values.add(match.getMatchNum());
-        values.add(match.getTeam());
-        values.add(match.getScore());
-        for(int i = 0; i < match.getTags().size(); i++) {
+        values.add(team.getId());
+        values.add(team.getTeam());
+        for(int i = 0; i < team.getTags().size(); i++) {
             fieldsSting += ", tag" + i;
             valuesSting += ", ?";
-            values.add(match.getTags().get(i));
+            values.add(team.getTags().get(i));
         }
-        SqlParameterSource addColsArg = new MapSqlParameterSource().addValue("newCols", match.getTags().size()).addValue
-                ("tableName", "matches");
+        SqlParameterSource addColsArg = new MapSqlParameterSource().addValue("newCols", team.getTags().size()).addValue
+                ("tableName", "teams");
         addCols.execute(addColsArg);
-        SQL = "INSERT INTO matches (" + fieldsSting + ") VALUES (" + valuesSting + ");";
+        SQL = "INSERT INTO teams (" + fieldsSting + ") VALUES (" + valuesSting + ");";
         jdbcTemplateObject.update(SQL, values.toArray());
-        for(String tagName : match.getTags()) {
+        for(String tagName : team.getTags()) {
             SqlParameterSource addTagArg = new MapSqlParameterSource().addValue("tagName", tagName);
             addTag.execute(addTagArg);
         }
     }
 
     @Override
-    public Match getMatch(Integer id) {
-        String SQL = "SELECT * FROM matches WHERE id = ?";
+    public Match getTeam(Integer id) {
+        String SQL = "SELECT * FROM teams WHERE id = ?";
         return jdbcTemplateObject.queryForObject(SQL, new MatchMapper(), id);
     }
 
     @Override
-    public List<Match> getMatches() {
-        String SQL = "SELECT * FROM matches";
-        return jdbcTemplateObject.query(SQL, new MatchMapper());
+    public List<Team> getTeams() {
+        String SQL = "SELECT * FROM teams";
+        return jdbcTemplateObject.query(SQL, new TeamMapper());
     }
 
     @Override
-    public List<Match> getForMatch(Integer teamNum) {
-        String SQL = "SELECT * FROM matches WHERE team = ?";
-        return jdbcTemplateObject.query(SQL, new MatchMapper(), teamNum);
+    public List<Team> getTeamByNumber(Integer teamNum) {
+        String SQL = "SELECT * FROM teams WHERE team = ?";
+        return jdbcTemplateObject.query(SQL, new TeamMapper(), teamNum);
     }
 
     @Override
-    public List<Match> getForTeam(Integer matchNum) {
-        String SQL = "SELECT * FROM matches WHERE matchNum = ?";
-        return jdbcTemplateObject.query(SQL, new MatchMapper());
-    }
-
-    @Override
-    public List<Match> getForMatchAndTeam(Integer matchNum, Integer teamNum) {
-        String SQL = "SELECT * FROM matches WHERE matchNum = ? AND team = ?";
-        return jdbcTemplateObject.query(SQL, new MatchMapper(), matchNum, teamNum);
-    }
-
-    @Override
-    public void update(Match match) {
-        String valuesSting = "id=?, matchNum=?, team=?, score=?", SQL;
+    public void update(Team team) {
+        String valuesSting = "id=?", SQL;
         List<Object> values = new ArrayList<>();
-        values.add(match.getId());
-        values.add(match.getMatchNum());
-        values.add(match.getTeam());
-        values.add(match.getScore());
-        for(int i = 0; i < match.getTags().size(); i++) {
+        values.add(team.getId());
+        values.add(team.getTeam());
+        for(int i = 0; i < team.getTags().size(); i++) {
             valuesSting += ", tag" + i + "=?";
-            values.add(match.getTags().get(i));
+            values.add(team.getTags().get(i));
         }
-        SQL = "UPDATE matches SET " + valuesSting + " WHERE id=" + match.getId() + ";";
+        SQL = "UPDATE teams SET " + valuesSting + " WHERE id=" + team.getId() + ";";
         SqlParameterSource in = new MapSqlParameterSource()
-                .addValue("newCols", match.getTags().size())
+                .addValue("newCols", team.getTags().size())
                 .addValue("tableName", "matches");
         addCols.execute(in);
         jdbcTemplateObject.update(SQL, values.toArray());
-        for(String tagName : match.getTags()) {
+        for(String tagName : team.getTags()) {
             SqlParameterSource addTagArg = new MapSqlParameterSource().addValue("tagName", tagName);
             addTag.execute(addTagArg);
         }
@@ -111,13 +97,13 @@ public class MatchServiceMySQLImpl implements MatchService {
 
     @Override
     public void delete(Integer id) {
-        String SQL = "DELETE FROM matches WHERE id = ?";
+        String SQL = "DELETE FROM teams WHERE id = ?";
         jdbcTemplateObject.update(SQL, id);
     }
 
     @Override
     public boolean checkForId(Integer id) {
-        String SQL = "SELECT count(*) FROM matches WHERE id = ?";
+        String SQL = "SELECT count(*) FROM teams WHERE id = ?";
         Integer count = jdbcTemplateObject.queryForObject(SQL, Integer.class, id);
         return count != null && count > 0;
     }
@@ -125,25 +111,25 @@ public class MatchServiceMySQLImpl implements MatchService {
     @Override
     public void mergeTags(String oldTag, String newTag) {
         SqlParameterSource args = new MapSqlParameterSource()
-                .addValue("tableName", "matches")
-                .addValue("noTagCols", 4)
+                .addValue("tableName", "teams")
+                .addValue("noTagCols", 2)
                 .addValue("oldTag", oldTag)
                 .addValue("newTag", newTag);
         mergeTags.execute(args);
     }
 
     @Override
-    public void exportCSV(String outputFile, List<Match> data) {
+    public void exportCSV(String outputFile, List<Team> data) {
         FileWriter fileWriter = null;
         CSVPrinter csvFilePrinter = null;
         try {
             fileWriter = new FileWriter(outputFile);
             csvFilePrinter = new CSVPrinter(fileWriter, CSVFormat.DEFAULT.withRecordSeparator("\n"));
-            for (Match match : data) {
+            for (Team team : data) {
                 List<Object> line = new ArrayList<>();
                 for (Field field : Match.class.getDeclaredFields()) {
                     field.setAccessible(true);
-                    Object value = field.get(match);
+                    Object value = field.get(team);
                     line.add(value);
                 }
                 csvFilePrinter.printRecord(line);
@@ -164,4 +150,5 @@ public class MatchServiceMySQLImpl implements MatchService {
             }
         }
     }
+
 }
