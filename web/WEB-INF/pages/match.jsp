@@ -28,7 +28,7 @@
     </div>
 </nav>
 <div class="main container">
-    <form:form method="POST" modelAttribute="match" action="${pageContext.request.contextPath}/m/add.jsp">
+    <form:form method="POST" modelAttribute="match" action="${pageContext.request.contextPath}/m/add">
         <form:hidden path="matchNum" value="${matchNum}"/>
         <form:hidden path="team" value="${teamNum}"/>
         <form:hidden path="id" value="${match.id}"/>
@@ -36,6 +36,12 @@
             <h2>Team: ${teamNum} - Match: ${matchNum}</h2>
         </div>
         <table id="input" class="input table">
+            <tr>
+                <td><input type="text" class="form-control" id="tokenfield" name="tags"/></td>
+            </tr>
+            <tr>
+                <form:input path="score" value="${match.score}"/>
+            </tr>
             <tr>
                 <td colspan="2">
                     <input type="submit" value="Save" class="btn btn-success">
@@ -55,6 +61,15 @@
         "${tag}",
         </c:forEach>
     ];
+</script>
+<script>
+    $('#tokenfield').tokenfield({
+        autocomplete: {
+            source: matchTags,
+            delay: 100
+        },
+        showAutocompleteOnFocus: true
+    })
 </script>
 </body>
 </html>

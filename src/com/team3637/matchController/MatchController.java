@@ -14,6 +14,7 @@ import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -69,7 +70,10 @@ public class MatchController {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public String submitNewMatch(@ModelAttribute("match") Match match) {
+    public String submitNewMatch(@ModelAttribute("match") Match match, @RequestParam("tags") String tags) {
+        System.out.println(match);
+        System.out.println(tags);
+        match.setTags(new ArrayList<>(Arrays.asList(tags.split(", "))));
         if (matchService.checkForId(match.getId()))
             matchService.update(match);
         else
