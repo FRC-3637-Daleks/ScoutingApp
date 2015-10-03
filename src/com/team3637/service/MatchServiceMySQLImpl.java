@@ -1,6 +1,7 @@
 package com.team3637.service;
 
 import com.team3637.mapper.MatchMapper;
+import com.team3637.mapper.TagMapper;
 import com.team3637.model.Match;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -44,13 +45,17 @@ public class MatchServiceMySQLImpl implements MatchService {
             valuesSting += ", ?";
             values.add(match.getTags().get(i));
         }
-        SqlParameterSource addColsArg = new MapSqlParameterSource().addValue("newCols", match.getTags().size()).addValue
-                ("tableName", "matches");
+        SqlParameterSource addColsArg = new MapSqlParameterSource()
+                .addValue("ignoreCols", 4)
+                .addValue("tableName", "matches")
+                .addValue("newCols", match.getTags().size());
         addCols.execute(addColsArg);
         SQL = "INSERT INTO matches (" + fieldsSting + ") VALUES (" + valuesSting + ");";
         jdbcTemplateObject.update(SQL, values.toArray());
         for(String tagName : match.getTags()) {
-            SqlParameterSource addTagArg = new MapSqlParameterSource().addValue("tagName", tagName);
+            SqlParameterSource addTagArg = new MapSqlParameterSource()
+                    .addValue("tableName", "matches")
+                    .addValue("tagName", tagName);
             addTag.execute(addTagArg);
         }
     }
@@ -99,12 +104,15 @@ public class MatchServiceMySQLImpl implements MatchService {
         }
         SQL = "UPDATE matches SET " + valuesSting + " WHERE id=" + match.getId() + ";";
         SqlParameterSource in = new MapSqlParameterSource()
-                .addValue("newCols", match.getTags().size())
-                .addValue("tableName", "matches");
+                .addValue("ignoreCols", 4)
+                .addValue("tableName", "matches")
+                .addValue("newCols", match.getTags().size());
         addCols.execute(in);
         jdbcTemplateObject.update(SQL, values.toArray());
         for(String tagName : match.getTags()) {
-            SqlParameterSource addTagArg = new MapSqlParameterSource().addValue("tagName", tagName);
+            SqlParameterSource addTagArg = new MapSqlParameterSource()
+                    .addValue("tableName", "matches")
+                    .addValue("tagName", tagName);
             addTag.execute(addTagArg);
         }
     }
@@ -120,6 +128,12 @@ public class MatchServiceMySQLImpl implements MatchService {
         String SQL = "SELECT count(*) FROM matches WHERE id = ?";
         Integer count = jdbcTemplateObject.queryForObject(SQL, Integer.class, id);
         return count != null && count > 0;
+    }
+
+    @Override
+    public List<String> getTags() {
+        String SQL = "SELECT tag FROM tags WHERE type = 'matches'";
+        return jdbcTemplateObject.query(SQL, new TagMapper());
     }
 
     @Override

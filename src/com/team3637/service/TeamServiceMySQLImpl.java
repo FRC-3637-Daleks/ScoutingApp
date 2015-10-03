@@ -1,6 +1,7 @@
 package com.team3637.service;
 
 import com.team3637.mapper.MatchMapper;
+import com.team3637.mapper.TagMapper;
 import com.team3637.mapper.TeamMapper;
 import com.team3637.model.Match;
 import com.team3637.model.Team;
@@ -35,7 +36,7 @@ public class TeamServiceMySQLImpl implements TeamService {
 
     @Override
     public void create(Team team) {
-        String fieldsSting = "id", valuesSting = "?", SQL;
+        String fieldsSting = "id, team", valuesSting = "?, ?", SQL;
         List<Object> values = new ArrayList<>();
         values.add(team.getId());
         values.add(team.getTeam());
@@ -44,13 +45,17 @@ public class TeamServiceMySQLImpl implements TeamService {
             valuesSting += ", ?";
             values.add(team.getTags().get(i));
         }
-        SqlParameterSource addColsArg = new MapSqlParameterSource().addValue("newCols", team.getTags().size()).addValue
-                ("tableName", "teams");
+        SqlParameterSource addColsArg = new MapSqlParameterSource()
+                .addValue("tableName", "teams")
+                .addValue("ignoreCols", 2)
+                .addValue("newCols", team.getTags().size());
         addCols.execute(addColsArg);
         SQL = "INSERT INTO teams (" + fieldsSting + ") VALUES (" + valuesSting + ");";
         jdbcTemplateObject.update(SQL, values.toArray());
         for(String tagName : team.getTags()) {
-            SqlParameterSource addTagArg = new MapSqlParameterSource().addValue("tagName", tagName);
+            SqlParameterSource addTagArg = new MapSqlParameterSource()
+                    .addValue("tableName", "teams")
+                    .addValue("tagName", tagName);
             addTag.execute(addTagArg);
         }
     }
@@ -75,7 +80,7 @@ public class TeamServiceMySQLImpl implements TeamService {
 
     @Override
     public void update(Team team) {
-        String valuesSting = "id=?", SQL;
+        String valuesSting = "id=?, team=?", SQL;
         List<Object> values = new ArrayList<>();
         values.add(team.getId());
         values.add(team.getTeam());
@@ -85,12 +90,15 @@ public class TeamServiceMySQLImpl implements TeamService {
         }
         SQL = "UPDATE teams SET " + valuesSting + " WHERE id=" + team.getId() + ";";
         SqlParameterSource in = new MapSqlParameterSource()
-                .addValue("newCols", team.getTags().size())
-                .addValue("tableName", "matches");
+                .addValue("ignoreCols", 2)
+                .addValue("tableName", "matches")
+                .addValue("newCols", team.getTags().size());
         addCols.execute(in);
         jdbcTemplateObject.update(SQL, values.toArray());
         for(String tagName : team.getTags()) {
-            SqlParameterSource addTagArg = new MapSqlParameterSource().addValue("tagName", tagName);
+            SqlParameterSource addTagArg = new MapSqlParameterSource()
+                    .addValue("tableName", "teams")
+                    .addValue("tagName", tagName);
             addTag.execute(addTagArg);
         }
     }
@@ -106,6 +114,12 @@ public class TeamServiceMySQLImpl implements TeamService {
         String SQL = "SELECT count(*) FROM teams WHERE id = ?";
         Integer count = jdbcTemplateObject.queryForObject(SQL, Integer.class, id);
         return count != null && count > 0;
+    }
+
+    @Override
+    public List<String> getTags() {
+        String SQL = "SELECT tag FROM tags WHERE type = 'teams'";
+        return jdbcTemplateObject.query(SQL, new TagMapper());
     }
 
     @Override

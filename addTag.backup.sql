@@ -1,6 +1,7 @@
 DROP PROCEDURE IF EXISTS addTag;
 delimiter //
 CREATE PROCEDURE addTag (
+	IN tableName VARCHAR(20),
 	IN tagName VARCHAR(45)
 )
 BEGIN
@@ -10,7 +11,7 @@ BEGIN
     #SET @tagName = (SELECT tag FROM tags WHERE tag = tagName);
     #SELECT @tagName;
     IF (SELECT tag FROM tags WHERE tag = tagName) IS NULL THEN
-      SET @addTag = CONCAT('INSERT INTO tags (tag) VALUES (\'', tagName, '\');');
+      SET @addTag = CONCAT('INSERT INTO tags (tag, type) VALUES (\'', tagName, '\',\'', tableName, '\');');
       SELECT @addTag;
       PREPARE stmt FROM @addTag;
       EXECUTE stmt;
@@ -21,4 +22,4 @@ BEGIN
     END IF;
 END//
 delimiter ;
-CALL addTag('Pi');
+CALL addTag('matches', 'Zee');

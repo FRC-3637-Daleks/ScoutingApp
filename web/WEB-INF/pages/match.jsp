@@ -32,15 +32,28 @@
         <form:hidden path="matchNum" value="${matchNum}"/>
         <form:hidden path="team" value="${teamNum}"/>
         <form:hidden path="id" value="${match.id}"/>
+        <input type="hidden" value="${team.id}" name="teamId"/>
         <div>
             <h2>Team: ${teamNum} - Match: ${matchNum}</h2>
         </div>
         <table id="input" class="input table">
             <tr>
-                <td><input type="text" class="form-control" id="tokenfield" name="tags"/></td>
+                <td>
+                    <label for="matchTags">Match Tags</label>
+                    <input type="text" class="form-control" id="matchTags" name="matchTags"/>
+                </td>
             </tr>
             <tr>
-                <form:input path="score" value="${match.score}"/>
+                <td>
+                    <label for="teamTags">Team Tags</label>
+                    <input type="text" class="form-control" id="teamTags" name="teamTags"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="score">Score</label>
+                    <form:input path="score" cssClass="form-control" value="${match.score}"/>
+                </td>
             </tr>
             <tr>
                 <td colspan="2">
@@ -51,25 +64,42 @@
     </form:form>
 </div>
 <script>
+    var matchTags = [
+        <c:forEach var="tag" items="${matchTags}">
+        "${tag}",
+        </c:forEach>
+    ];
     var teamTags = [
+        <c:forEach var="tag" items="${teamTags}">
+        "${tag}",
+        </c:forEach>
+    ];
+    var usedTeamTags = [
         <c:forEach var="tag" items="${team.tags}">
             "${tag}",
         </c:forEach>
     ];
-    var matchTags = [
+    var usedMatchTags = [
         <c:forEach var="tag" items="${match.tags}">
         "${tag}",
         </c:forEach>
     ];
 </script>
 <script>
-    $('#tokenfield').tokenfield({
+    $('#matchTags').tokenfield({
         autocomplete: {
             source: matchTags,
             delay: 100
         },
         showAutocompleteOnFocus: true
-    })
+    }).tokenfield('setTokens', usedMatchTags);
+    $('#teamTags').tokenfield({
+        autocomplete: {
+            source: teamTags,
+            delay: 100
+        },
+        showAutocompleteOnFocus: true
+    }).tokenfield('setTokens', usedTeamTags);
 </script>
 </body>
 </html>

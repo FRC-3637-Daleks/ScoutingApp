@@ -49,6 +49,8 @@ public class MatchController {
 
         List<Match> matches = matchService.getForMatchAndTeam(matchNum, teamNum);
         List<Team> teams = teamService.getTeamByNumber(teamNum);
+        List<String> matchTags = matchService.getTags();
+        List<String> teamTags = teamService.getTags();
         Match match;
         Team team;
         if (matches.size() == 0) {
@@ -65,20 +67,30 @@ public class MatchController {
         model.addAttribute("team", team);
         model.addAttribute("teamNum", teamNum);
         model.addAttribute("matchNum", matchNum);
+        model.addAttribute("matchTags", matchTags);
+        model.addAttribute("teamTags", teamTags);
 
         return "match";
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public String submitNewMatch(@ModelAttribute("match") Match match, @RequestParam("tags") String tags) {
-        System.out.println(match);
-        System.out.println(tags);
-        match.setTags(new ArrayList<>(Arrays.asList(tags.split(", "))));
+    public String submitNewMatch(@ModelAttribute("match") Match match,
+                                 @RequestParam("matchTags") String matchTags,
+                                 @RequestParam("teamId") Integer teamId,
+                                 @RequestParam("teamTags") String teamTags) {
+        match.setTags(new ArrayList<>(Arrays.asList(matchTags.split(", "))));
+        Team team = new Team();
+        team.setId(teamId);
+        team.setTeam(match.getTeam());
+        team.setTags(new ArrayList<>(Arrays.asList(teamTags.split(", "))));
         if (matchService.checkForId(match.getId()))
             matchService.update(match);
         else
             matchService.create(match);
-
+        if (teamService.checkForId(team.getId()))
+            teamService.update(team);
+        else
+            teamService.create(team);
         return "redirect:/s/";
     }
 
