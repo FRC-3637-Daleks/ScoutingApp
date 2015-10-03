@@ -1,11 +1,16 @@
 package com.team3637.matchController;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.team3637.model.Match;
 import com.team3637.model.Team;
 import com.team3637.service.MatchService;
 import com.team3637.service.TeamService;
 import com.team3637.wrapper.MatchWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Controller
 public class MatchController {
@@ -74,15 +77,22 @@ public class MatchController {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public String submitNewMatch(@ModelAttribute("match") Match match,
+    @ResponseBody
+    public ResponseEntity<?> submitNewMatch(@ModelAttribute("match") Match match,
                                  @RequestParam("matchTags") String matchTags,
                                  @RequestParam("teamId") Integer teamId,
                                  @RequestParam("teamTags") String teamTags) {
-        match.setTags(new ArrayList<>(Arrays.asList(matchTags.split(", "))));
+
+        if(match.getScore() == null) {
+            return new ResponseEntity<>("400 - Bad Request", HttpStatus.BAD_REQUEST);
+        }
+
         Team team = new Team();
         team.setId(teamId);
         team.setTeam(match.getTeam());
-        team.setTags(new ArrayList<>(Arrays.asList(teamTags.split(", "))));
+        team.setTags(new ArrayList<>(new LinkedHashSet<>(Arrays.asList(teamTags.split(", ")))));
+        match.setTags(new ArrayList<>(new LinkedHashSet<>(Arrays.asList(matchTags.split(", ")))));
+
         if (matchService.checkForId(match.getId()))
             matchService.update(match);
         else
@@ -91,7 +101,9 @@ public class MatchController {
             teamService.update(team);
         else
             teamService.create(team);
-        return "redirect:/s/";
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Location", "/s/");
+        return new ResponseEntity<byte []>(null, headers, HttpStatus.FOUND);
     }
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
@@ -126,5 +138,17 @@ public class MatchController {
         matchService.exportCSV(exportDirectory.getAbsolutePath() + "/" + file, new ArrayList<>(matchService.getMatches()));
 
         return filePath;
+    }
+
+    @RequestMapping("/matchTags")
+    @ResponseBody
+    public String getMatchTags() {
+        return  new Gson().toJson(matchService.getTags());
+    }
+
+    @RequestMapping("/teamTags")
+    @ResponseBody
+    public String getTeamTags() {
+        return  new Gson().toJson(teamService.getTags());
     }
 }

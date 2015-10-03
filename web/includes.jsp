@@ -27,3 +27,4 @@
 <script src="${pageContext.request.contextPath}/js/bootstrap-tokenfield.js"></script>
 <%--<script src="${pageContext.request.contextPath}/js/selectize.js"></script>--%>
 <script src="${pageContext.request.contextPath}/js/jquery.tablesorter.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/jquery.validate.min.js"></script>

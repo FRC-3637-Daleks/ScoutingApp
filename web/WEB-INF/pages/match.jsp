@@ -39,20 +39,24 @@
         <table id="input" class="input table">
             <tr>
                 <td>
-                    <label for="matchTags">Match Tags</label>
-                    <input type="text" class="form-control" id="matchTags" name="matchTags"/>
+                    <label for="matchTags">Match Tags <span id="matchTagsErr" class="error"></span></label>
+                    <input type="text" class="form-control" id="matchTags"
+                           name="matchTags" data-error="#matchTagsErr" required/>
                 </td>
             </tr>
             <tr>
                 <td>
-                    <label for="teamTags">Team Tags</label>
-                    <input type="text" class="form-control" id="teamTags" name="teamTags"/>
+                    <label for="teamTags">Team Tags <span id="teamTagsErr" class="error"></span></label>
+                    <input type="text" class="form-control" id="teamTags"
+                           name="teamTags" data-error="#teamTagsErr" required/>
                 </td>
             </tr>
             <tr>
                 <td>
-                    <label for="score">Score</label>
-                    <form:input path="score" cssClass="form-control" value="${match.score}"/>
+                    <label for="score">Score <span id="scoreErr" class="error"></span></label>
+                    <input id="score" name="score" class="form-control" type="text"
+                           value="${match.score}" data-error="#scoreErr" required/>
+
                 </td>
             </tr>
             <tr>
@@ -100,6 +104,21 @@
         },
         showAutocompleteOnFocus: true
     }).tokenfield('setTokens', usedTeamTags);
+    $('#match').validate({
+        messages: {
+            matchTags: "(Please enter at least 1 tag)",
+            teamTags: "(Please enter at least 1 tag)",
+            score: "(Please enter a score)"
+        },
+        errorPlacement: function(error, element) {
+            var placement = $(element).data('error');
+            if (placement) {
+                $(placement).append(error)
+            } else {
+                error.insertAfter(element);
+            }
+        }
+    });
 </script>
 </body>
 </html>

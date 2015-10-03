@@ -49,6 +49,9 @@ table a {
 
 .data-row {
     padding-bottom: 10px;
+}
 
+.error {
+    color: #ff1800;
 }
 
