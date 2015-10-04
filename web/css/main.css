@@ -1,37 +1,10 @@
-body {
-  padding-top: 50px;
-}
-.main {
-  padding: 40px 15px;
-  text-align: center;
-}
-
-.form-input {
-    text-align: center;
-}
-
-::-webkit-input-placeholder {
-   text-align: center;
-}
-
-:-moz-placeholder { /* Firefox 18- */
-   text-align: center;  
-}
-
-::-moz-placeholder {  /* Firefox 19+ */
-   text-align: center;  
-}
-
-:-ms-input-placeholder {  
-   text-align: center; 
-}
-
-body {
+html {
     width: 100%;
     height: 100%;
 }
 
-html {
+body {
+    padding-top: 50px;
     width: 100%;
     height: 100%;
 }
@@ -43,15 +16,47 @@ table a {
     text-align: center;
 }
 
-#getNameTag {
-    padding-top: 10px;
+.main {
+    padding: 40px 15px;
+    text-align: center;
+}
+
+.form-input {
+    text-align: center;
+}
+
+::-webkit-input-placeholder {
+    text-align: center;
+}
+
+:-moz-placeholder {
+    /* Firefox 18- */
+    text-align: center;
+}
+
+::-moz-placeholder {
+    /* Firefox 19+ */
+    text-align: center;
+}
+
+:-ms-input-placeholder {
+    text-align: center;
 }
 
 .data-row {
-    padding-bottom: 10px;
+    padding-bottom: 15px;
 }
 
 .error {
     color: #ff1800;
 }
 
+@media (max-width: 360px) {
+    .h2 {
+        font-size: 1.5em;
+    }
+}
+
+.tokenfield {
+    height: 150px;
+}

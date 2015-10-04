@@ -34,37 +34,35 @@
         <form:hidden path="id" value="${match.id}"/>
         <input type="hidden" value="${team.id}" name="teamId"/>
         <div>
-            <h2>Team: ${teamNum} - Match: ${matchNum}</h2>
+            <p class="h2">Team: ${teamNum} - Match: ${matchNum}</p>
         </div>
-        <table id="input" class="input table">
-            <tr>
-                <td>
+        <div id="input" class="input container">
+            <div class="row data-row">
+                <div class="col-md-6">
                     <label for="matchTags">Match Tags <span id="matchTagsErr" class="error"></span></label>
                     <input type="text" class="form-control" id="matchTags"
                            name="matchTags" data-error="#matchTagsErr" required/>
-                </td>
-            </tr>
-            <tr>
-                <td>
+                </div>
+                <div class="col-md-6">
                     <label for="teamTags">Team Tags <span id="teamTagsErr" class="error"></span></label>
                     <input type="text" class="form-control" id="teamTags"
                            name="teamTags" data-error="#teamTagsErr" required/>
-                </td>
-            </tr>
-            <tr>
-                <td>
+                </div>
+            </div>
+            <div class="row data-row">
+                <div class="col-md-4 col-md-offset-4 text-center">
                     <label for="score">Score <span id="scoreErr" class="error"></span></label>
                     <input id="score" name="score" class="form-control" type="text"
                            value="${match.score}" data-error="#scoreErr" required/>
 
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
+                </div>
+            </div>
+            <div class="row data-row">
+                <div class="col-md-12">
                     <input type="submit" value="Save" class="btn btn-success">
-                </td>
-            </tr>
-        </table>
+                </div>
+            </div>
+        </div>
     </form:form>
 </div>
 <script>
