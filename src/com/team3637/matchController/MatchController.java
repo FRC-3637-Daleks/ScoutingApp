@@ -3,10 +3,13 @@ package com.team3637.matchController;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.team3637.model.Match;
+import com.team3637.model.Tag;
 import com.team3637.model.Team;
 import com.team3637.service.MatchService;
+import com.team3637.service.TagService;
 import com.team3637.service.TeamService;
 import com.team3637.wrapper.MatchWrapper;
+import com.team3637.wrapper.TagWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -28,16 +31,12 @@ public class MatchController {
     @Autowired
     private TeamService teamService;
     @Autowired
+    private TagService tagService;
+    @Autowired
     private ServletContext context;
 
     @PostConstruct
     public void init() {
-    }
-
-    @RequestMapping("/test")
-    @ResponseBody
-    public String test() {
-        return "";
     }
 
     @RequestMapping("/")
@@ -125,6 +124,13 @@ public class MatchController {
         return "redirect:/s/";
     }
 
+    @RequestMapping("/tags")
+    public String tags(Model model) {
+        List<Tag> tags = tagService.getTags();
+        model.addAttribute("wrapper", new TagWrapper(tags, new boolean[tags.size()]));
+        return "tags";
+    }
+
     @RequestMapping("/export/csv")
     @ResponseBody
     public String exportCSV() {
@@ -150,5 +156,12 @@ public class MatchController {
     @ResponseBody
     public String getTeamTags() {
         return  new Gson().toJson(teamService.getTags());
+    }
+
+    @RequestMapping("/test")
+    @ResponseBody
+    public String test() {
+        List<Integer> teams = tagService.search(new String[]{"Hello"}, new String[]{"Foo"});
+        return "";
     }
 }

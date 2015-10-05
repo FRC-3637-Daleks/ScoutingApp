@@ -1,7 +1,7 @@
 package com.team3637.service;
 
 import com.team3637.mapper.MatchMapper;
-import com.team3637.mapper.TagMapper;
+import com.team3637.mapper.TagStringMapper;
 import com.team3637.model.Match;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -133,7 +133,7 @@ public class MatchServiceMySQLImpl implements MatchService {
     @Override
     public List<String> getTags() {
         String SQL = "SELECT tag FROM tags WHERE type = 'matches'";
-        return jdbcTemplateObject.query(SQL, new TagMapper());
+        return jdbcTemplateObject.query(SQL, new TagStringMapper());
     }
 
     @Override

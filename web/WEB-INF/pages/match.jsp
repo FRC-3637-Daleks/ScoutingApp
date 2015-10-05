@@ -4,8 +4,6 @@
 <html>
 <head>
     <%@ include file="/includes.jsp" %>
-    <link href="${pageContext.request.contextPath}/css/input-page.css" rel="stylesheet"/>
-    <link href="${pageContext.request.contextPath}/css/match.css" rel="stylesheet"/>
 </head>
 <body>
 <nav class="navbar navbar-inverse navbar-fixed-top">

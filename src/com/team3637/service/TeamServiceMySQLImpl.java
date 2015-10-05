@@ -1,7 +1,7 @@
 package com.team3637.service;
 
 import com.team3637.mapper.MatchMapper;
-import com.team3637.mapper.TagMapper;
+import com.team3637.mapper.TagStringMapper;
 import com.team3637.mapper.TeamMapper;
 import com.team3637.model.Match;
 import com.team3637.model.Team;
@@ -119,7 +119,7 @@ public class TeamServiceMySQLImpl implements TeamService {
     @Override
     public List<String> getTags() {
         String SQL = "SELECT tag FROM tags WHERE type = 'teams'";
-        return jdbcTemplateObject.query(SQL, new TagMapper());
+        return jdbcTemplateObject.query(SQL, new TagStringMapper());
     }
 
     @Override

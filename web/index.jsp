@@ -18,6 +18,9 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
+                <li><a href="${pageContext.request.contextPath}/s/">Schedule</a></li>
+                <li><a href="${pageContext.request.contextPath}/m/list">Matches</a></li>
+                <li><a href="${pageContext.request.contextPath}/m/tags">Tags</a></li>
             </ul>
         </div>
     </div>
@@ -28,17 +31,9 @@
 
     <p class="lead">Click "Start Scouting" when you ready to begin scouting</p>
     <section>
-        <button class="btn btn-primary" onclick="window.location = '${pageContext.request.contextPath}/s/'">Start Scouting</button>
+        <a class="btn btn-primary" href="${pageContext.request.contextPath}/s/">Start
+            Scouting</a>
     </section>
-<%--    <section>
-        <jsp:include page="WEB-INF/pages/test.jsp">
-            <jsp:param name="message" value="Cake"/>
-        </jsp:include>
-    </section>--%>
-<%--    <section>
-        <hr/>
-        <button class="btn btn-default" id="toTop">Back to top</button>
-    </section>--%>
 </div>
 </body>
 </html>
