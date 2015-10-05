@@ -20,6 +20,7 @@
         <jdbc:script separator="|" location="classpath:com/team3637/scripts/addCols.sql"/>
         <jdbc:script separator="|" location="classpath:com/team3637/scripts/addTag.sql"/>
         <jdbc:script separator="|" location="classpath:com/team3637/scripts/mergeTags.sql"/>
+        <jdbc:script separator="|" location="classpath:com/team3637/scripts/deleteTag.sql"/>
     </jdbc:initialize-database>
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">

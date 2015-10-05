@@ -26,11 +26,13 @@ public class TagServiceMySQLImpl implements TagService {
 
     private JdbcTemplate jdbcTemplateObject;
     private SimpleJdbcCall mergeTags;
+    private SimpleJdbcCall deleteTag;
 
     @Override
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplateObject = new JdbcTemplate(dataSource);
         this.mergeTags = new SimpleJdbcCall(dataSource).withProcedureName("mergeTags");
+        this.deleteTag = new SimpleJdbcCall(dataSource).withProcedureName("deleteTag");
     }
 
     @Override
@@ -151,9 +153,18 @@ public class TagServiceMySQLImpl implements TagService {
     }
 
     @Override
-    public void delete(Integer id) {
-        String SQL = "DELETE FROM tags WHERE id = ?";
-        jdbcTemplateObject.update(SQL, id);
+    public void deleteById(Integer id) {
+        String tag = jdbcTemplateObject.queryForObject("SELECT tag FROM tags WHERE id = ?", String.class, id);
+        delete(tag);
+    }
+
+    @Override
+    public void delete(String name) {
+        SqlParameterSource args = new MapSqlParameterSource()
+                .addValue("tagName", name);
+        deleteTag.execute(args);
+        String SQL = "DELETE FROM tags WHERE tag = ?";
+        jdbcTemplateObject.update(SQL, name);
     }
 
     @Override

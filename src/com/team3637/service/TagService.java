@@ -26,7 +26,9 @@ public interface TagService {
 
     void update(Tag tag);
 
-    void delete(Integer id);
+    void deleteById(Integer id);
+
+    void delete(String name);
 
     boolean checkForId(Integer id);
 
