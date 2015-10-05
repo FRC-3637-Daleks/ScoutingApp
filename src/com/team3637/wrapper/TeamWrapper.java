@@ -7,6 +7,8 @@ public class TeamWrapper {
     private List<Team> teams;
     boolean[] deleted;
 
+    public TeamWrapper() {}
+
     public TeamWrapper(List<Team> teams, boolean[] deleted) {
         this.teams = teams;
         this.deleted = deleted;
@@ -22,5 +24,9 @@ public class TeamWrapper {
 
     public boolean[] getDeleted() {
         return deleted;
+    }
+
+    public void setDeleted(boolean[] deleted) {
+        this.deleted = deleted;
     }
 }

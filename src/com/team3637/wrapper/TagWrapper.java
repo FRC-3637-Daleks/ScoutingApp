@@ -9,6 +9,8 @@ public class TagWrapper {
     List<Tag> tags;
     boolean[] deleted;
 
+    public TagWrapper() {}
+
     public TagWrapper(List<Tag> tags, boolean[] deleted) {
         this.tags = tags;
         this.deleted = deleted;
@@ -24,5 +26,9 @@ public class TagWrapper {
 
     public boolean[] getDeleted() {
         return deleted;
+    }
+
+    public void setDeleted(boolean[] deleted) {
+        this.deleted = deleted;
     }
 }

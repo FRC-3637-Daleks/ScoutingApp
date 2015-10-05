@@ -9,6 +9,8 @@ public class ScheduleWrapper {
     private List<Schedule> schedule;
     private boolean[] deleted;
 
+    public ScheduleWrapper() {}
+
     public ScheduleWrapper(List<Schedule> schedule, boolean[] deleted) {
         this.schedule = schedule;
         this.deleted = deleted;
@@ -26,4 +28,7 @@ public class ScheduleWrapper {
         return deleted;
     }
 
+    public void setDeleted(boolean[] deleted) {
+        this.deleted = deleted;
+    }
 }

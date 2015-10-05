@@ -113,7 +113,7 @@ public class MatchController {
     }
 
     @RequestMapping(value = "/list", method = RequestMethod.POST)
-    public String submitListMatches(@ModelAttribute("wrapper") MatchWrapper wrapper) {
+    public String listMatches(@ModelAttribute("wrapper") MatchWrapper wrapper) {
         if (wrapper.getMatches() != null && wrapper.getMatches().size() > 0) {
             for (int i = 0; i < wrapper.getMatches().size(); i++) {
                 if (wrapper.getDeleted()[i]) {
@@ -124,11 +124,23 @@ public class MatchController {
         return "redirect:/s/";
     }
 
-    @RequestMapping("/tags")
+    @RequestMapping(value = "/tags", method = RequestMethod.GET)
     public String tags(Model model) {
         List<Tag> tags = tagService.getTags();
         model.addAttribute("wrapper", new TagWrapper(tags, new boolean[tags.size()]));
         return "tags";
+    }
+
+    @RequestMapping(value = "/tags", method = RequestMethod.POST)
+    public String tags(@ModelAttribute("wrapper") TagWrapper wrapper) {
+        if (wrapper.getTags() != null && wrapper.getTags().size() > 0) {
+            for (int i = 0; i < wrapper.getTags().size(); i++) {
+                if (wrapper.getDeleted()[i]) {
+                    tagService.deleteById(wrapper.getTags().get(i).getId());
+                }
+            }
+        }
+        return "redirect:/s/";
     }
 
     @RequestMapping("/export/csv")
