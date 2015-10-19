@@ -1,16 +1,12 @@
 package com.team3637.service;
 
-import com.team3637.mapper.IntegerMapper;
-import com.team3637.mapper.MatchMapper;
-import com.team3637.mapper.TagMapper;
-import com.team3637.mapper.TeamMapper;
+import com.team3637.mapper.*;
 import com.team3637.model.Match;
 import com.team3637.model.Tag;
 import com.team3637.model.Team;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
@@ -140,6 +136,18 @@ public class TagServiceMySQLImpl implements TagService {
         return jdbcTemplateObject.query(SQL, new TeamMapper());
     }
 
+    @Override
+    public List<String> getMatchTagsForTeam(Integer teamNum) {
+        int matchRows = jdbcTemplateObject.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE " +
+                "TABLE_SCHEMA = 'scoutingtags' AND table_name = 'matches'", Integer.class) - 4;
+        String SQL = "";
+        for(int i = 0; i < matchRows; i ++) {
+            SQL += " SELECT DISTINCT `tag" + i + "` FROM matches WHERE `team`=" + teamNum +
+                    " AND `tag" + i + "` IS NOT NULL UNION ALL";
+        }
+        SQL = SQL.substring(0, SQL.length() - 9);
+        return jdbcTemplateObject.query(SQL, new TagStringMapper());
+    }
 
     @Override
     public void update(Tag tag) {

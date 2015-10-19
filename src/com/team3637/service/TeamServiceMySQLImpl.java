@@ -1,6 +1,5 @@
 package com.team3637.service;
 
-import com.team3637.mapper.MatchMapper;
 import com.team3637.mapper.TagStringMapper;
 import com.team3637.mapper.TeamMapper;
 import com.team3637.model.Match;
@@ -61,9 +60,15 @@ public class TeamServiceMySQLImpl implements TeamService {
     }
 
     @Override
-    public Match getTeam(Integer id) {
+    public Team getTeam(Integer team) {
+        String SQL = "SELECT * FROM teams WHERE team = ?";
+        return jdbcTemplateObject.queryForObject(SQL, new TeamMapper(), team);
+    }
+
+    @Override
+    public Team getTeamById(Integer id) {
         String SQL = "SELECT * FROM teams WHERE id = ?";
-        return jdbcTemplateObject.queryForObject(SQL, new MatchMapper(), id);
+        return jdbcTemplateObject.queryForObject(SQL, new TeamMapper(), id);
     }
 
     @Override

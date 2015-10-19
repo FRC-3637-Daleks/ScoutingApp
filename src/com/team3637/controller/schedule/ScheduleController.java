@@ -1,4 +1,4 @@
-package com.team3637.scheduleController;
+package com.team3637.controller.schedule;
 
 import com.team3637.model.Schedule;
 import com.team3637.service.ScheduleService;
@@ -21,11 +21,6 @@ public class ScheduleController {
     private ScheduleService scheduleService;
     @Autowired
     private ServletContext context;
-
-    @PostConstruct
-    public void init() {
-//        scheduleService.initDB(context.getRealPath("/web/WEB-INF/script/initSchedule.sql"));
-    }
 
     @RequestMapping("/")
     public String schedule(Model model) {

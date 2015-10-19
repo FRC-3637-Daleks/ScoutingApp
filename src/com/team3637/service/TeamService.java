@@ -11,7 +11,9 @@ public interface TeamService {
 
     void create(Team team);
 
-    Match getTeam(Integer id);
+    Team getTeam(Integer id);
+
+    Team getTeamById(Integer id);
 
     List<Team> getTeams();
 

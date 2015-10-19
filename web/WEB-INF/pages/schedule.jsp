@@ -21,8 +21,7 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="${pageContext.request.contextPath}/s/edit">Edit</a></li>
-                <li><a href="${pageContext.request.contextPath}/m/list">Matches</a></li>
+            <li><a href="${pageContext.request.contextPath}/s/edit">Edit</a></li>
             </ul>
             <form class="navbar-form navbar-right" action="${pageContext.request.contextPath}/s/t/">
                 <div class="form-group" role="search">

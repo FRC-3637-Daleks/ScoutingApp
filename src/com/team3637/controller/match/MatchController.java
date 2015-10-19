@@ -1,7 +1,6 @@
-package com.team3637.matchController;
+package com.team3637.controller.match;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.team3637.model.Match;
 import com.team3637.model.Tag;
 import com.team3637.model.Team;
@@ -18,10 +17,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.List;
 
 @Controller
 public class MatchController {
@@ -34,10 +35,6 @@ public class MatchController {
     private TagService tagService;
     @Autowired
     private ServletContext context;
-
-    @PostConstruct
-    public void init() {
-    }
 
     @RequestMapping("/")
     public String index() {
@@ -121,7 +118,7 @@ public class MatchController {
                 }
             }
         }
-        return "redirect:/s/";
+        return "redirect:/";
     }
 
     @RequestMapping(value = "/tags", method = RequestMethod.GET)
@@ -140,7 +137,7 @@ public class MatchController {
                 }
             }
         }
-        return "redirect:/s/";
+        return "redirect:/";
     }
 
     @RequestMapping("/export/csv")

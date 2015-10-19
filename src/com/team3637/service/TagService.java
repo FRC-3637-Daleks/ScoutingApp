@@ -24,6 +24,8 @@ public interface TagService {
 
     List<Team> searchTeams(String... params);
 
+    List<String> getMatchTagsForTeam(Integer teamNum);
+
     void update(Tag tag);
 
     void deleteById(Integer id);

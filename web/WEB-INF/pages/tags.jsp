@@ -46,7 +46,7 @@
                     <td class="block">${tag.type}</td>
                     <td class="block">
                         <%--<a class="btn btn-info"
-                           href="${pageContext.request.contextPath}/m/add?teamNum=${match.team}&&matchNum=${match.matchNum}">Edit</a>--%>
+                           href="${pageContext.request.contextPath}/m/add?teamNum=${match.teams}&&matchNum=${match.matchNum}">Edit</a>--%>
                         <input type="button" class="btn btn-danger delete" value="Delete"/>
                         <form:hidden path="deleted[${status.index}]" value="${false}"/>
                     </td>

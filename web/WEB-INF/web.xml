@@ -36,4 +36,15 @@
         <servlet-name>matches</servlet-name>
         <url-pattern>/m/*</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>teams</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>teams</servlet-name>
+        <url-pattern>/t/*</url-pattern>
+    </servlet-mapping>
 </web-app>

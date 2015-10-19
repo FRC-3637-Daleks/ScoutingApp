@@ -25,6 +25,6 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <context:component-scan base-package="com.team3637.matchController"/>
+    <context:component-scan base-package="com.team3637.controller.match"/>
     <mvc:annotation-driven />
 </beans>
