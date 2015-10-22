@@ -66,7 +66,7 @@ public class TagServiceMySQLImpl implements TagService {
         int matchRows = jdbcTemplateObject.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE " +
                 "TABLE_SCHEMA = 'scoutingtags' AND table_name = 'matches'", Integer.class) - 4;
         int teamRows = jdbcTemplateObject.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE " +
-                "TABLE_SCHEMA = 'scoutingtags' AND table_name = 'teams'", Integer.class) - 2;
+                "TABLE_SCHEMA = 'scoutingtags' AND table_name = 'teams'", Integer.class) - 4;
         String SQL = "SELECT matches.team FROM matches JOIN teams ON matches.team=teams.team WHERE ";
         for(int i = 0; i < matchTags.length; i++) {
             SQL += "(";
@@ -119,7 +119,7 @@ public class TagServiceMySQLImpl implements TagService {
     @Override
     public List<Team> searchTeams(String... params) {
         int rows = jdbcTemplateObject.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE " +
-                "TABLE_SCHEMA = 'scoutingtags' AND table_name = 'teams'", Integer.class) - 2;
+                "TABLE_SCHEMA = 'scoutingtags' AND table_name = 'teams'", Integer.class) - 4;
         String SQL = "SELECT * FROM teams WHERE ";
         for(int i = 0; i < params.length; i++) {
             SQL += "(";

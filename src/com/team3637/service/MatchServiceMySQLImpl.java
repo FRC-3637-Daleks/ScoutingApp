@@ -58,6 +58,10 @@ public class MatchServiceMySQLImpl implements MatchService {
                     .addValue("tagName", tagName);
             addTag.execute(addTagArg);
         }
+        SQL = "UPDATE teams SET `avgscore` = (`avgscore` * `matches` + ?) / (`matches` + 1) WHERE `team` = ?";
+        jdbcTemplateObject.update(SQL, match.getScore(), match.getTeam());
+        SQL = "UPDATE teams SET `matches` = `matches` + 1 WHERE `team` = ?";
+        jdbcTemplateObject.update(SQL, match.getTeam());
     }
 
     @Override
@@ -93,6 +97,8 @@ public class MatchServiceMySQLImpl implements MatchService {
     @Override
     public void update(Match match) {
         String valuesSting = "id=?, matchNum=?, team=?, score=?", SQL;
+        SQL = "SELECT `score` FROM matches WHERE `id` = ?";
+        int oldScore = jdbcTemplateObject.queryForObject(SQL, Integer.TYPE, match.getId());
         List<Object> values = new ArrayList<>();
         values.add(match.getId());
         values.add(match.getMatchNum());
@@ -115,12 +121,19 @@ public class MatchServiceMySQLImpl implements MatchService {
                     .addValue("tagName", tagName);
             addTag.execute(addTagArg);
         }
+        SQL = "UPDATE teams SET `avgscore` = IF(`matches` > 1, (`avgscore` * `matches` - ? + ?) / `matches`, 0) " +
+                "WHERE `team` = ?";
+        jdbcTemplateObject.update(SQL, match.getScore(), oldScore, match.getTeam());
     }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(Match match) {
         String SQL = "DELETE FROM matches WHERE id = ?";
-        jdbcTemplateObject.update(SQL, id);
+        jdbcTemplateObject.update(SQL, match.getId());
+        SQL = "UPDATE teams SET `avgscore` = IF(`matches` > 1, (`avgscore` * `matches` - ?) / (`matches` - 1), 0) WHERE `team` = ?";
+        jdbcTemplateObject.update(SQL, match.getScore(), match.getTeam());
+        SQL = "UPDATE teams SET `matches` = `matches` - 1 WHERE `team` = ?";
+        jdbcTemplateObject.update(SQL, match.getTeam());
     }
 
     @Override

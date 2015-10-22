@@ -114,7 +114,7 @@ public class MatchController {
         if (wrapper.getMatches() != null && wrapper.getMatches().size() > 0) {
             for (int i = 0; i < wrapper.getMatches().size(); i++) {
                 if (wrapper.getDeleted()[i]) {
-                    matchService.delete(wrapper.getMatches().get(i).getId());
+                    matchService.delete(wrapper.getMatches().get(i));
                 }
             }
         }

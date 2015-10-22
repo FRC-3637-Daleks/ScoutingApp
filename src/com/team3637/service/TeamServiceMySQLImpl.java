@@ -35,10 +35,12 @@ public class TeamServiceMySQLImpl implements TeamService {
 
     @Override
     public void create(Team team) {
-        String fieldsSting = "id, team", valuesSting = "?, ?", SQL;
+        String fieldsSting = "id, team, avgscore, matches", valuesSting = "?, ?, ?, ?", SQL;
         List<Object> values = new ArrayList<>();
         values.add(team.getId());
         values.add(team.getTeam());
+        values.add(team.getAvgscore());
+        values.add(team.getMatches());
         for(int i = 0; i < team.getTags().size(); i++) {
             fieldsSting += ", tag" + i;
             valuesSting += ", ?";
@@ -46,7 +48,7 @@ public class TeamServiceMySQLImpl implements TeamService {
         }
         SqlParameterSource addColsArg = new MapSqlParameterSource()
                 .addValue("tableName", "teams")
-                .addValue("ignoreCols", 2)
+                .addValue("ignoreCols", 4)
                 .addValue("newCols", team.getTags().size());
         addCols.execute(addColsArg);
         SQL = "INSERT INTO teams (" + fieldsSting + ") VALUES (" + valuesSting + ");";
@@ -95,7 +97,7 @@ public class TeamServiceMySQLImpl implements TeamService {
         }
         SQL = "UPDATE teams SET " + valuesSting + " WHERE id=" + team.getId() + ";";
         SqlParameterSource in = new MapSqlParameterSource()
-                .addValue("ignoreCols", 2)
+                .addValue("ignoreCols", 4)
                 .addValue("tableName", "matches")
                 .addValue("newCols", team.getTags().size());
         addCols.execute(in);
@@ -131,7 +133,7 @@ public class TeamServiceMySQLImpl implements TeamService {
     public void mergeTags(String oldTag, String newTag) {
         SqlParameterSource args = new MapSqlParameterSource()
                 .addValue("tableName", "teams")
-                .addValue("noTagCols", 2)
+                .addValue("noTagCols", 4)
                 .addValue("oldTag", oldTag)
                 .addValue("newTag", newTag);
         mergeTags.execute(args);

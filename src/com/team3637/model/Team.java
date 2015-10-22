@@ -6,6 +6,8 @@ import java.util.List;
 public class Team {
     private int id;
     private int team;
+    private float avgscore;
+    private int matches;
     private List<String> tags;
 
     public int getId() {
@@ -22,6 +24,22 @@ public class Team {
 
     public void setTeam(int team) {
         this.team = team;
+    }
+
+    public float getAvgscore() {
+        return avgscore;
+    }
+
+    public void setAvgscore(float avgscore) {
+        this.avgscore = avgscore;
+    }
+
+    public int getMatches() {
+        return matches;
+    }
+
+    public void setMatches(int matches) {
+        this.matches = matches;
     }
 
     public List<String> getTags() {

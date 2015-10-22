@@ -22,7 +22,7 @@ public interface MatchService {
 
     void update(Match match);
 
-    void delete(Integer id);
+    void delete(Match match);
 
     boolean checkForId(Integer id);
 
