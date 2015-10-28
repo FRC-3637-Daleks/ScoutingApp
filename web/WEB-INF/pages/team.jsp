@@ -30,20 +30,28 @@
 </nav>
 <div class="container main">
     <div>
-        <p class="h2">Team: ${teamNum}</p>
+        <p class="h2">Team: ${team.team}</p>
     </div>
     <div id="input" class="input container">
         <div class="row data-row">
             <div class="col-md-6">
-                <label for="matchTags">Match Tags <span id="matchTagsErr" class="error"></span></label>
-                <input type="text" class="form-control" id="matchTags"
-                       name="matchTags" data-error="#matchTagsErr" required/>
+                <label for="matchTags">Match Tags</label>
+                <input type="text" class="form-control" id="matchTags" name="matchTags" readonly/>
             </div>
             <div class="col-md-6">
-                <label for="teamTags">Team Tags <span id="teamTagsErr" class="error"></span></label>
-                <input type="text" class="form-control" id="teamTags"
-                       name="teamTags" data-error="#teamTagsErr" required/>
+                <label for="teamTags">Team Tags</label>
+                <input type="text" class="form-control" id="teamTags" name="teamTags" readonly/>
             </div>
+        </div>
+    </div>
+    <div class="row data-row">
+        <div class="col-md-4 col-md-offset-2 text-center">
+            <label for="score">Average Score</label>
+            <input id="score" name="score" class="form-control" type="text" value="${team.avgscore}" readonly/>
+        </div>
+        <div class="col-md-4 text-center">
+            <label for="matches">Matches Played</label>
+            <input id="matches" name="matches" class="form-control" type="text" value="${team.matches}" readonly/>
         </div>
     </div>
 </div>
@@ -54,7 +62,7 @@
         </c:forEach>
     ];
     var teamTags = [
-        <c:forEach var="tag" items="${teamTags}">
+        <c:forEach var="tag" items="${team.tags}">
         "${tag}",
         </c:forEach>
     ];

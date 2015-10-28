@@ -13,9 +13,11 @@ public class TeamMapper implements RowMapper<Team> {
         Team team = new Team();
         team.setId(resultSet.getInt("id"));
         team.setTeam(resultSet.getInt("team"));
+        team.setMatches(resultSet.getInt("matches"));
+        team.setAvgscore(resultSet.getFloat("avgscore"));
         ResultSetMetaData rsmd = resultSet.getMetaData();
         int columns = rsmd.getColumnCount();
-        for(int i = 3; i <= columns; i++) {
+        for(int i = 5; i <= columns; i++) {
             if(resultSet.getString(i) != null) {
                 team.getTags().add(resultSet.getString(i));
             }

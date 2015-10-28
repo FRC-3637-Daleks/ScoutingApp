@@ -35,9 +35,8 @@ public class TeamsController {
         Team team = teamService.getTeam(teamNum);
         List<String> teamTags = team.getTags();
         List<String> matchTags = tagService.getMatchTagsForTeam(teamNum);
-        model.addAttribute("teamNum", team.getTeam());
+        model.addAttribute("team", team);
         model.addAttribute("matchTags", matchTags);
-        model.addAttribute("teamTags", teamTags);
         return "team";
     }
 

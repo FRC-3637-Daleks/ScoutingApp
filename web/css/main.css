@@ -60,3 +60,9 @@ table a {
 .tokenfield {
     height: 150px;
 }
+
+@media (min-width: 922px) {
+    .col-md-offset-2 {
+        margin-left: 18%;
+    }
+}
