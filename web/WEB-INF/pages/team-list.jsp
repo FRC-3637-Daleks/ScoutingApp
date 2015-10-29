@@ -24,24 +24,26 @@
     </div>
 </nav>
 <div class="container main">
-    <form:form method="post" action="/m/list" modelAttribute="matchWrapper">
-        <table id="match-list" class="table table-striped table-bordered">
+    <form:form method="post" action="/t/" modelAttribute="teamWrapper">
+        <table id="team-list" class="table table-striped table-bordered">
             <thead>
             <tr>
                 <th>Team # <span class="glyphicon glyphicon-sort"></span></th>
-                <th>Match # <span class="glyphicon glyphicon-sort"></span></th>
+                <th>Matches Played <span class="glyphicon glyphicon-sort"></span></th>
+                <th>Average Score <span class="glyphicon glyphicon-sort"></span></th>
                 <th>Actions</th>
             </tr>
             </thead>
             <tbody>
-            <c:forEach var="match" items="${matchWrapper.matches}" varStatus="status">
+            <c:forEach var="team" items="${teamWrapper.teams}" varStatus="status">
                 <tr>
-                    <form:hidden path="matches[${status.index}].id" value="${match.id}"/>
-                    <td class="block">${match.team}</td>
-                    <td class="block">${match.matchNum}</td>
+                    <form:hidden path="teams[${status.index}].id" value="${team.id}"/>
+                    <td class="block">${team.team}</td>
+                    <td class="block">${team.matches}</td>
+                    <td class="block">${team.avgscore}</td>
                     <td class="block">
                         <a class="btn btn-info"
-                           href="${pageContext.request.contextPath}/m/add?teamNum=${match.team}&&matchNum=${match.matchNum}">Edit</a>
+                           href="${pageContext.request.contextPath}/t/${team.team}">View</a>
                         <input type="button" class="btn btn-danger delete" value="Delete"/>
                         <form:hidden path="deleted[${status.index}]" value="${false}"/>
                     </td>
@@ -50,7 +52,7 @@
             </tbody>
             <tfoot>
             <tr>
-                <td colspan="3"><input class="btn btn-success" type="submit" value="Save"/></td>
+                <td colspan="5"><input class="btn btn-success" type="submit" value="Save"/></td>
             </tr>
             </tfoot>
         </table>
@@ -58,14 +60,14 @@
 </div>
 <script>
     $(document).ready(function () {
-                $("#match-list").tablesorter({
+                $("#team-list").tablesorter({
                     headers: {
-                        2: {
+                        3: {
                             sorter: false
                         }
                     },
                     sortList: [
-                        [0,0]
+                        [0,0,0]
                     ]
                 });
             }

@@ -105,12 +105,12 @@ public class MatchController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public String listMatches(Model model) {
         List<Match> matches = matchService.getMatches();
-        model.addAttribute("wrapper", new MatchWrapper(matches, new boolean[matches.size()]));
+        model.addAttribute("matchWrapper", new MatchWrapper(matches, new boolean[matches.size()]));
         return "match-list";
     }
 
     @RequestMapping(value = "/list", method = RequestMethod.POST)
-    public String listMatches(@ModelAttribute("wrapper") MatchWrapper wrapper) {
+    public String listMatches(@ModelAttribute("matchWrapper") MatchWrapper wrapper) {
         if (wrapper.getMatches() != null && wrapper.getMatches().size() > 0) {
             for (int i = 0; i < wrapper.getMatches().size(); i++) {
                 if (wrapper.getDeleted()[i]) {
@@ -124,12 +124,12 @@ public class MatchController {
     @RequestMapping(value = "/tags", method = RequestMethod.GET)
     public String tags(Model model) {
         List<Tag> tags = tagService.getTags();
-        model.addAttribute("wrapper", new TagWrapper(tags, new boolean[tags.size()]));
+        model.addAttribute("tagWrapper", new TagWrapper(tags, new boolean[tags.size()]));
         return "tags";
     }
 
     @RequestMapping(value = "/tags", method = RequestMethod.POST)
-    public String tags(@ModelAttribute("wrapper") TagWrapper wrapper) {
+    public String tags(@ModelAttribute("tagWrapper") TagWrapper wrapper) {
         if (wrapper.getTags() != null && wrapper.getTags().size() > 0) {
             for (int i = 0; i < wrapper.getTags().size(); i++) {
                 if (wrapper.getDeleted()[i]) {

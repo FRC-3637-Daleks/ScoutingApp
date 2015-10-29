@@ -21,15 +21,10 @@
             </button>
             <a class="navbar-brand page-scroll" href="${pageContext.request.contextPath}/">Team 3637 Scouting App</a>
         </div>
-        <div id="navbar" class="collapse navbar-collapse">
-            <ul class="nav navbar-nav">
-                <li><a href="${pageContext.request.contextPath}/s/">Schedule</a></li>
-            </ul>
-        </div>
     </div>
 </nav>
 <div class="container main">
-    <form:form method="post" action="/m/tags" modelAttribute="wrapper">
+    <form:form method="post" action="/m/tags" modelAttribute="tagWrapper">
         <table id="match-list" class="table table-striped table-bordered">
             <thead>
             <tr>
@@ -39,7 +34,7 @@
             </tr>
             </thead>
             <tbody>
-            <c:forEach var="tag" items="${wrapper.tags}" varStatus="status">
+            <c:forEach var="tag" items="${tagWrapper.tags}" varStatus="status">
                 <tr>
                     <form:hidden path="tags[${status.index}].id" value="${tag.id}"/>
                     <td class="block">${tag.tag}</td>

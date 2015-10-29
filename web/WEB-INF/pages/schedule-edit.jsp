@@ -36,7 +36,7 @@
 <div class="container main">
     <c:choose>
         <c:when test="${true}">
-            <form:form method="post" action="/s/edit" modelAttribute="wrapper">
+            <form:form method="post" action="/s/edit" modelAttribute="scheduleWrapper">
                 <table class="table table-striped table-bordered">
                     <thead>
                     <tr>
@@ -51,7 +51,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <c:forEach var="match" items="${wrapper.schedule}" varStatus="status">
+                    <c:forEach var="match" items="${scheduleWrapper.schedule}" varStatus="status">
                         <tr>
                             <form:hidden path="schedule[${status.index}].id" value="${match.id}"/>
                             <td><form:input path="schedule[${status.index}].matchNum" cssClass="form-control"/></td>
@@ -72,7 +72,7 @@
                     </tr>
                     </tbody>
                 </table>
-                <script>var num = ${wrapper.schedule.size()};</script>
+                <script>var num = ${scheduleWrapper.schedule.size()};</script>
             </form:form>
         </c:when>
         <c:otherwise>

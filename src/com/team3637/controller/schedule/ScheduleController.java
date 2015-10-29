@@ -46,7 +46,7 @@ public class ScheduleController {
     @RequestMapping(value = "/edit", method = RequestMethod.GET)
     public String edit(Model model) {
         List<Schedule> matches = scheduleService.getSchedule();
-        model.addAttribute("wrapper", new ScheduleWrapper(matches, new boolean[matches.size()]));
+        model.addAttribute("scheduleWrapper", new ScheduleWrapper(matches, new boolean[matches.size()]));
         return "schedule-edit";
     }
 
