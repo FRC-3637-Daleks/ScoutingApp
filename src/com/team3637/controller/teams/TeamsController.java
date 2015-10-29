@@ -50,7 +50,6 @@ public class TeamsController {
     @RequestMapping("/{teamNum}")
     public String getTeam(@PathVariable("teamNum") Integer teamNum, Model model) {
         Team team = teamService.getTeam(teamNum);
-        List<String> teamTags = team.getTags();
         List<String> matchTags = tagService.getMatchTagsForTeam(teamNum);
         model.addAttribute("team", team);
         model.addAttribute("matchTags", matchTags);

@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletContext;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -142,17 +145,14 @@ public class MatchController {
 
     @RequestMapping("/export/csv")
     @ResponseBody
-    public String exportCSV() {
-        String directory = "export";
+    public String exportCSV() throws IOException {
         String file = "matches.csv";
-        String filePath = context.getContextPath() + "/" + directory + "/" + file;
         File exportDirectory = new File(context.getRealPath("/") + "/export");
         if (!exportDirectory.exists())
             exportDirectory.mkdir();
-
-        matchService.exportCSV(exportDirectory.getAbsolutePath() + "/" + file, new ArrayList<>(matchService.getMatches()));
-
-        return filePath;
+        String filePath = exportDirectory.getAbsolutePath() + "/" + file;
+        matchService.exportCSV(filePath, new ArrayList<>(matchService.getMatches()));
+        return new String(Files.readAllBytes(FileSystems.getDefault().getPath(filePath)));
     }
 
     @RequestMapping("/matchTags")

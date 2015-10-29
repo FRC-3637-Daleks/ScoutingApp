@@ -8,9 +8,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,18 +83,14 @@ public class ScheduleController {
 
     @RequestMapping("/export/csv")
     @ResponseBody
-    public String exportCSV() {
-        String directory = "export";
+    public String exportCSV() throws IOException {
         String file = "schedule.csv";
-        String filePath = context.getContextPath() + "/" + directory + "/" + file;
-
         File exportDirectory = new File(context.getRealPath("/") + "/export");
         if (!exportDirectory.exists())
             exportDirectory.mkdir();
-
-        scheduleService.exportCSV(exportDirectory.getAbsolutePath() + "/" + file, new ArrayList<>(scheduleService.getSchedule()));
-
-        return filePath;
+        String filePath = exportDirectory.getAbsolutePath() + "/" + file;
+        scheduleService.exportCSV(filePath, new ArrayList<>(scheduleService.getSchedule()));
+        return new String(Files.readAllBytes(FileSystems.getDefault().getPath(filePath)));
     }
 
 }
