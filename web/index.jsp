@@ -20,6 +20,7 @@
             <ul class="nav navbar-nav">
                 <li><a href="${pageContext.request.contextPath}/s/">Schedule</a></li>
                 <li><a href="${pageContext.request.contextPath}/m/list">Matches</a></li>
+                <li><a href="${pageContext.request.contextPath}/t/">Teams</a></li>
                 <li><a href="${pageContext.request.contextPath}/m/tags">Tags</a></li>
             </ul>
         </div>

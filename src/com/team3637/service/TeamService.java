@@ -21,7 +21,7 @@ public interface TeamService {
 
     void update(Team team);
 
-    void delete(Integer id);
+    void delete(Team team);
 
     boolean checkForId(Integer id);
 

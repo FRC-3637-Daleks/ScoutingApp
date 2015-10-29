@@ -111,9 +111,9 @@ public class TeamServiceMySQLImpl implements TeamService {
     }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(Team team) {
         String SQL = "DELETE FROM teams WHERE id = ?";
-        jdbcTemplateObject.update(SQL, id);
+        jdbcTemplateObject.update(SQL, team.getId());
     }
 
     @Override
