@@ -29,6 +29,7 @@
     </div>
 </nav>
 <div class="container main">
+<form:form id="team" method="POST" action="${pageContext.request.contextPath}/t/view/${team.team}">
     <div>
         <p class="h2">Team: ${team.team}</p>
     </div>
@@ -39,8 +40,9 @@
                 <input type="text" class="form-control" id="matchTags" name="matchTags" readonly/>
             </div>
             <div class="col-md-6">
-                <label for="teamTags">Team Tags</label>
-                <input type="text" class="form-control" id="teamTags" name="teamTags" readonly/>
+                <label for="teamTags">Team Tags <span id="teamTagsErr" class="error"></span></label>
+                <input type="text" class="form-control" id="teamTags"
+                       name="teamTags" data-error="#teamTagsErr" required/>
             </div>
         </div>
     </div>
@@ -54,18 +56,30 @@
             <input id="matches" name="matches" class="form-control" type="text" value="${team.matches}" readonly/>
         </div>
     </div>
+    <div class="row data-row">
+        <div class="col-md-12">
+            <input type="submit" value="Save" class="btn btn-success">
+        </div>
+    </div>
+    </form:form>
 </div>
 <script>
-    var matchTags = [
+    var teamTags = [
+        <c:forEach var="tag" items="${teamTags}">
+        "${tag}",
+        </c:forEach>
+    ];
+    var usedMatchTags = [
         <c:forEach var="tag" items="${matchTags}">
         "${tag}",
         </c:forEach>
     ];
-    var teamTags = [
+    var usedTeamTags = [
         <c:forEach var="tag" items="${team.tags}">
         "${tag}",
         </c:forEach>
     ];
+
 </script>
 <script>
     $('#matchTags').tokenfield({
@@ -73,15 +87,28 @@
             delay: 100
         },
         showAutocompleteOnFocus: true
-    }).tokenfield('setTokens', matchTags);
+    }).tokenfield('setTokens', usedMatchTags);
     $('#matchTags').tokenfield('readonly');
     $('#teamTags').tokenfield({
         autocomplete: {
+            source: teamTags,
             delay: 100
         },
         showAutocompleteOnFocus: true
-    }).tokenfield('setTokens', teamTags);
-    $('#teamTags').tokenfield('readonly');
+    }).tokenfield('setTokens', usedTeamTags);
+    $('#team').validate({
+        messages: {
+            teamTags: "(Please enter at least 1 tag)",
+        },
+        errorPlacement: function(error, element) {
+            var placement = $(element).data('error');
+            if (placement) {
+                $(placement).append(error)
+            } else {
+                error.insertAfter(element);
+            }
+        }
+    });
 </script>
 </body>
 </html>

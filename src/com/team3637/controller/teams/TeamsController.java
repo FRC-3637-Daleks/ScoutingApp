@@ -11,6 +11,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletContext;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 @Controller
@@ -44,13 +47,33 @@ public class TeamsController {
         return "redirect:/t/";
     }
 
-    @RequestMapping("/view/{teamNum}")
+    @RequestMapping(value = "/view/{teamNum}", method = RequestMethod.GET)
     public String getTeam(@PathVariable("teamNum") Integer teamNum, Model model) {
         Team team = teamService.getTeam(teamNum);
         List<String> matchTags = tagService.getMatchTagsForTeam(teamNum);
+        List<String> teamTags = teamService.getTags();
         model.addAttribute("team", team);
         model.addAttribute("matchTags", matchTags);
+        model.addAttribute("teamTags", teamTags);
         return "team";
+    }
+
+    @RequestMapping(value = "/view/{teamNum}", method = RequestMethod.POST)
+    public String getTeam(@PathVariable("teamNum") Integer teamNum,
+                          @RequestParam("teamTags") String teamTags,
+                          @RequestParam("score") Double score,
+                          @RequestParam("matches") Integer matches) {
+
+        Team team = new Team();
+        team.setTeam(teamNum);
+        team.setAvgscore(score);
+        team.setMatches(matches);
+        team.setTags(new ArrayList<>(new LinkedHashSet<>(Arrays.asList(teamTags.split(", ")))));
+        if (teamService.checkForTeam(team.getTeam()))
+            teamService.update(team);
+        else
+            teamService.create(team);
+        return "redirect:/t/";
     }
 
 

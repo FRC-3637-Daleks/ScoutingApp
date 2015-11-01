@@ -6,7 +6,7 @@ import java.util.List;
 public class Team {
     private int id;
     private int team;
-    private float avgscore;
+    private double avgscore;
     private int matches;
     private List<String> tags;
 
@@ -26,11 +26,11 @@ public class Team {
         this.team = team;
     }
 
-    public float getAvgscore() {
+    public double getAvgscore() {
         return avgscore;
     }
 
-    public void setAvgscore(float avgscore) {
+    public void setAvgscore(double avgscore) {
         this.avgscore = avgscore;
     }
 
