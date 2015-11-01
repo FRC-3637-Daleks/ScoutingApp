@@ -95,6 +95,8 @@ public class MatchServiceMySQLImpl implements MatchService {
 
     @Override
     public void update(Match match) {
+        Match oldMatch = getForMatchAndTeam(match.getMatchNum(), match.getTeam()).get(0);
+        int diff = oldMatch.getTags().size() - match.getTags().size();
         String valuesSting = "matchNum=?, team=?, score=?", SQL;
         SQL = "SELECT `score` FROM matches WHERE `matchNum` = ? AND `team` = ?";
         Integer oldScore = jdbcTemplateObject.queryForObject(SQL, Integer.class, match.getMatchNum(), match.getTeam());
@@ -102,9 +104,19 @@ public class MatchServiceMySQLImpl implements MatchService {
         values.add(match.getMatchNum());
         values.add(match.getTeam());
         values.add(match.getScore());
-        for(int i = 0; i < match.getTags().size(); i++) {
-            valuesSting += ", tag" + i + "=?";
-            values.add(match.getTags().get(i));
+        if(diff <= 0) {
+            for (int i = 0; i < match.getTags().size(); i++) {
+                valuesSting += ", tag" + i + "=?";
+                values.add(match.getTags().get(i));
+            }
+        } else {
+            for (int i = 0; i < oldMatch.getTags().size(); i++) {
+                valuesSting += ", tag" + i + "=?";
+                if (match.getTags().size() > i)
+                    values.add(match.getTags().get(i));
+                else
+                    values.add(null);
+            }
         }
         SQL = "UPDATE matches SET " + valuesSting + " WHERE matchNum = " +
                 match.getMatchNum() + " AND team = " + match.getTeam() + ";";

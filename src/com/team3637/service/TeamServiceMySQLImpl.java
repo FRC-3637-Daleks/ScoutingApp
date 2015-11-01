@@ -106,12 +106,24 @@ public class TeamServiceMySQLImpl implements TeamService {
 
     @Override
     public void update(Team team) {
+        Team oldTeam = getTeamByNumber(team.getTeam()).get(0);
+        int diff = oldTeam.getTags().size() - team.getTags().size();
         String valuesSting = "team=?", SQL;
         List<Object> values = new ArrayList<>();
         values.add(team.getTeam());
-        for(int i = 0; i < team.getTags().size(); i++) {
-            valuesSting += ", tag" + i + "=?";
-            values.add(team.getTags().get(i));
+        if(diff <= 0) {
+            for (int i = 0; i < team.getTags().size(); i++) {
+                valuesSting += ", tag" + i + "=?";
+                values.add(team.getTags().get(i));
+            }
+        } else {
+            for (int i = 0; i < oldTeam.getTags().size(); i++) {
+                valuesSting += ", tag" + i + "=?";
+                if(team.getTags().size() > i)
+                    values.add(team.getTags().get(i));
+                else
+                    values.add(null);
+            }
         }
         SQL = "UPDATE teams SET " + valuesSting + " WHERE team=" + team.getTeam() + ";";
         SqlParameterSource in = new MapSqlParameterSource()
