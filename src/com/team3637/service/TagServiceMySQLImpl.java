@@ -61,39 +61,112 @@ public class TagServiceMySQLImpl implements TagService {
     }
 
     @Override
-    public List<Integer> search(String[] matchTags, String[] teamTags) {
-        List<Integer> teams = new ArrayList<>();
+    public List<Team> search(String[] matchTags, String[] teamTags) {
         int matchRows = jdbcTemplateObject.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE " +
                 "TABLE_SCHEMA = 'scoutingtags' AND table_name = 'matches'", Integer.class) - 4;
         int teamRows = jdbcTemplateObject.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE " +
                 "TABLE_SCHEMA = 'scoutingtags' AND table_name = 'teams'", Integer.class) - 4;
-        String SQL = "SELECT matches.team FROM matches JOIN teams ON matches.team=teams.team WHERE ";
-        for(int i = 0; i < matchTags.length; i++) {
-            SQL += "(";
-            for (int j = 0; j < matchRows; j++) {
-                SQL +="matches.tag" + j + "=" +  "'" + matchTags[i] + "'";
-                if(j != matchRows - 1) {
+        String SQL = "SELECT DISTINCT matches.team FROM matches JOIN teams ON matches.team=teams.team ";
+        if (matchTags.length != 0 || teamTags.length != 0)
+            SQL += "WHERE ";
+        if (matchTags.length != 0) {
+            for (int i = 0; i < matchTags.length; i++) {
+                SQL += "(";
+                for (int j = 0; j < matchRows; j++) {
+                    SQL += "matches.tag" + j + "=" + "'" + matchTags[i] + "'";
+                    if (j != matchRows - 1) {
+                        SQL += " OR ";
+                    }
+                }
+                SQL += ")";
+                if (i != matchTags.length - 1)
+                    SQL += " AND ";
+            }
+        }
+        if (matchTags.length != 0 && teamTags.length != 0)
+            SQL += " AND ";
+        if (teamTags.length != 0) {
+            for (int i = 0; i < teamTags.length; i++) {
+                SQL += "(";
+                for (int j = 0; j < teamRows; j++) {
+                    SQL += "teams.tag" + j + "=" + "'" + teamTags[i] + "'";
+                    if (j != teamRows - 1) {
+                        SQL += " OR ";
+                    }
+                }
+                SQL += ")";
+                if (i != teamTags.length - 1)
+                    SQL += " AND ";
+            }
+        }
+        List<Integer> teams = jdbcTemplateObject.query(SQL, new IntegerMapper());
+        if (teams.size() != 0) {
+            SQL = "SELECT * FROM teams WHERE ";
+            for (int i = 0; i < teams.size(); i++) {
+                SQL += "team = " + teams.get(i);
+                if (i == teams.size() - 1) {
                     SQL += " OR ";
                 }
             }
-            SQL += ")";
-            if(i != matchTags.length - 1)
-                SQL += " AND ";
+            return jdbcTemplateObject.query(SQL, new TeamMapper());
+        } else {
+            return new ArrayList<>();
         }
-        SQL += " AND ";
-        for(int i = 0; i < teamTags.length; i++) {
-            SQL += "(";
-            for (int j = 0; j < teamRows; j++) {
-                SQL +="teams.tag" + j + "=" +  "'" + teamTags[i] +  "'";
-                if(j != teamRows - 1) {
+    }
+
+    @Override
+    public List<Team> search(Double minScore, Double maxScore, String[] matchTags, String[] teamTags) {
+        int matchRows = jdbcTemplateObject.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE " +
+                "TABLE_SCHEMA = 'scoutingtags' AND table_name = 'matches'", Integer.class) - 4;
+        int teamRows = jdbcTemplateObject.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE " +
+                "TABLE_SCHEMA = 'scoutingtags' AND table_name = 'teams'", Integer.class) - 4;
+        String SQL = "SELECT DISTINCT matches.team FROM matches JOIN teams ON matches.team=teams.team WHERE ";
+        if (matchTags.length != 0) {
+            for (int i = 0; i < matchTags.length; i++) {
+                SQL += "(";
+                for (int j = 0; j < matchRows; j++) {
+                    SQL += "matches.tag" + j + "=" + "'" + matchTags[i] + "'";
+                    if (j != matchRows - 1) {
+                        SQL += " OR ";
+                    }
+                }
+                SQL += ")";
+                if (i != matchTags.length - 1)
+                    SQL += " AND ";
+            }
+        }
+        if (matchTags.length != 0 && teamTags.length != 0)
+            SQL += " AND ";
+        if (teamTags.length != 0) {
+            for (int i = 0; i < teamTags.length; i++) {
+                SQL += "(";
+                for (int j = 0; j < teamRows; j++) {
+                    SQL += "teams.tag" + j + "=" + "'" + teamTags[i] + "'";
+                    if (j != teamRows - 1) {
+                        SQL += " OR ";
+                    }
+                }
+                SQL += ")";
+                if (i != teamTags.length - 1)
+                    SQL += " AND ";
+            }
+        }
+        if (matchTags.length != 0 && teamTags.length != 0)
+            SQL += " AND ";
+        SQL += " (avgscore >= " + minScore + ") AND (avgscore <= " + maxScore + ")";
+        List<Integer> teams = jdbcTemplateObject.query(SQL, new IntegerMapper());
+        if (teams.size() != 0) {
+            SQL = "SELECT * FROM teams WHERE ";
+            for (int i = 0; i < teams.size(); i++) {
+                SQL += "team = " + teams.get(i) + " ";
+                if (i != teams.size() - 1) {
                     SQL += " OR ";
                 }
             }
-            SQL += ")";
-            if(i != teamTags.length - 1)
-                SQL += " AND ";
+            return jdbcTemplateObject.query(SQL, new TeamMapper());
+        } else {
+            return new ArrayList<>();
         }
-        return jdbcTemplateObject.query(SQL, new IntegerMapper());
     }
 
     @Override
@@ -101,18 +174,39 @@ public class TagServiceMySQLImpl implements TagService {
         int rows = jdbcTemplateObject.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE " +
                 "TABLE_SCHEMA = 'scoutingtags' AND table_name = 'matches'", Integer.class) - 4;
         String SQL = "SELECT * FROM matches WHERE ";
-        for(int i = 0; i < params.length; i++) {
+        for (int i = 0; i < params.length; i++) {
             SQL += "(";
             for (int j = 0; j < rows; j++) {
-                SQL +="tag" + j + "=" +  "'" + params[i] +  "'";
-                if(j != rows - 1) {
+                SQL += "tag" + j + "=" + "'" + params[i] + "'";
+                if (j != rows - 1) {
                     SQL += " OR ";
                 }
             }
             SQL += ")";
-            if(i != params.length - 1)
+            if (i != params.length - 1)
                 SQL += " AND ";
         }
+        return jdbcTemplateObject.query(SQL, new MatchMapper());
+    }
+
+    @Override
+    public List<Match> searchMatches(Double minScore, Double maxScore, String... params) {
+        int rows = jdbcTemplateObject.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE " +
+                "TABLE_SCHEMA = 'scoutingtags' AND table_name = 'matches'", Integer.class) - 4;
+        String SQL = "SELECT * FROM matches WHERE ";
+        for (int i = 0; i < params.length; i++) {
+            SQL += "(";
+            for (int j = 0; j < rows; j++) {
+                SQL += "tag" + j + "=" + "'" + params[i] + "'";
+                if (j != rows - 1) {
+                    SQL += " OR ";
+                }
+            }
+            SQL += ")";
+            if (i != params.length - 1)
+                SQL += " AND ";
+        }
+        SQL += " AND (avgscore >= " + minScore + ") AND (avgscore <= " + maxScore + ")";
         return jdbcTemplateObject.query(SQL, new MatchMapper());
     }
 
@@ -121,18 +215,39 @@ public class TagServiceMySQLImpl implements TagService {
         int rows = jdbcTemplateObject.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE " +
                 "TABLE_SCHEMA = 'scoutingtags' AND table_name = 'teams'", Integer.class) - 4;
         String SQL = "SELECT * FROM teams WHERE ";
-        for(int i = 0; i < params.length; i++) {
+        for (int i = 0; i < params.length; i++) {
             SQL += "(";
             for (int j = 0; j < rows; j++) {
-                SQL +="tag" + j + "=" +  "'" + params[i] +  "'";
-                if(j != rows - 1) {
+                SQL += "tag" + j + "=" + "'" + params[i] + "'";
+                if (j != rows - 1) {
                     SQL += " OR ";
                 }
             }
             SQL += ")";
-            if(i != params.length - 1)
+            if (i != params.length - 1)
                 SQL += " AND ";
         }
+        return jdbcTemplateObject.query(SQL, new TeamMapper());
+    }
+
+    @Override
+    public List<Team> searchTeams(Double minScore, Double maxScore, String... params) {
+        int rows = jdbcTemplateObject.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE " +
+                "TABLE_SCHEMA = 'scoutingtags' AND table_name = 'teams'", Integer.class) - 4;
+        String SQL = "SELECT * FROM teams WHERE ";
+        for (int i = 0; i < params.length; i++) {
+            SQL += "(";
+            for (int j = 0; j < rows; j++) {
+                SQL += "tag" + j + "=" + "'" + params[i] + "'";
+                if (j != rows - 1) {
+                    SQL += " OR ";
+                }
+            }
+            SQL += ")";
+            if (i != params.length - 1)
+                SQL += " AND ";
+        }
+        SQL += " AND (avgscore >= " + minScore + ") AND (avgscore <= " + maxScore + ")";
         return jdbcTemplateObject.query(SQL, new TeamMapper());
     }
 
@@ -141,7 +256,7 @@ public class TagServiceMySQLImpl implements TagService {
         int matchRows = jdbcTemplateObject.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE " +
                 "TABLE_SCHEMA = 'scoutingtags' AND table_name = 'matches'", Integer.class) - 4;
         String SQL = "";
-        for(int i = 0; i < matchRows; i ++) {
+        for (int i = 0; i < matchRows; i++) {
             SQL += " SELECT DISTINCT `tag" + i + "` FROM matches WHERE `team`=" + teamNum +
                     " AND `tag" + i + "` IS NOT NULL UNION ALL";
         }
@@ -184,7 +299,7 @@ public class TagServiceMySQLImpl implements TagService {
 
     @Override
     public void mergeTags(Tag oldTag, Tag newTag) {
-        if(oldTag.getType().equals(newTag.getType()))
+        if (oldTag.getType().equals(newTag.getType()))
             return;
         SqlParameterSource args = new MapSqlParameterSource()
                 .addValue("tableName", oldTag.getType())

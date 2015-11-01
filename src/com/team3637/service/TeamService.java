@@ -19,6 +19,10 @@ public interface TeamService {
 
     List<Team> getTeamByNumber(Integer teamNum);
 
+    Double[] getScoreRange();
+
+    Integer[] getScoreRangeFor(Team team);
+
     void update(Team team);
 
     void delete(Team team);

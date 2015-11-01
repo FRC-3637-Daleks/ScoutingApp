@@ -18,11 +18,17 @@ public interface TagService {
 
     List<Tag> getTags();
 
-    List<Integer> search(String[] matchTags, String[] teamTags);
+    List<Team> search(String[] matchTags, String[] teamTags);
+
+    List<Team> search(Double minScore, Double maxScore, String[] matchTags, String[] teamTags);
 
     List<Match> searchMatches(String... params);
 
+    List<Match> searchMatches(Double minScore, Double maxScore, String... params);
+
     List<Team> searchTeams(String... params);
+
+    List<Team> searchTeams(Double minScore, Double maxScore, String... params);
 
     List<String> getMatchTagsForTeam(Integer teamNum);
 

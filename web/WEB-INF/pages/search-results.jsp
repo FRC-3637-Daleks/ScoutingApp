@@ -23,45 +23,34 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="${pageContext.request.contextPath}/t/search/">Search</a></li>
+                <li><a href="${pageContext.request.contextPath}/t/search/">Back</a></li>
             </ul>
         </div>
     </div>
 </nav>
 <div class="container main">
-    <form:form method="post" action="/t/view/" modelAttribute="teamWrapper">
-        <table id="team-list" class="table table-striped table-bordered">
-            <thead>
+    <table id="team-list" class="table table-striped table-bordered">
+        <thead>
+        <tr>
+            <th>Team # <span class="glyphicon glyphicon-sort"></span></th>
+            <th>Matches Played <span class="glyphicon glyphicon-sort"></span></th>
+            <th>Average Score <span class="glyphicon glyphicon-sort"></span></th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <c:forEach var="team" items="${teams}" varStatus="status">
             <tr>
-                <th>Team # <span class="glyphicon glyphicon-sort"></span></th>
-                <th>Matches Played <span class="glyphicon glyphicon-sort"></span></th>
-                <th>Average Score <span class="glyphicon glyphicon-sort"></span></th>
-                <th>Actions</th>
+                <td class="block">${team.team}</td>
+                <td class="block">${team.matches}</td>
+                <td class="block">${team.avgscore}</td>
+                <td class="block">
+                    <a class="btn btn-info" href="${pageContext.request.contextPath}/t/view/${team.team}">View</a>
+                </td>
             </tr>
-            </thead>
-            <tbody>
-            <c:forEach var="team" items="${teamWrapper.teams}" varStatus="status">
-                <tr>
-                    <form:hidden path="teams[${status.index}].id" value="${team.id}"/>
-                    <td class="block">${team.team}</td>
-                    <td class="block">${team.matches}</td>
-                    <td class="block">${team.avgscore}</td>
-                    <td class="block">
-                        <a class="btn btn-info"
-                           href="${pageContext.request.contextPath}/t/view/${team.team}">View</a>
-                        <input type="button" class="btn btn-danger delete" value="Delete"/>
-                        <form:hidden path="deleted[${status.index}]" value="${false}"/>
-                    </td>
-                </tr>
-            </c:forEach>
-            </tbody>
-            <tfoot>
-            <tr>
-                <td colspan="5"><input class="btn btn-success" type="submit" value="Save"/></td>
-            </tr>
-            </tfoot>
-        </table>
-    </form:form>
+        </c:forEach>
+        </tbody>
+    </table>
 </div>
 <script>
     $(document).ready(function () {

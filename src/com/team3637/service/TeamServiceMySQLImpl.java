@@ -86,6 +86,26 @@ public class TeamServiceMySQLImpl implements TeamService {
     }
 
     @Override
+    public Double[] getScoreRange() {
+        Double[] scores = new Double[2];
+        String SQL = "SELECT MIN(avgscore) FROM teams";
+        scores[0] = jdbcTemplateObject.queryForObject(SQL, Double.class);
+        SQL = "SELECT MAX(avgscore) FROM teams";
+        scores[1] = jdbcTemplateObject.queryForObject(SQL, Double.class);
+        return scores;
+    }
+
+    @Override
+    public Integer[] getScoreRangeFor(Team team) {
+        Integer[] scores = new Integer[2];
+        String SQL = "SELECT MIN(avgscore) FROM teams WHERE team = ?";
+        scores[0] = jdbcTemplateObject.queryForObject(SQL, Integer.class, team.getTeam());
+        SQL = "SELECT MAX(avgscore) FROM teams WHERE team = ?";
+        scores[1] = jdbcTemplateObject.queryForObject(SQL, Integer.class, team.getTeam());
+        return scores;
+    }
+
+    @Override
     public void update(Team team) {
         String valuesSting = "id=?, team=?", SQL;
         List<Object> values = new ArrayList<>();
