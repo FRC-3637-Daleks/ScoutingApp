@@ -28,8 +28,6 @@
     <form:form method="POST" modelAttribute="match" action="${pageContext.request.contextPath}/m/add">
         <form:hidden path="matchNum" value="${matchNum}"/>
         <form:hidden path="team" value="${teamNum}"/>
-        <form:hidden path="id" value="${match.id}"/>
-        <input type="hidden" value="${team.id}" name="teamId"/>
         <div>
             <p class="h2">Team: ${teamNum} - Match: ${matchNum}</p>
         </div>
@@ -73,14 +71,14 @@
         "${tag}",
         </c:forEach>
     ];
-    var usedTeamTags = [
-        <c:forEach var="tag" items="${team.tags}">
-            "${tag}",
-        </c:forEach>
-    ];
     var usedMatchTags = [
         <c:forEach var="tag" items="${match.tags}">
         "${tag}",
+        </c:forEach>
+    ];
+    var usedTeamTags = [
+        <c:forEach var="tag" items="${team.tags}">
+            "${tag}",
         </c:forEach>
     ];
 </script>

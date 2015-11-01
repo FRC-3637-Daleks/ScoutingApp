@@ -34,9 +34,8 @@ public class MatchServiceMySQLImpl implements MatchService {
 
     @Override
     public void create(Match match) {
-        String fieldsSting = "id, matchNum, team, score", valuesSting = "?, ?, ?, ?", SQL;
+        String fieldsSting = "matchNum, team, score", valuesSting = "?, ?, ?", SQL;
         List<Object> values = new ArrayList<>();
-        values.add(match.getId());
         values.add(match.getMatchNum());
         values.add(match.getTeam());
         values.add(match.getScore());
@@ -96,11 +95,10 @@ public class MatchServiceMySQLImpl implements MatchService {
 
     @Override
     public void update(Match match) {
-        String valuesSting = "id=?, matchNum=?, team=?, score=?", SQL;
-        SQL = "SELECT `score` FROM matches WHERE `id` = ?";
-        Integer oldScore = jdbcTemplateObject.queryForObject(SQL, Integer.class, match.getId());
+        String valuesSting = "matchNum=?, team=?, score=?", SQL;
+        SQL = "SELECT `score` FROM matches WHERE `matchNum` = ? AND `team` = ?";
+        Integer oldScore = jdbcTemplateObject.queryForObject(SQL, Integer.class, match.getMatchNum(), match.getTeam());
         List<Object> values = new ArrayList<>();
-        values.add(match.getId());
         values.add(match.getMatchNum());
         values.add(match.getTeam());
         values.add(match.getScore());
@@ -108,7 +106,8 @@ public class MatchServiceMySQLImpl implements MatchService {
             valuesSting += ", tag" + i + "=?";
             values.add(match.getTags().get(i));
         }
-        SQL = "UPDATE matches SET " + valuesSting + " WHERE id=" + match.getId() + ";";
+        SQL = "UPDATE matches SET " + valuesSting + " WHERE matchNum = " +
+                match.getMatchNum() + " AND team = " + match.getTeam() + ";";
         SqlParameterSource in = new MapSqlParameterSource()
                 .addValue("ignoreCols", 4)
                 .addValue("tableName", "matches")
@@ -140,6 +139,13 @@ public class MatchServiceMySQLImpl implements MatchService {
     public boolean checkForId(Integer id) {
         String SQL = "SELECT count(*) FROM matches WHERE id = ?";
         Integer count = jdbcTemplateObject.queryForObject(SQL, Integer.class, id);
+        return count != null && count > 0;
+    }
+
+    @Override
+    public boolean checkForMatch(Integer matchNum, Integer team) {
+        String SQL = "SELECT count(*) FROM matches WHERE matchNum = ? AND team = ?";
+        Integer count = jdbcTemplateObject.queryForObject(SQL, Integer.class, matchNum, team);
         return count != null && count > 0;
     }
 

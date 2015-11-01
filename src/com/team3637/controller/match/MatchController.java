@@ -79,7 +79,6 @@ public class MatchController {
     @ResponseBody
     public ResponseEntity<?> submitNewMatch(@ModelAttribute("match") Match match,
                                  @RequestParam("matchTags") String matchTags,
-                                 @RequestParam("teamId") Integer teamId,
                                  @RequestParam("teamTags") String teamTags) {
 
         if(match.getScore() == null) {
@@ -87,16 +86,15 @@ public class MatchController {
         }
 
         Team team = new Team();
-        team.setId(teamId);
         team.setTeam(match.getTeam());
         team.setTags(new ArrayList<>(new LinkedHashSet<>(Arrays.asList(teamTags.split(", ")))));
         match.setTags(new ArrayList<>(new LinkedHashSet<>(Arrays.asList(matchTags.split(", ")))));
 
-        if (teamService.checkForId(team.getId()))
+        if (teamService.checkForTeam(team.getTeam()))
             teamService.update(team);
         else
             teamService.create(team);
-        if (matchService.checkForId(match.getId()))
+        if (matchService.checkForMatch(match.getMatchNum(), match.getTeam()))
             matchService.update(match);
         else
             matchService.create(match);

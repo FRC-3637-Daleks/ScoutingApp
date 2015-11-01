@@ -26,6 +26,8 @@ public interface MatchService {
 
     boolean checkForId(Integer id);
 
+    boolean checkForMatch(Integer matchNum, Integer team);
+
     List<String> getTags();
 
     void mergeTags(String oldTag, String newTag);

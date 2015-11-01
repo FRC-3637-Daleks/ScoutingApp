@@ -35,9 +35,8 @@ public class TeamServiceMySQLImpl implements TeamService {
 
     @Override
     public void create(Team team) {
-        String fieldsSting = "id, team, avgscore, matches", valuesSting = "?, ?, ?, ?", SQL;
+        String fieldsSting = "team, avgscore, matches", valuesSting = "?, ?, ?", SQL;
         List<Object> values = new ArrayList<>();
-        values.add(team.getId());
         values.add(team.getTeam());
         values.add(team.getAvgscore());
         values.add(team.getMatches());
@@ -107,15 +106,14 @@ public class TeamServiceMySQLImpl implements TeamService {
 
     @Override
     public void update(Team team) {
-        String valuesSting = "id=?, team=?", SQL;
+        String valuesSting = "team=?", SQL;
         List<Object> values = new ArrayList<>();
-        values.add(team.getId());
         values.add(team.getTeam());
         for(int i = 0; i < team.getTags().size(); i++) {
             valuesSting += ", tag" + i + "=?";
             values.add(team.getTags().get(i));
         }
-        SQL = "UPDATE teams SET " + valuesSting + " WHERE id=" + team.getId() + ";";
+        SQL = "UPDATE teams SET " + valuesSting + " WHERE team=" + team.getTeam() + ";";
         SqlParameterSource in = new MapSqlParameterSource()
                 .addValue("ignoreCols", 4)
                 .addValue("tableName", "matches")
@@ -140,6 +138,13 @@ public class TeamServiceMySQLImpl implements TeamService {
     public boolean checkForId(Integer id) {
         String SQL = "SELECT count(*) FROM teams WHERE id = ?";
         Integer count = jdbcTemplateObject.queryForObject(SQL, Integer.class, id);
+        return count != null && count > 0;
+    }
+
+    @Override
+    public boolean checkForTeam(Integer team) {
+        String SQL = "SELECT count(*) FROM teams WHERE team = ?";
+        Integer count = jdbcTemplateObject.queryForObject(SQL, Integer.class, team);
         return count != null && count > 0;
     }
 

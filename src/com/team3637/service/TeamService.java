@@ -29,6 +29,8 @@ public interface TeamService {
 
     boolean checkForId(Integer id);
 
+    boolean checkForTeam(Integer id);
+
     List<String> getTags();
 
     void mergeTags(String oldTag, String newTag);
