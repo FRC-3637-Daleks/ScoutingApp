@@ -98,7 +98,7 @@ public class MatchServiceMySQLImpl implements MatchService {
     public void update(Match match) {
         String valuesSting = "id=?, matchNum=?, team=?, score=?", SQL;
         SQL = "SELECT `score` FROM matches WHERE `id` = ?";
-        int oldScore = jdbcTemplateObject.queryForObject(SQL, Integer.TYPE, match.getId());
+        Integer oldScore = jdbcTemplateObject.queryForObject(SQL, Integer.class, match.getId());
         List<Object> values = new ArrayList<>();
         values.add(match.getId());
         values.add(match.getMatchNum());

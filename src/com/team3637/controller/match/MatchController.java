@@ -92,14 +92,14 @@ public class MatchController {
         team.setTags(new ArrayList<>(new LinkedHashSet<>(Arrays.asList(teamTags.split(", ")))));
         match.setTags(new ArrayList<>(new LinkedHashSet<>(Arrays.asList(matchTags.split(", ")))));
 
-        if (matchService.checkForId(match.getId()))
-            matchService.update(match);
-        else
-            matchService.create(match);
         if (teamService.checkForId(team.getId()))
             teamService.update(team);
         else
             teamService.create(team);
+        if (matchService.checkForId(match.getId()))
+            matchService.update(match);
+        else
+            matchService.create(match);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", "/s/");
         return new ResponseEntity<byte []>(null, headers, HttpStatus.FOUND);
@@ -165,12 +165,5 @@ public class MatchController {
     @ResponseBody
     public String getTeamTags() {
         return  new Gson().toJson(teamService.getTags());
-    }
-
-    @RequestMapping("/test")
-    @ResponseBody
-    public String test() {
-        List<Integer> teams = tagService.search(new String[]{"Hello"}, new String[]{"Foo"});
-        return "";
     }
 }
