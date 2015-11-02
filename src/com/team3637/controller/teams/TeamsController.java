@@ -6,6 +6,9 @@ import com.team3637.service.TagService;
 import com.team3637.service.TeamService;
 import com.team3637.wrapper.TeamWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -59,7 +62,8 @@ public class TeamsController {
     }
 
     @RequestMapping(value = "/view/{teamNum}", method = RequestMethod.POST)
-    public String getTeam(@PathVariable("teamNum") Integer teamNum,
+    @ResponseBody
+    public ResponseEntity<?> getTeam(@PathVariable("teamNum") Integer teamNum,
                           @RequestParam("teamTags") String teamTags,
                           @RequestParam("score") Double score,
                           @RequestParam("matches") Integer matches) {
@@ -69,11 +73,15 @@ public class TeamsController {
         team.setAvgscore(score);
         team.setMatches(matches);
         team.setTags(new ArrayList<>(new LinkedHashSet<>(Arrays.asList(teamTags.split(", ")))));
+        if(team.getTags().size() < 1 || team.getTags().size() > 50)
+            return new ResponseEntity<>("400 - Bad Request", HttpStatus.BAD_REQUEST);
         if (teamService.checkForTeam(team.getTeam()))
             teamService.update(team);
         else
             teamService.create(team);
-        return "redirect:/t/";
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Location", "/t/");
+        return new ResponseEntity<byte[]>(null, headers, HttpStatus.FOUND);
     }
 
 

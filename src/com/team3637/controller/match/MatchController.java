@@ -90,6 +90,10 @@ public class MatchController {
         team.setTags(new ArrayList<>(new LinkedHashSet<>(Arrays.asList(teamTags.split(", ")))));
         match.setTags(new ArrayList<>(new LinkedHashSet<>(Arrays.asList(matchTags.split(", ")))));
 
+        if(team.getTags().size() > 50 || team.getTags().size() < 1 ||
+                match.getTags().size() > 50 || match.getTags().size() < 1)
+            return new ResponseEntity<>("400 - Bad Request", HttpStatus.BAD_REQUEST);
+
         if (teamService.checkForTeam(team.getTeam()))
             teamService.update(team);
         else
@@ -100,7 +104,7 @@ public class MatchController {
             matchService.create(match);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", "/s/");
-        return new ResponseEntity<byte []>(null, headers, HttpStatus.FOUND);
+        return new ResponseEntity<byte[]>(null, headers, HttpStatus.FOUND);
     }
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)

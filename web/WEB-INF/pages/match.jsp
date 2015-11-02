@@ -35,12 +35,12 @@
             <div class="row data-row">
                 <div class="col-md-6">
                     <label for="matchTags">Match Tags <span id="matchTagsErr" class="error"></span></label>
-                    <input type="text" class="form-control" id="matchTags"
+                    <input type="text" class="form-control" id="matchTags" data-limit="50"
                            name="matchTags" data-error="#matchTagsErr" required/>
                 </div>
                 <div class="col-md-6">
                     <label for="teamTags">Team Tags <span id="teamTagsErr" class="error"></span></label>
-                    <input type="text" class="form-control" id="teamTags"
+                    <input type="text" class="form-control" id="teamTags" data-limit="50"
                            name="teamTags" data-error="#teamTagsErr" required/>
                 </div>
             </div>
@@ -98,10 +98,15 @@
         showAutocompleteOnFocus: true
     }).tokenfield('setTokens', usedTeamTags);
     $('#match').validate({
+        rules: {
+            score: {
+                number: true
+            }
+        },
         messages: {
-            matchTags: "(Please enter at least 1 tag)",
-            teamTags: "(Please enter at least 1 tag)",
-            score: "(Please enter a score)"
+            matchTags: "(Please enter between 1 and 50 tags)",
+            teamTags: "(Please enter between 1 and 50 tags)",
+            score: "(Please enter a numeric score)"
         },
         errorPlacement: function(error, element) {
             var placement = $(element).data('error');
