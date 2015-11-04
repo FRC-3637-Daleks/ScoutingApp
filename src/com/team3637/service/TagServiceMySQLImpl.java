@@ -134,9 +134,8 @@ public class TagServiceMySQLImpl implements TagService {
                 if (i != matchTags.length - 1)
                     SQL += " AND ";
             }
-        }
-        if (matchTags.length != 0 && teamTags.length != 0)
             SQL += " AND ";
+        }
         if (teamTags.length != 0) {
             for (int i = 0; i < teamTags.length; i++) {
                 SQL += "(";
@@ -150,9 +149,8 @@ public class TagServiceMySQLImpl implements TagService {
                 if (i != teamTags.length - 1)
                     SQL += " AND ";
             }
-        }
-        if (matchTags.length != 0 && teamTags.length != 0)
             SQL += " AND ";
+        }
         SQL += " (avgscore >= " + minScore + ") AND (avgscore <= " + maxScore + ")";
         List<Integer> teams = jdbcTemplateObject.query(SQL, new IntegerMapper());
         if (teams.size() != 0) {

@@ -19,7 +19,7 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="${pageContext.request.contextPath}/s/">Back</a></li>
+                <li><a href="${pageContext.request.contextPath}/t/">Back</a></li>
             </ul>
         </div>
     </div>

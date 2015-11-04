@@ -22,7 +22,7 @@
             <a class="navbar-brand page-scroll" href="${pageContext.request.contextPath}/">Team 3637 Scouting App</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
-            <ul class="nav navbar-nav navbar-right">
+            <ul class="nav navbar-nav">
                 <li><a href="${pageContext.request.contextPath}/t/search/">Back</a></li>
             </ul>
         </div>
