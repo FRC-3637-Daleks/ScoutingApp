@@ -8,7 +8,6 @@ import com.team3637.service.MatchService;
 import com.team3637.service.TagService;
 import com.team3637.service.TeamService;
 import com.team3637.wrapper.MatchWrapper;
-import com.team3637.wrapper.TagWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -128,21 +127,94 @@ public class MatchController {
 
     @RequestMapping(value = "/tags", method = RequestMethod.GET)
     public String tags(Model model) {
-        List<Tag> tags = tagService.getTags();
-        model.addAttribute("tagWrapper", new TagWrapper(tags, new boolean[tags.size()]));
+        List<String> matchTags = matchService.getTags();
+        List<String> teamTags = teamService.getTags();
+        model.addAttribute("matchTags", matchTags);
+        model.addAttribute("teamTags", teamTags);
         return "tags";
     }
 
     @RequestMapping(value = "/tags", method = RequestMethod.POST)
-    public String tags(@ModelAttribute("tagWrapper") TagWrapper wrapper) {
-        if (wrapper.getTags() != null && wrapper.getTags().size() > 0) {
-            for (int i = 0; i < wrapper.getTags().size(); i++) {
-                if (wrapper.getDeleted()[i]) {
-                    tagService.deleteById(wrapper.getTags().get(i).getId());
+    public String tags(@RequestParam("matchTags") String matchTagsString,
+                       @RequestParam("teamTags") String teamTagsString) {
+        List<String> matchTags = new ArrayList<>(new LinkedHashSet<>(Arrays.asList(matchTagsString.split(", "))));
+        List<String> teamTags = new ArrayList<>(new LinkedHashSet<>(Arrays.asList(teamTagsString.split(", "))));
+        List<String> currentMatchTags = matchService.getTags();
+        List<String> currentTeamTags = teamService.getTags();
+        boolean dne;
+        for (String matchTag : matchTags) {
+            dne = true;
+            for (String currentMatchTag : currentMatchTags) {
+                if (matchTag.equals(currentMatchTag)) {
+                    dne = false;
                 }
             }
+            if (dne) {
+                tagService.create(new Tag(matchTag, "matches"));
+            }
         }
-        return "redirect:/";
+        for (String currentMatchTag : currentMatchTags) {
+            dne = true;
+            for (String matchTag : matchTags) {
+                if (currentMatchTag.equals(matchTag)) {
+                    dne = false;
+                }
+            }
+            if (dne) {
+                tagService.delete(currentMatchTag);
+            }
+        }
+        for (String teamTag : teamTags) {
+            dne = true;
+            for (String currentTeamTag : currentTeamTags) {
+                if (teamTag.equals(currentTeamTag)) {
+                    dne = false;
+                }
+            }
+            if (dne) {
+                tagService.create(new Tag(teamTag, "teams"));
+            }
+        }
+        for (String currentTeamTag : currentTeamTags) {
+            dne = true;
+            for (String teamTag : teamTags) {
+                if (currentTeamTag.equals(teamTag)) {
+                    dne = false;
+                }
+            }
+            if (dne) {
+                tagService.delete(currentTeamTag);
+            }
+        }
+        return "redirect:/m/tags";
+    }
+
+    @RequestMapping(value = "/tags/mergeMatch", method = RequestMethod.GET)
+    public String mergeMatchTags(Model model) {
+        List<String> matchTags = matchService.getTags();
+        model.addAttribute("matchTags", matchTags);
+        return "merge-match-tags";
+    }
+
+    @RequestMapping(value = "/tags/mergeMatch", method = RequestMethod.POST)
+    public String mergeMatchTags(@RequestParam("oldTag") String oldTag,
+                            @RequestParam("newTag") String newTag) {
+        tagService.mergeTags(new Tag(oldTag, "matches"), new Tag(newTag, "matches"));
+        return "redirect:/m/tags";
+    }
+
+    @RequestMapping(value = "/tags/mergeTeam", method = RequestMethod.GET)
+    public String mergeTeamTags(Model model) {
+        List<String> teamTags = teamService.getTags();
+        model.addAttribute("teamTags", teamTags);
+        return "merge-team-tags";
+    }
+
+    @RequestMapping(value = "/tags/mergeTeam", method = RequestMethod.POST)
+    public String mergeTeamTags(@RequestParam("oldTag") String oldTag,
+                                 @RequestParam("newTag") String newTag) {
+        tagService.mergeTags(new Tag(oldTag, "teams"), new Tag(newTag, "teams"));
+        return "redirect:/m/tags";
     }
 
     @RequestMapping("/export/csv")

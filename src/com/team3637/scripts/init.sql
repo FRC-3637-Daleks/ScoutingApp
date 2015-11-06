@@ -60,14 +60,6 @@ CREATE PROCEDURE init()
     THEN
       CREATE UNIQUE INDEX id_UNIQUE ON tags (id);
     END IF;
-    IF (SELECT COUNT(INDEX_NAME)
-        FROM INFORMATION_SCHEMA.STATISTICS
-        WHERE
-          `TABLE_CATALOG` = 'def' AND `TABLE_SCHEMA` = DATABASE() AND
-          `TABLE_NAME` = 'tags' AND `INDEX_NAME` = 'name_UNIQUE') = 0
-    THEN
-      CREATE UNIQUE INDEX name_UNIQUE ON tags (tag);
-    END IF;
 
     CREATE TABLE IF NOT EXISTS  teams (
       id       INT         NOT NULL,

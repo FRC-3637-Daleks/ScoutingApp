@@ -33,9 +33,8 @@ public class TagServiceMySQLImpl implements TagService {
 
     @Override
     public void create(Tag tag) {
-        String fieldsSting = "id, tag, type", valuesSting = "?, ?, ?", SQL;
+        String fieldsSting = "tag, type", valuesSting = "?, ?", SQL;
         List<Object> values = new ArrayList<>();
-        values.add(tag.getId());
         values.add(tag.getTag());
         values.add(tag.getType());
         SQL = "INSERT INTO tags (" + fieldsSting + ") VALUES (" + valuesSting + ");";
@@ -297,14 +296,15 @@ public class TagServiceMySQLImpl implements TagService {
 
     @Override
     public void mergeTags(Tag oldTag, Tag newTag) {
-        if (oldTag.getType().equals(newTag.getType()))
+        if (!oldTag.getType().equals(newTag.getType()))
             return;
         SqlParameterSource args = new MapSqlParameterSource()
                 .addValue("tableName", oldTag.getType())
                 .addValue("noTagCols", 4)
-                .addValue("oldTag", oldTag)
-                .addValue("newTag", newTag);
+                .addValue("oldTag", oldTag.getTag())
+                .addValue("newTag", newTag.getTag());
         mergeTags.execute(args);
+        delete(oldTag.getTag());
     }
 
     @Override

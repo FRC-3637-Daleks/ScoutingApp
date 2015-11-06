@@ -21,66 +21,75 @@
             </button>
             <a class="navbar-brand page-scroll" href="${pageContext.request.contextPath}/">Team 3637 Scouting App</a>
         </div>
-        <div id="navbar" class="collapse navbar-collapse">
-            <ul class="nav navbar-nav  navbar-right">
-                <li><a href="${pageContext.request.contextPath}/m//tags/mergeMatch">Merge Match Tags</a></li>
-                <li><a href="${pageContext.request.contextPath}/m//tags/mergeTeam">Match Team Tags</a></li>
-            </ul>
-        </div>
     </div>
 </nav>
 <div class="container main">
-    <form:form method="post" action="/m/tags" modelAttribute="tagWrapper">
+    <form:form id="merge" method="post" action="/m/tags/mergeMatch">
         <div>
-            <p class="h2">Tags</p>
-            <p id="error" class="error"></p>
+            <p class="h2">Merge Match Tags</p>
         </div>
         <div id="input" class="input container">
             <div class="row data-row">
                 <div class="col-md-6">
-                    <label for="matchTags">Match Tags</label>
-                    <input type="text" class="form-control" id="matchTags"
-                           name="matchTags" data-error="#error"/>
+                    <label for="oldTag">Old Tag <span id="oldTagsErr" class="error"></span></label>
+                    <input type="text" class="form-control" id="oldTag" name="oldTag"
+                           data-limit="1" data-error="#oldTagsErr" required/>
                 </div>
                 <div class="col-md-6">
-                    <label for="teamTags">Team Tags <span id="teamTagsErr" class="error"></span></label>
-                    <input type="text" class="form-control" id="teamTags"
-                           name="teamTags" data-error="#error"/>
+                    <label for="newTag">New Tags <span id="newTagsErr" class="error"></span></label>
+                    <input type="text" class="form-control" id="newTag" name="newTag"
+                           data-limit="1" data-error="#newTagsErr" required/>
                 </div>
             </div>
             <div class="row data-row">
                 <div class="col-md-12">
-                    <input type="submit" value="Save" class="btn btn-success">
+                    <input type="submit" value="Merge" class="btn btn-success">
                 </div>
             </div>
         </div>
     </form:form>
 </div>
 <script>
-    var usedMatchTags = [
+    var matchTags = [
         <c:forEach var="tag" items="${matchTags}">
-        "${tag}",
-        </c:forEach>
-    ];
-    var usedTeamTags = [
-        <c:forEach var="tag" items="${teamTags}">
         "${tag}",
         </c:forEach>
     ];
 </script>
 <script>
-    $('#matchTags').tokenfield({
+    $('#oldTag').tokenfield({
         autocomplete: {
+            source: matchTags,
             delay: 100
         },
         showAutocompleteOnFocus: true
-    }).tokenfield('setTokens', usedMatchTags);
-    $('#teamTags').tokenfield({
+    });
+    $('#newTag').tokenfield({
         autocomplete: {
+            source: matchTags,
             delay: 100
         },
         showAutocompleteOnFocus: true
-    }).tokenfield('setTokens', usedTeamTags);
+    });
+    $('#merge').validate({
+        rules: {
+            score: {
+                number: true
+            }
+        },
+        messages: {
+            matchTags: "(Please enter 1 tag)",
+            teamTags: "(Please enter 1 tag)",
+        },
+        errorPlacement: function(error, element) {
+            var placement = $(element).data('error');
+            if (placement) {
+                $(placement).append(error)
+            } else {
+                error.insertAfter(element);
+            }
+        }
+    });
 </script>
 </body>
 </html>
