@@ -22,6 +22,7 @@
                 <li><a href="${pageContext.request.contextPath}/m/list">Matches</a></li>
                 <li><a href="${pageContext.request.contextPath}/t/">Teams</a></li>
                 <li><a href="${pageContext.request.contextPath}/m/tags">Tags</a></li>
+                <li><a href="${pageContext.request.contextPath}/io/">IO</a></li>
             </ul>
         </div>
     </div>

@@ -10,8 +10,5 @@ CREATE PROCEDURE addTag (
       PREPARE stmt FROM @addTag;
       EXECUTE stmt;
       DEALLOCATE PREPARE stmt;
-      SELECT CONCAT('Added tag \'', tagName, '\'');
-    ELSE
-      SELECT CONCAT('Tag \'',tagName ,'\' already exists');
     END IF;
   END |

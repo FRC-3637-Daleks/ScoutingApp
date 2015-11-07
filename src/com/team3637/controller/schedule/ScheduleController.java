@@ -33,9 +33,9 @@ public class ScheduleController {
     @RequestMapping("/t/")
     public String teamRedirect(@RequestParam(value = "teamNum", required = false) String teamNum) {
         if (teamNum != null && !teamNum.equals(""))
-            return "redirect:/s/t/" + teamNum;
+            return "redirect:" + context.getContextPath() + "/s/t/" + teamNum;
         else
-            return "redirect:/s/";
+            return "redirect:" + context.getContextPath() + "/s/";
     }
 
     @RequestMapping("/t/{teamNum}")
@@ -57,7 +57,7 @@ public class ScheduleController {
         if (teamNum != null && !teamNum.equals(""))
             return "redirect:/s/edit/t/" + teamNum;
         else
-            return "redirect:/s/edit/";
+            return "redirect:" + context.getContextPath() + "/s/edit/";
     }
 
     @RequestMapping("/edit/t/{teamNum}")
@@ -78,19 +78,6 @@ public class ScheduleController {
                 }
             }
         }
-        return "redirect:/s/";
+        return "redirect:" + context.getContextPath() + "/s/";
     }
-
-    @RequestMapping("/export/csv")
-    @ResponseBody
-    public String exportCSV() throws IOException {
-        String file = "schedule.csv";
-        File exportDirectory = new File(context.getRealPath("/") + "/export");
-        if (!exportDirectory.exists())
-            exportDirectory.mkdir();
-        String filePath = exportDirectory.getAbsolutePath() + "/" + file;
-        scheduleService.exportCSV(filePath, new ArrayList<>(scheduleService.getSchedule()));
-        return new String(Files.readAllBytes(FileSystems.getDefault().getPath(filePath)));
-    }
-
 }

@@ -6,7 +6,7 @@ import com.team3637.model.Schedule;
 import javax.sql.DataSource;
 import java.util.List;
 
-public interface ScheduleService {
+public interface ScheduleService extends Service {
     void setDataSource(DataSource dataSource);
 
     void initDB(String initScript);
@@ -27,5 +27,7 @@ public interface ScheduleService {
 
     void deleteById(Integer id);
 
-    void exportCSV(String outputFile, List<Schedule> data);
+    boolean checkForId(Integer id);
+
+    boolean checkForMatch(Schedule schedule);
 }

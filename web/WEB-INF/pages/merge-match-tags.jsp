@@ -24,7 +24,7 @@
     </div>
 </nav>
 <div class="container main">
-    <form:form id="merge" method="post" action="/m/tags/mergeMatch">
+    <form:form id="merge" method="post" action="${pageContext.request.contextPath}/m/tags/mergeMatch">
         <div>
             <p class="h2">Merge Match Tags</p>
         </div>

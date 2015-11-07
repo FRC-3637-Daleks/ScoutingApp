@@ -1,8 +1,11 @@
 package com.team3637.service;
 
 import com.team3637.model.Match;
+import com.team3637.model.Team;
 import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVRecord;
 import org.springframework.jdbc.core.JdbcTemplate;
 import com.team3637.mapper.ScheduleMapper;
 import com.team3637.model.Schedule;
@@ -13,10 +16,9 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.util.*;
 
 public class ScheduleServiceMySQLImpl implements ScheduleService {
 
@@ -57,10 +59,10 @@ public class ScheduleServiceMySQLImpl implements ScheduleService {
                     valuesSting += "?, ";
                 }
             }
-        } catch (IllegalAccessException e){
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-        SQL = "INSERT INTO matches (" + fieldsSting + ") VALUES (" + valuesSting + ");";
+        SQL = "INSERT INTO schedule (" + fieldsSting + ") VALUES (" + valuesSting + ");";
 
         jdbcTemplateObject.update(SQL, values.toArray());
     }
@@ -105,7 +107,7 @@ public class ScheduleServiceMySQLImpl implements ScheduleService {
                     valuesSting += fields[i].getName() + "=?, ";
                 }
             }
-        } catch (IllegalAccessException e){
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
         SQL = "UPDATE schedule SET " + valuesSting + " WHERE id=" + schedule.getId() + ";";
@@ -114,26 +116,41 @@ public class ScheduleServiceMySQLImpl implements ScheduleService {
 
     @Override
     public void delete(Integer matchNum) {
-        String SQL = "delete from schedule where matchNum = ?";
+        String SQL = "DELETE FROM schedule WHERE matchNum = ?";
         jdbcTemplateObject.update(SQL, matchNum);
     }
 
     @Override
     public void deleteById(Integer id) {
-        String SQL = "delete from schedule where id = ?";
+        String SQL = "DELETE FROM schedule WHERE id = ?";
         jdbcTemplateObject.update(SQL, id);
     }
 
     @Override
-    public void exportCSV(String outputFile, List<Schedule> data) {
+    public boolean checkForId(Integer id) {
+        String SQL = "SELECT count(*) FROM schedule WHERE id = ?";
+        Integer count = jdbcTemplateObject.queryForObject(SQL, Integer.class, id);
+        return count != null && count > 0;
+    }
+
+    @Override
+    public boolean checkForMatch(Schedule schedule) {
+        String SQL = "SELECT count(*) FROM schedule WHERE matchNum = ?";
+        Integer count = jdbcTemplateObject.queryForObject(SQL, Integer.class, schedule.getMatchNum());
+        return count != null && count > 0;
+    }
+
+    @Override
+    public void exportCSV(String outputFile) {
+        List<Schedule> data = getSchedule();
         FileWriter fileWriter = null;
         CSVPrinter csvFilePrinter = null;
         try {
             fileWriter = new FileWriter(outputFile);
             csvFilePrinter = new CSVPrinter(fileWriter, CSVFormat.DEFAULT.withRecordSeparator("\n"));
-            for(int i = 0; i < data.size(); i++) {
+            for (int i = 0; i < data.size(); i++) {
                 List<Object> line = new ArrayList<>();
-                for(Field field : Schedule.class.getDeclaredFields()) {
+                for (Field field : Schedule.class.getDeclaredFields()) {
                     field.setAccessible(true);
                     Object value = field.get(data.get(i));
                     line.add(value);
@@ -154,6 +171,32 @@ public class ScheduleServiceMySQLImpl implements ScheduleService {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    @Override
+    public void importCSV(String inputFile) {
+        try {
+            String csvData = new String(Files.readAllBytes(FileSystems.getDefault().getPath(inputFile)));
+            csvData = csvData.replaceAll("\\r", "");
+            CSVParser parser = CSVParser.parse(csvData, CSVFormat.DEFAULT.withRecordSeparator("\n"));
+            for (CSVRecord record : parser) {
+                Schedule schedule = new Schedule();
+                schedule.setId(Integer.parseInt(record.get(0)));
+                schedule.setMatchNum(Integer.parseInt(record.get(1)));
+                schedule.setB1(Integer.parseInt(record.get(2)));
+                schedule.setB2(Integer.parseInt(record.get(3)));
+                schedule.setB3(Integer.parseInt(record.get(4)));
+                schedule.setR1(Integer.parseInt(record.get(5)));
+                schedule.setR2(Integer.parseInt(record.get(6)));
+                schedule.setR3(Integer.parseInt(record.get(7)));
+                if(checkForMatch(schedule))
+                    update(schedule);
+                else
+                    create(schedule);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

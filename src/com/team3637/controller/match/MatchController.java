@@ -40,7 +40,7 @@ public class MatchController {
 
     @RequestMapping("/")
     public String index() {
-        return "redirect:/";
+        return "redirect:" + context.getContextPath() + "/";
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.GET)
@@ -102,7 +102,7 @@ public class MatchController {
         else
             matchService.create(match);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Location", "/s/");
+        headers.add("Location", context.getContextPath() + "/s/");
         return new ResponseEntity<byte[]>(null, headers, HttpStatus.FOUND);
     }
 
@@ -122,7 +122,7 @@ public class MatchController {
                 }
             }
         }
-        return "redirect:/";
+        return "redirect:" + context.getContextPath() + "/";
     }
 
     @RequestMapping(value = "/tags", method = RequestMethod.GET)
@@ -143,13 +143,7 @@ public class MatchController {
         List<String> currentTeamTags = teamService.getTags();
         boolean dne;
         for (String matchTag : matchTags) {
-            dne = true;
-            for (String currentMatchTag : currentMatchTags) {
-                if (matchTag.equals(currentMatchTag)) {
-                    dne = false;
-                }
-            }
-            if (dne) {
+            if (!tagService.checkForTag(new Tag(matchTag, "matches"))) {
                 tagService.create(new Tag(matchTag, "matches"));
             }
         }
@@ -165,13 +159,7 @@ public class MatchController {
             }
         }
         for (String teamTag : teamTags) {
-            dne = true;
-            for (String currentTeamTag : currentTeamTags) {
-                if (teamTag.equals(currentTeamTag)) {
-                    dne = false;
-                }
-            }
-            if (dne) {
+            if (!tagService.checkForTag(new Tag(teamTag, "teams"))) {
                 tagService.create(new Tag(teamTag, "teams"));
             }
         }
@@ -186,7 +174,7 @@ public class MatchController {
                 tagService.delete(currentTeamTag);
             }
         }
-        return "redirect:/m/tags";
+        return "redirect:" + context.getContextPath() + "/m/tags";
     }
 
     @RequestMapping(value = "/tags/mergeMatch", method = RequestMethod.GET)
@@ -200,7 +188,7 @@ public class MatchController {
     public String mergeMatchTags(@RequestParam("oldTag") String oldTag,
                             @RequestParam("newTag") String newTag) {
         tagService.mergeTags(new Tag(oldTag, "matches"), new Tag(newTag, "matches"));
-        return "redirect:/m/tags";
+        return "redirect:" + context.getContextPath() + "/m/tags";
     }
 
     @RequestMapping(value = "/tags/mergeTeam", method = RequestMethod.GET)
@@ -214,7 +202,7 @@ public class MatchController {
     public String mergeTeamTags(@RequestParam("oldTag") String oldTag,
                                  @RequestParam("newTag") String newTag) {
         tagService.mergeTags(new Tag(oldTag, "teams"), new Tag(newTag, "teams"));
-        return "redirect:/m/tags";
+        return "redirect:" + context.getContextPath() + "/m/tags";
     }
 
     @RequestMapping("/export/csv")
@@ -225,7 +213,7 @@ public class MatchController {
         if (!exportDirectory.exists())
             exportDirectory.mkdir();
         String filePath = exportDirectory.getAbsolutePath() + "/" + file;
-        matchService.exportCSV(filePath, new ArrayList<>(matchService.getMatches()));
+        matchService.exportCSV(filePath);
         return new String(Files.readAllBytes(FileSystems.getDefault().getPath(filePath)));
     }
 

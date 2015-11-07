@@ -47,7 +47,7 @@ public class TeamsController {
                 }
             }
         }
-        return "redirect:/t/";
+        return "redirect:" + context.getContextPath() + "/t/";
     }
 
     @RequestMapping(value = "/view/{teamNum}", method = RequestMethod.GET)
@@ -80,7 +80,7 @@ public class TeamsController {
         else
             teamService.create(team);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Location", "/t/");
+        headers.add("Location", context.getContextPath() + "/t/");
         return new ResponseEntity<byte[]>(null, headers, HttpStatus.FOUND);
     }
 

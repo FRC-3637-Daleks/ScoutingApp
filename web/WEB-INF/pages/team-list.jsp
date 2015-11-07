@@ -29,7 +29,7 @@
     </div>
 </nav>
 <div class="container main">
-    <form:form method="post" action="/t/view/" modelAttribute="teamWrapper">
+    <form:form method="post" action="${pageContext.request.contextPath}/t/view/" modelAttribute="teamWrapper">
         <table id="team-list" class="table table-striped table-bordered">
             <thead>
             <tr>

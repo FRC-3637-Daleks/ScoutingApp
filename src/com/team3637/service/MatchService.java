@@ -5,7 +5,7 @@ import com.team3637.model.Match;
 import javax.sql.DataSource;
 import java.util.List;
 
-public interface MatchService {
+public interface MatchService extends Service {
     void setDataSource(DataSource dataSource);
 
     void create(Match match);
@@ -31,6 +31,4 @@ public interface MatchService {
     List<String> getTags();
 
     void mergeTags(String oldTag, String newTag);
-
-    void exportCSV(String outputFile, List<Match> data);
 }

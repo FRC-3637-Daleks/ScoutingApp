@@ -7,7 +7,7 @@ import com.team3637.model.Team;
 import javax.sql.DataSource;
 import java.util.List;
 
-public interface TagService {
+public interface TagService extends Service {
     void setDataSource(DataSource dataSource);
 
     void create(Tag tag);
@@ -40,7 +40,7 @@ public interface TagService {
 
     boolean checkForId(Integer id);
 
-    void mergeTags(Tag oldTag, Tag newTag);
+    boolean checkForTag(Tag tag);
 
-    void exportCSV(String outputFile, List<Tag> data);
+    void mergeTags(Tag oldTag, Tag newTag);
 }

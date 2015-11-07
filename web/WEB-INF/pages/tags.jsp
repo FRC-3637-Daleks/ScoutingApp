@@ -30,7 +30,7 @@
     </div>
 </nav>
 <div class="container main">
-    <form:form method="post" action="/m/tags" modelAttribute="tagWrapper">
+    <form:form method="post" action="${pageContext.request.contextPath}/m/tags" modelAttribute="tagWrapper">
         <div>
             <p class="h2">Tags</p>
             <p id="error" class="error"></p>

@@ -36,7 +36,7 @@
 <div class="container main">
     <c:choose>
         <c:when test="${true}">
-            <form:form method="post" action="/s/edit" modelAttribute="scheduleWrapper">
+            <form:form method="post" action="${pageContext.request.contextPath}/s/edit" modelAttribute="scheduleWrapper">
                 <table class="table table-striped table-bordered">
                     <thead>
                     <tr>

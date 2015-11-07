@@ -24,7 +24,7 @@
     </div>
 </nav>
 <div class="container main">
-    <form:form method="post" action="/m/list" modelAttribute="matchWrapper">
+    <form:form method="post" action="${pageContext.request.contextPath}/m/list" modelAttribute="matchWrapper">
         <table id="match-list" class="table table-striped table-bordered">
             <thead>
             <tr>

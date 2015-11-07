@@ -5,7 +5,9 @@ import com.team3637.model.Match;
 import com.team3637.model.Tag;
 import com.team3637.model.Team;
 import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVRecord;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -15,7 +17,10 @@ import javax.sql.DataSource;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TagServiceMySQLImpl implements TagService {
@@ -295,6 +300,13 @@ public class TagServiceMySQLImpl implements TagService {
     }
 
     @Override
+    public boolean checkForTag(Tag tag) {
+        String SQL = "SELECT count(*) FROM tags WHERE tag = ? AND type = ?";
+        Integer count = jdbcTemplateObject.queryForObject(SQL, Integer.class, tag.getTag(), tag.getType());
+        return count != null && count > 0;
+    }
+
+    @Override
     public void mergeTags(Tag oldTag, Tag newTag) {
         if (!oldTag.getType().equals(newTag.getType()))
             return;
@@ -308,7 +320,8 @@ public class TagServiceMySQLImpl implements TagService {
     }
 
     @Override
-    public void exportCSV(String outputFile, List<Tag> data) {
+    public void exportCSV(String outputFile) {
+        List<Tag> data = getTags();
         FileWriter fileWriter = null;
         CSVPrinter csvFilePrinter = null;
         try {
@@ -337,6 +350,27 @@ public class TagServiceMySQLImpl implements TagService {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    @Override
+    public void importCSV(String inputFile) {
+        try {
+            String csvData = new String(Files.readAllBytes(FileSystems.getDefault().getPath(inputFile)));
+            csvData = csvData.replaceAll("\\r", "");
+            CSVParser parser = CSVParser.parse(csvData, CSVFormat.DEFAULT.withRecordSeparator("\n"));
+            for (CSVRecord record : parser) {
+                Tag tag = new Tag();
+                tag.setId(Integer.parseInt(record.get(0)));
+                tag.setTag(record.get(1));
+                tag.setType(record.get(2));
+                if(checkForTag(tag))
+                    update(tag);
+                else
+                    create(tag);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

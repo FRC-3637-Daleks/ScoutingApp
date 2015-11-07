@@ -2,10 +2,11 @@ package com.team3637.service;
 
 import com.team3637.mapper.TagStringMapper;
 import com.team3637.mapper.TeamMapper;
-import com.team3637.model.Match;
 import com.team3637.model.Team;
 import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVRecord;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -15,7 +16,10 @@ import javax.sql.DataSource;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TeamServiceMySQLImpl implements TeamService {
@@ -177,7 +181,8 @@ public class TeamServiceMySQLImpl implements TeamService {
     }
 
     @Override
-    public void exportCSV(String outputFile, List<Team> data) {
+    public void exportCSV(String outputFile) {
+        List<Team> data = getTeams();
         FileWriter fileWriter = null;
         CSVPrinter csvFilePrinter = null;
         try {
@@ -185,7 +190,7 @@ public class TeamServiceMySQLImpl implements TeamService {
             csvFilePrinter = new CSVPrinter(fileWriter, CSVFormat.DEFAULT.withRecordSeparator("\n"));
             for (Team team : data) {
                 List<Object> line = new ArrayList<>();
-                for (Field field : Match.class.getDeclaredFields()) {
+                for (Field field : Team.class.getDeclaredFields()) {
                     field.setAccessible(true);
                     Object value = field.get(team);
                     line.add(value);
@@ -206,6 +211,35 @@ public class TeamServiceMySQLImpl implements TeamService {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    @Override
+    public void importCSV(String inputFile) {
+        try {
+            String csvData = new String(Files.readAllBytes(FileSystems.getDefault().getPath(inputFile)));
+            csvData = csvData.replaceAll("\\r", "");
+            CSVParser parser = CSVParser.parse(csvData, CSVFormat.DEFAULT.withRecordSeparator("\n"));
+            for (CSVRecord record : parser) {
+                Team team = new Team();
+                team.setId(Integer.parseInt(record.get(0)));
+                team.setTeam(Integer.parseInt(record.get(1)));
+                team.setAvgscore(Double.parseDouble(record.get(2)));
+                team.setMatches(Integer.parseInt(record.get(3)));
+                String[] tags = record.get(4).substring(1, record.get(4).length() - 1).split(",");
+                for(int i =0; i < tags.length; i++)
+                    tags[i] = tags[i].trim();
+                if (tags.length > 0 && !tags[0].equals(""))
+                    team.setTags(Arrays.asList(tags));
+                else
+                    team.setTags(new ArrayList<String>());
+                if(checkForTeam(team.getTeam()))
+                    update(team);
+                else
+                    create(team);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

@@ -6,15 +6,8 @@ CREATE PROCEDURE init()
       matchNum INT NOT NULL,
       team     INT NOT NULL,
       score    INT NOT NULL,
-      tag0     VARCHAR(45),
-      tag1     VARCHAR(45),
-      tag2     VARCHAR(45),
-      tag3     VARCHAR(45),
-      tag4     VARCHAR(45),
-      tag5     VARCHAR(45),
-      tag6     VARCHAR(45),
-      tag7     VARCHAR(45),
-      PRIMARY KEY (id, matchNum, team)
+      PRIMARY KEY (`matchNum`,`team`),
+      UNIQUE KEY `id_UNIQUE` (`id`)
     );
 
     IF (SELECT COUNT(INDEX_NAME)
@@ -35,7 +28,9 @@ CREATE PROCEDURE init()
       r1       INT,
       r2       INT,
       r3       INT,
-      PRIMARY KEY (id)
+      PRIMARY KEY (`matchNum`),
+      UNIQUE KEY `id_UNIQUE` (`id`),
+      UNIQUE KEY `schedule_matchNum_uindex` (`matchNum`)
     );
     IF (SELECT COUNT(INDEX_NAME)
         FROM INFORMATION_SCHEMA.STATISTICS
@@ -50,7 +45,8 @@ CREATE PROCEDURE init()
       id   INT         NOT NULL,
       tag  VARCHAR(45) NOT NULL,
       type VARCHAR(45) NOT NULL,
-      PRIMARY KEY (id, tag)
+      PRIMARY KEY (`tag`,`type`),
+      UNIQUE KEY `id_UNIQUE` (`id`)
     );
     IF (SELECT COUNT(INDEX_NAME)
         FROM INFORMATION_SCHEMA.STATISTICS
@@ -66,12 +62,9 @@ CREATE PROCEDURE init()
       team     INT         NOT NULL,
       avgscore FLOAT(6, 2) NOT NULL DEFAULT 0.00,
       matches  INT         NOT NULL DEFAULT 0,
-      tag0     VARCHAR(45),
-      tag1     VARCHAR(45),
-      tag2     VARCHAR(45),
-      tag3     VARCHAR(45),
-      tag4     VARCHAR(45),
-      PRIMARY KEY (id, team)
+      PRIMARY KEY (`team`),
+      UNIQUE KEY `id_UNIQUE` (`id`),
+      UNIQUE KEY `team_UNIQUE` (`team`)
     );
     IF (SELECT COUNT(INDEX_NAME)
         FROM INFORMATION_SCHEMA.STATISTICS
