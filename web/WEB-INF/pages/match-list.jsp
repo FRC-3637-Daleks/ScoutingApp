@@ -36,7 +36,7 @@
             <tbody>
             <c:forEach var="match" items="${matchWrapper.matches}" varStatus="status">
                 <tr>
-                    <form:hidden path="matches[${status.index}].id" value="${match.id}"/>
+                    <form:hidden path="matches[${status.index}].id"/>
                     <td class="block">${match.team}</td>
                     <td class="block">${match.matchNum}</td>
                     <td class="block">

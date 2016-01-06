@@ -202,7 +202,7 @@ public class MatchController {
     public String mergeTeamTags(@RequestParam("oldTag") String oldTag,
                                  @RequestParam("newTag") String newTag) {
         tagService.mergeTags(new Tag(oldTag, "teams"), new Tag(newTag, "teams"));
-        return "redirect:" + context.getContextPath() + "/m/tags";
+        return "redirect:" + context.getContextPath() +  "/m/tags";
     }
 
     @RequestMapping("/export/csv")
