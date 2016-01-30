@@ -2,7 +2,7 @@ DROP PROCEDURE IF EXISTS init|
 CREATE PROCEDURE init()
   BEGIN
     CREATE TABLE IF NOT EXISTS matches (
-      id       INT NOT NULL,
+      id       INT NOT NULL AUTO_INCREMENT,
       matchNum INT NOT NULL,
       team     INT NOT NULL,
       score    INT NOT NULL,
@@ -20,7 +20,7 @@ CREATE PROCEDURE init()
     END IF;
 
     CREATE TABLE IF NOT EXISTS schedule (
-      id       INT NOT NULL,
+      id       INT NOT NULL AUTO_INCREMENT,
       matchNum INT,
       b1       INT,
       b2       INT,
@@ -42,7 +42,7 @@ CREATE PROCEDURE init()
     END IF;
 
     CREATE TABLE IF NOT EXISTS  tags (
-      id   INT         NOT NULL,
+      id   INT         NOT NULL AUTO_INCREMENT,
       tag  VARCHAR(45) NOT NULL,
       type VARCHAR(45) NOT NULL,
       PRIMARY KEY (`tag`,`type`),
@@ -58,7 +58,7 @@ CREATE PROCEDURE init()
     END IF;
 
     CREATE TABLE IF NOT EXISTS  teams (
-      id       INT         NOT NULL,
+      id       INT         NOT NULL AUTO_INCREMENT,
       team     INT         NOT NULL,
       avgscore FLOAT(6, 2) NOT NULL DEFAULT 0.00,
       matches  INT         NOT NULL DEFAULT 0,
