@@ -151,7 +151,7 @@ public class IOController {
                 FileOutputStream(new File(inputDir.getAbsolutePath() + "/" + fileName)));
         stream.write(buffer);
         stream.close();
-        scheduleService.importCSV(inputDir + fileName);
+        service.importCSV(inputDir + fileName);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", context.getContextPath() + "/io/");
         return new ResponseEntity<byte[]>(null, headers, HttpStatus.FOUND);
@@ -178,7 +178,7 @@ public class IOController {
     @RequestMapping(value = "/matches.csv", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> importMatches(@RequestParam("file") MultipartFile file) throws IOException {
-        return importCSV(scheduleService, "/matches.csv", file);
+        return importCSV(matchService, "/matches.csv", file);
     }
 
     @RequestMapping(value = "/teams.csv", method = RequestMethod.GET)
@@ -190,7 +190,7 @@ public class IOController {
     @RequestMapping(value = "/teams.csv", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> importTeam(@RequestParam("file") MultipartFile file) throws IOException {
-        return importCSV(scheduleService, "/teams.csv", file);
+        return importCSV(teamService, "/teams.csv", file);
     }
 
     @RequestMapping(value = "/tags.csv", method = RequestMethod.GET)
@@ -202,6 +202,6 @@ public class IOController {
     @RequestMapping(value = "/tags.csv", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> importTags(@RequestParam("file") MultipartFile file) throws IOException {
-        return importCSV(scheduleService, "/tags.csv", file);
+        return importCSV(tagService, "/tags.csv", file);
     }
 }
