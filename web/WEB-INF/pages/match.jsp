@@ -41,7 +41,7 @@
                 <div class="col-md-6">
                     <label for="teamTags">Team Tags <span id="teamTagsErr" class="error"></span></label>
                     <input type="text" class="form-control" id="teamTags" data-limit="50"
-                           name="teamTags" data-error="#teamTagsErr" required/>
+                           name="teamTags" disabled/>
                 </div>
             </div>
             <div class="row data-row">
@@ -76,11 +76,6 @@
         "${tag}",
         </c:forEach>
     ];
-    var usedTeamTags = [
-        <c:forEach var="tag" items="${team.tags}">
-            "${tag}",
-        </c:forEach>
-    ];
 </script>
 <script>
     $('#matchTags').tokenfield({
@@ -92,11 +87,9 @@
     }).tokenfield('setTokens', usedMatchTags);
     $('#teamTags').tokenfield({
         autocomplete: {
-            source: teamTags,
-            delay: 100
-        },
-        showAutocompleteOnFocus: true
-    }).tokenfield('setTokens', usedTeamTags);
+            source: teamTags
+        }
+    });
     $('#match').validate({
         rules: {
             score: {
@@ -105,7 +98,6 @@
         },
         messages: {
             matchTags: "(Please enter between 1 and 50 tags)",
-            teamTags: "(Please enter between 1 and 50 tags)",
             score: "(Please enter a numeric score)"
         },
         errorPlacement: function(error, element) {

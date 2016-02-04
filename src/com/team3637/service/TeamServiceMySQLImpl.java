@@ -132,7 +132,7 @@ public class TeamServiceMySQLImpl implements TeamService {
         SQL = "UPDATE teams SET " + valuesSting + " WHERE team=" + team.getTeam() + ";";
         SqlParameterSource in = new MapSqlParameterSource()
                 .addValue("ignoreCols", 4)
-                .addValue("tableName", "matches")
+                .addValue("tableName", "teams")
                 .addValue("newCols", team.getTags().size());
         addCols.execute(in);
         jdbcTemplateObject.update(SQL, values.toArray());

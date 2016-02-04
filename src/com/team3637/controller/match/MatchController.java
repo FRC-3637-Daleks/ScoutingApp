@@ -59,7 +59,7 @@ public class MatchController {
         } else {
             match = matches.get(0);
         }
-        if(teams.size() == 0) {
+        if (teams.size() == 0) {
             team = new Team();
         } else {
             team = teams.get(0);
@@ -77,25 +77,27 @@ public class MatchController {
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> submitNewMatch(@ModelAttribute("match") Match match,
-                                 @RequestParam("matchTags") String matchTags,
-                                 @RequestParam("teamTags") String teamTags) {
-
-        if(match.getScore() == null) {
+                                            @RequestParam("matchTags") String matchTags) {
+        if (match.getScore() == null)
             return new ResponseEntity<>("400 - Bad Request", HttpStatus.BAD_REQUEST);
+        if (!matchTags.equals(""))
+            match.setTags(new ArrayList<>(new LinkedHashSet<>(Arrays.asList(matchTags.split(", ")))));
+
+        List<String> matchTagsList = matchService.getTags();
+        if (match.getTags().size() > matchTagsList.size())
+            return new ResponseEntity<>("400 - More tags in request than in tag list", HttpStatus.BAD_REQUEST);
+        for (int i = 0; i < match.getTags().size(); i++) {
+            if (!matchTagsList.contains(match.getTags().get(i))) {
+                match.getTags().remove(match.getTags().get(i));
+            }
         }
+
+        if (match.getTags().size() > 50 || match.getTags().size() < 1)
+            return new ResponseEntity<>("400 - Bad Request", HttpStatus.BAD_REQUEST);
 
         Team team = new Team();
         team.setTeam(match.getTeam());
-        team.setTags(new ArrayList<>(new LinkedHashSet<>(Arrays.asList(teamTags.split(", ")))));
-        match.setTags(new ArrayList<>(new LinkedHashSet<>(Arrays.asList(matchTags.split(", ")))));
-
-        if(team.getTags().size() > 50 || team.getTags().size() < 1 ||
-                match.getTags().size() > 50 || match.getTags().size() < 1)
-            return new ResponseEntity<>("400 - Bad Request", HttpStatus.BAD_REQUEST);
-
-        if (teamService.checkForTeam(team.getTeam()))
-            teamService.update(team);
-        else
+        if (!teamService.checkForTeam(team.getTeam()))
             teamService.create(team);
         if (matchService.checkForMatch(match.getMatchNum(), match.getTeam()))
             matchService.update(match);
@@ -186,7 +188,7 @@ public class MatchController {
 
     @RequestMapping(value = "/tags/mergeMatch", method = RequestMethod.POST)
     public String mergeMatchTags(@RequestParam("oldTag") String oldTag,
-                            @RequestParam("newTag") String newTag) {
+                                 @RequestParam("newTag") String newTag) {
         tagService.mergeTags(new Tag(oldTag, "matches"), new Tag(newTag, "matches"));
         return "redirect:" + context.getContextPath() + "/m/tags";
     }
@@ -200,9 +202,9 @@ public class MatchController {
 
     @RequestMapping(value = "/tags/mergeTeam", method = RequestMethod.POST)
     public String mergeTeamTags(@RequestParam("oldTag") String oldTag,
-                                 @RequestParam("newTag") String newTag) {
+                                @RequestParam("newTag") String newTag) {
         tagService.mergeTags(new Tag(oldTag, "teams"), new Tag(newTag, "teams"));
-        return "redirect:" + context.getContextPath() +  "/m/tags";
+        return "redirect:" + context.getContextPath() + "/m/tags";
     }
 
     @RequestMapping("/export/csv")
@@ -220,12 +222,12 @@ public class MatchController {
     @RequestMapping("/matchTags")
     @ResponseBody
     public String getMatchTags() {
-        return  new Gson().toJson(matchService.getTags());
+        return new Gson().toJson(matchService.getTags());
     }
 
     @RequestMapping("/teamTags")
     @ResponseBody
     public String getTeamTags() {
-        return  new Gson().toJson(teamService.getTags());
+        return new Gson().toJson(teamService.getTags());
     }
 }

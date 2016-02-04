@@ -64,21 +64,31 @@ public class TeamsController {
     @RequestMapping(value = "/view/{teamNum}", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> getTeam(@PathVariable("teamNum") Integer teamNum,
-                          @RequestParam("teamTags") String teamTags,
-                          @RequestParam("score") Double score,
-                          @RequestParam("matches") Integer matches) {
-
+                                     @RequestParam("teamTags") String teamTags,
+                                     @RequestParam("score") Double score,
+                                     @RequestParam("matches") Integer matches) {
         Team team = new Team();
         team.setTeam(teamNum);
         team.setAvgscore(score);
         team.setMatches(matches);
-        team.setTags(new ArrayList<>(new LinkedHashSet<>(Arrays.asList(teamTags.split(", ")))));
-        if(team.getTags().size() < 1 || team.getTags().size() > 50)
+        if (!teamTags.equals(""))
+            team.setTags(new ArrayList<>(new LinkedHashSet<>(Arrays.asList(teamTags.split(", ")))));
+
+        List<String> teamTagList = teamService.getTags();
+        for (int i = 0; i < team.getTags().size(); i++) {
+            if (!teamTagList.contains(team.getTags().get(i))) {
+                team.getTags().remove(i);
+            }
+        }
+
+        if (team.getTags().size() < 0 || team.getTags().size() > 50)
             return new ResponseEntity<>("400 - Bad Request", HttpStatus.BAD_REQUEST);
-        if (teamService.checkForTeam(team.getTeam()))
-            teamService.update(team);
-        else
-            teamService.create(team);
+        else if (team.getTags().size() != 0) {
+            if (teamService.checkForTeam(team.getTeam()))
+                teamService.update(team);
+            else
+                teamService.create(team);
+        }
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", context.getContextPath() + "/t/");
         return new ResponseEntity<byte[]>(null, headers, HttpStatus.FOUND);

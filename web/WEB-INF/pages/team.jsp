@@ -37,12 +37,12 @@
         <div class="row data-row">
             <div class="col-md-6">
                 <label for="matchTags">Match Tags</label>
-                <input type="text" class="form-control" id="matchTags" name="matchTags" readonly/>
+                <input type="text" class="form-control" id="matchTags" name="matchTags" disabled/>
             </div>
             <div class="col-md-6">
                 <label for="teamTags">Team Tags <span id="teamTagsErr" class="error"></span></label>
                 <input type="text" class="form-control" id="teamTags"
-                       name="teamTags" data-error="#teamTagsErr" required/>
+                       name="teamTags" data-error="#teamTagsErr"/>
             </div>
         </div>
     </div>
@@ -88,7 +88,6 @@
         },
         showAutocompleteOnFocus: true
     }).tokenfield('setTokens', usedMatchTags);
-    $('#matchTags').tokenfield('readonly');
     $('#teamTags').tokenfield({
         autocomplete: {
             source: teamTags,
