@@ -112,9 +112,11 @@ public class TeamServiceMySQLImpl implements TeamService {
     public void update(Team team) {
         Team oldTeam = getTeamByNumber(team.getTeam()).get(0);
         int diff = oldTeam.getTags().size() - team.getTags().size();
-        String valuesSting = "team=?", SQL;
+        String valuesSting = "team=?, avgscore=?, matches=?", SQL;
         List<Object> values = new ArrayList<>();
         values.add(team.getTeam());
+        values.add(team.getAvgscore());
+        values.add(team.getMatches());
         if(diff <= 0) {
             for (int i = 0; i < team.getTags().size(); i++) {
                 valuesSting += ", tag" + i + "=?";
