@@ -168,7 +168,7 @@ public class TeamServiceMySQLImpl implements TeamService {
 
     @Override
     public List<String> getTags() {
-        String SQL = "SELECT tag FROM tags WHERE type = 'teams'";
+        String SQL = "SELECT tag FROM tags WHERE type = 'teams' ORDER BY tag";
         return jdbcTemplateObject.query(SQL, new TagStringMapper());
     }
 

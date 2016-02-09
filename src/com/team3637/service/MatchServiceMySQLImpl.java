@@ -171,7 +171,7 @@ public class MatchServiceMySQLImpl implements MatchService {
 
     @Override
     public List<String> getTags() {
-        String SQL = "SELECT tag FROM tags WHERE type = 'matches'";
+        String SQL = "SELECT tag FROM tags WHERE type = 'matches' ORDER BY tag";
         return jdbcTemplateObject.query(SQL, new TagStringMapper());
     }
 
