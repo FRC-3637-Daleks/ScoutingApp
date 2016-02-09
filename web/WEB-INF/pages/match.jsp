@@ -89,7 +89,7 @@
         autocomplete: {
             source: teamTags
         }
-    });
+    }).tokenfield('setTokens', teamTags);
     $('#match').validate({
         rules: {
             score: {
