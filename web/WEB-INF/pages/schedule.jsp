@@ -23,11 +23,11 @@
             <ul class="nav navbar-nav">
             <li><a href="${pageContext.request.contextPath}/s/edit">Edit</a></li>
             </ul>
-            <form class="navbar-form navbar-right" action="${pageContext.request.contextPath}/s/t/">
+            <form class="navbar-form navbar-right navbar-input-group" action="${pageContext.request.contextPath}/s/t/">
                 <div class="form-group" role="search">
                     <input type="text" class="form-control" placeholder="Search" name="teamNum">
+                    <button type="submit" class="btn btn-info">Search</button>
                 </div>
-                <button type="submit" class="btn btn-info">Search</button>
             </form>
         </div>
     </div>

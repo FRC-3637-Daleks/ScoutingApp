@@ -25,6 +25,10 @@
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="${pageContext.request.contextPath}/t/search/">Search</a></li>
             </ul>
+            <div class="navbar-form navbar-right navbar-input-group form-group">
+                <input type="text" class="form-control" placeholder="Team #" name="teamNum">
+                <button type="submit" class="btn btn-info" onclick="addTeam();">Add Team</button>
+            </div>
         </div>
     </div>
 </nav>
@@ -77,6 +81,9 @@
                 });
             }
     );
+    function addTeam() {
+        window.location = '${pageContext.request.contextPath}/t/view/' + $('input[name=teamNum]').val();
+    }
 </script>
 </body>
 </html>

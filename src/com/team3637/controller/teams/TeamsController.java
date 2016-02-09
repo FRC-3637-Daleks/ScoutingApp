@@ -52,13 +52,22 @@ public class TeamsController {
 
     @RequestMapping(value = "/view/{teamNum}", method = RequestMethod.GET)
     public String getTeam(@PathVariable("teamNum") Integer teamNum, Model model) {
-        Team team = teamService.getTeam(teamNum);
-        List<String> matchTags = tagService.getMatchTagsForTeam(teamNum);
-        List<String> teamTags = teamService.getTags();
-        model.addAttribute("team", team);
-        model.addAttribute("matchTags", matchTags);
-        model.addAttribute("teamTags", teamTags);
-        return "team";
+        if(teamService.checkForTeam(teamNum)) {
+            Team team = teamService.getTeam(teamNum);
+            List<String> matchTags = tagService.getMatchTagsForTeam(teamNum);
+            List<String> teamTags = teamService.getTags();
+            model.addAttribute("team", team);
+            model.addAttribute("matchTags", matchTags);
+            model.addAttribute("teamTags", teamTags);
+            return "team";
+        } else {
+            Team team = new Team();
+            team.setTeam(teamNum);
+            List<String> teamTags = teamService.getTags();
+            model.addAttribute("team", team);
+            model.addAttribute("teamTags", teamTags);
+            return "team";
+        }
     }
 
     @RequestMapping(value = "/view/{teamNum}", method = RequestMethod.POST)
@@ -83,7 +92,7 @@ public class TeamsController {
 
         if (team.getTags().size() < 0 || team.getTags().size() > 50)
             return new ResponseEntity<>("400 - Bad Request", HttpStatus.BAD_REQUEST);
-        else if (team.getTags().size() != 0) {
+        else {
             if (teamService.checkForTeam(team.getTeam()))
                 teamService.update(team);
             else

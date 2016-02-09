@@ -97,7 +97,7 @@
     }).tokenfield('setTokens', usedTeamTags);
     $('#team').validate({
         messages: {
-            teamTags: "(Please enter at least 1 tag)",
+            teamTags: "(Please enter at least 1 tag)"
         },
         errorPlacement: function(error, element) {
             var placement = $(element).data('error');
