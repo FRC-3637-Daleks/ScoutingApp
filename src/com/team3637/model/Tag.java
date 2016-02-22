@@ -2,10 +2,15 @@ package com.team3637.model;
 
 public class Tag {
     int id;
-    String tag;
-    String type;
+    String tag, type, expression;
 
     public Tag() {}
+
+    public Tag(String tag, String type, String expression) {
+        this.tag = tag;
+        this.type = type;
+        this.expression = expression;
+    }
 
     public Tag(String tag, String type) {
         this.tag = tag;
@@ -34,5 +39,13 @@ public class Tag {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getExpression() {
+        return expression;
+    }
+
+    public void setExpression(String expression) {
+        this.expression = expression;
     }
 }

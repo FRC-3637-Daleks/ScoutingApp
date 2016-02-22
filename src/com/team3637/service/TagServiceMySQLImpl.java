@@ -38,7 +38,7 @@ public class TagServiceMySQLImpl implements TagService {
 
     @Override
     public void create(Tag tag) {
-        String fieldsSting = "tag, type", valuesSting = "?, ?", SQL;
+        String fieldsSting = "tag, type, expression", valuesSting = "?, ?, ?", SQL;
         List<Object> values = new ArrayList<>();
         values.add(tag.getTag());
         values.add(tag.getType());
@@ -268,7 +268,7 @@ public class TagServiceMySQLImpl implements TagService {
 
     @Override
     public void update(Tag tag) {
-        String valuesSting = "id=?, tag=?, type=?", SQL;
+        String valuesSting = "id=?, tag=?, type=?, expression=?", SQL;
         List<Object> values = new ArrayList<>();
         values.add(tag.getId());
         values.add(tag.getTag());
