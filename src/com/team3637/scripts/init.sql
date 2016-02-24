@@ -45,7 +45,7 @@ CREATE PROCEDURE init()
       id   INT         NOT NULL AUTO_INCREMENT,
       tag  VARCHAR(45) NOT NULL,
       type VARCHAR(45) NOT NULL,
-      expression VARCHAR(45) NOT NULL,
+      expression VARCHAR(45) NULL,
       PRIMARY KEY (`tag`,`type`),
       UNIQUE KEY `id_UNIQUE` (`id`)
     );
