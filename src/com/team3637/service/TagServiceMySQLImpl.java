@@ -42,6 +42,7 @@ public class TagServiceMySQLImpl implements TagService {
         List<Object> values = new ArrayList<>();
         values.add(tag.getTag());
         values.add(tag.getType());
+        values.add(tag.getExpression());
         SQL = "INSERT INTO tags (" + fieldsSting + ") VALUES (" + valuesSting + ");";
         jdbcTemplateObject.update(SQL, values.toArray());
     }
@@ -273,6 +274,7 @@ public class TagServiceMySQLImpl implements TagService {
         values.add(tag.getId());
         values.add(tag.getTag());
         values.add(tag.getType());
+        values.add(tag.getExpression());
         SQL = "UPDATE tags SET " + valuesSting + " WHERE id=" + tag.getId() + ";";
         jdbcTemplateObject.update(SQL, values.toArray());
     }
@@ -364,6 +366,7 @@ public class TagServiceMySQLImpl implements TagService {
                 tag.setId(Integer.parseInt(record.get(0)));
                 tag.setTag(record.get(1));
                 tag.setType(record.get(2));
+                tag.setExpression(record.get(3));
                 if(checkForTag(tag))
                     update(tag);
                 else
