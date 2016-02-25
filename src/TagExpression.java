@@ -6,8 +6,6 @@ import java.util.Map;
 
 public class TagExpression {
     public static void main(String[] args) throws ScriptException {
-        //This code would be run once per tag
-
         //Create a new matches tag
         Tag[][] matches = new Tag[][]{new Tag[]{
                 new Tag("high goal fast", "match", "high goal",
@@ -38,7 +36,15 @@ public class TagExpression {
                         new Tag("high goal fair shot", "match", "high goal", null),
                 }
         };
+        //Process the tags and get back the counter for each category
+        Map<String, Integer> counters = processTags(matches);
+        //Print counter values
+        for(Map.Entry<String, Integer> entry : counters.entrySet()) {
+            System.out.println(entry.getKey() + " : " + entry.getValue());
+        }
+    }
 
+    public static Map<String, Integer> processTags(Tag[][] matches) throws ScriptException {
         //Added an array contains function because Java's script engine doesn't contain ones
         String containsFunction = "function contains(arr, obj) {\n" +
                 "   for (var i = 0; i < arr.length; i++) {\n" +
@@ -51,7 +57,6 @@ public class TagExpression {
 
         //Set the current high goal
         Map<String, Integer> counters = new HashMap<>();
-
         //Create new ScriptEngine that will process the javascript expression
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("javascript");
         for (Tag[] match : matches) {
@@ -75,9 +80,6 @@ public class TagExpression {
                 }
             }
         }
-        //Print counter values
-        for(Map.Entry<String, Integer> entry : counters.entrySet()) {
-            System.out.println(entry.getKey() + " : " + entry.getValue());
-        }
+        return counters;
     }
 }
