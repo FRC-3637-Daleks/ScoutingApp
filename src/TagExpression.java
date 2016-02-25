@@ -1,18 +1,42 @@
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TagExpression {
     public static void main(String[] args) throws ScriptException {
         //This code would be run once per tag
 
-        //Create a new test tag
-        Tag[] test = new Tag[]{
+        //Create a new matches tag
+        Tag[][] matches = new Tag[][]{new Tag[]{
                 new Tag("high goal fast", "match", "high goal",
                         "if (contains(arr, 'high goal great shot')) {(x < 0) ? x = 1 : x += 2} " +
                                 "else if (contains(arr, 'high goal fair shot')) {(x < 0) ? x = 0 : x++} " +
-                                "else x--"),
-                new Tag("high goal shit shot", "match", "high goal", "")
+                                "else if (contains(arr, 'high goal poor shot')) {x--}"),
+                new Tag("high goal poor shot", "match", "high goal", null),
+        },
+                new Tag[]{
+                        new Tag("high goal fast", "match", "high goal",
+                                "if (contains(arr, 'high goal great shot')) {(x < 0) ? x = 1 : x += 2} " +
+                                        "else if (contains(arr, 'high goal fair shot')) {(x < 0) ? x = 0 : x++} " +
+                                        "else if (contains(arr, 'high goal poor shot')) {x--}"),
+                        new Tag("high poor great shot", "match", "high goal", null),
+                },
+                new Tag[]{
+                        new Tag("high goal fast", "match", "high goal",
+                                "if (contains(arr, 'high goal great shot')) {(x < 0) ? x = 1 : x += 2} " +
+                                        "else if (contains(arr, 'high goal fair shot')) {(x < 0) ? x = 0 : x++} " +
+                                        "else if (contains(arr, 'high goal poor shot')) {x--}"),
+                        new Tag("high goal great shot", "match", "high goal", null),
+                },
+                new Tag[]{
+                        new Tag("high goal fast", "match", "high goal",
+                                "if (contains(arr, 'high goal great shot')) {(x < 0) ? x = 1 : x += 2} " +
+                                        "else if (contains(arr, 'high goal fair shot')) {(x < 0) ? x = 0 : x++} " +
+                                        "else if (contains(arr, 'high goal poor shot')) {x--}"),
+                        new Tag("high goal fair shot", "match", "high goal", null),
+                }
         };
 
         //Added an array contains function because Java's script engine doesn't contain ones
@@ -26,80 +50,34 @@ public class TagExpression {
                 "}\n";
 
         //Set the current high goal
-        int highGoal = -20;
+        Map<String, Integer> counters = new HashMap<>();
 
         //Create new ScriptEngine that will process the javascript expression
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("javascript");
-        for (Tag tag : test) {
-            if (tag.getExpression() != null && !tag.getExpression().equals("")) {
-                //Set the javascript variable x equal to the value of highGoal
-                engine.put("x", highGoal);
-                //Set the javascript variable arr equal to the an array of strings of each tag
-                String[] tags = new String[test.length];
-                for (int i = 0; i < test.length; i++) {
-                    tags[i] = test[i].toString();
+        for (Tag[] match : matches) {
+            for (Tag tag : match) {
+                if (tag.getExpression() != null && !tag.getExpression().equals("")) {
+                    if (!counters.containsKey(tag.getCategory()))
+                        counters.put(tag.getCategory(), 0);
+                    //Set the javascript variable arr equal to the an array of strings of each tag
+                    String[] tags = new String[match.length];
+                    for (int i = 0; i < match.length; i++)
+                        tags[i] = match[i].toString();
+                    //Set the javascript variable x equal to the value of highGoal
+                    engine.put("x", counters.get(tag.getCategory()));
+                    engine.put("arr", tags);
+                    //Evaluated to javascript expression
+                    engine.eval(containsFunction + tag.getExpression());
+                    //Retrieve the value of x
+                    Object x = engine.get("x");
+                    //Convert the java Object x into an int set highGoal equal to that value
+                    counters.put(tag.getCategory(), (x.getClass() == Double.class) ? (int) Math.round((Double) x) : (int) x);
                 }
-                engine.put("arr", tags);
-                //Evaluated to javascript expression
-                engine.eval(containsFunction + tag.getExpression());
-                //Retrieve the value of x
-                Object x = engine.get("x");
-                //Convert the java Object x into an int set highGoal equal to that value
-                highGoal = (x.getClass() == Double.class) ? (int) Math.round((Double) x) : (int) x;
-                //Print the now value if highGoal
-                System.out.println(highGoal);
             }
         }
-    }
-}
-
-//The Tag class is used to hold the data for one tag
-class Tag {
-    private String tag, type, category, expression;
-
-    public Tag() {}
-
-    public Tag(String tag, String type, String category, String expression) {
-        this.tag = tag;
-        this.type = type;
-        this.category = category;
-        this.expression = expression;
-    }
-
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getExpression() {
-        return expression;
-    }
-
-    public void setExpression(String expression) {
-        this.expression = expression;
-    }
-
-    @Override
-    public String toString() {
-        return tag;
+        //Print counter values
+        for(Map.Entry<String, Integer> entry : counters.entrySet()) {
+            System.out.println(entry.getKey() + " : " + entry.getValue());
+        }
     }
 }
