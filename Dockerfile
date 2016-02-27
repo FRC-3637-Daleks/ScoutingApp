@@ -1,9 +1,7 @@
-FROM tomcat:8.0
+FROM tutum/tomcat:8.0
 MAINTAINER "Team 3637"
 
-RUN apt-get install ant
+ENV TOMCAT_PASS="turing"
 
-ADD . /scBuild
-WORKDIR /scBuild
-
-RUN ant
+WORKDIR /tomcat
+COPY ScoutingApp.war webapps/ScoutingApp.war

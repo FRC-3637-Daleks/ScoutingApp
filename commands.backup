@@ -1,0 +1,2 @@
+docker run --name scouting --link mysql:mysql -d -p 8080 team3637/scoutingapp
+docker run -d -P -e MYSQL_USER=team3637 -e MYSQL_PASSWORD=turing -e MYSQL_DATABASE=scoutingtags --name mysql orchardup/mysql
