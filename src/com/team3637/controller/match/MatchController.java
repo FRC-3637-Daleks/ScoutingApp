@@ -81,7 +81,7 @@ public class MatchController {
         if (match.getScore() == null)
             return new ResponseEntity<>("400 - Bad Request", HttpStatus.BAD_REQUEST);
         if (!matchTags.equals(""))
-            match.setTags(new ArrayList<>(new LinkedHashSet<>(Arrays.asList(matchTags.split(", ")))));
+            match.setTags(new ArrayList<>(new LinkedHashSet<>(Arrays.asList(matchTags.split(",")))));
 
         List<String> matchTagsList = matchService.getTags();
         if (match.getTags().size() > matchTagsList.size())
