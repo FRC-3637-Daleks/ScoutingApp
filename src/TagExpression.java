@@ -42,6 +42,35 @@ public class TagExpression {
         for(Map.Entry<String, Integer> entry : counters.entrySet()) {
             System.out.println(entry.getKey() + " : " + entry.getValue());
         }
+
+        String designation = "";
+        if(convertToTint(counters.get("high goal")) > 2) {
+            designation += "S ";
+        } else if(convertToTint(counters.get("high goal")) >= 0) {
+            designation += "S? ";
+        }
+        if(convertToTint(counters.get("low goal")) > 2) {
+            designation += "L ";
+        } else if(convertToTint(counters.get("low goal")) >= 0) {
+            designation += "L? ";
+        }
+        if(convertToTint(counters.get("boulder carries")) > 2) {
+            designation += "C ";
+        } else if(convertToTint(counters.get("boulder carries")) >= 0) {
+            designation += "C? ";
+        }
+        if(convertToTint(counters.get("boulder passes")) > 2) {
+            designation += "P ";
+        } else if(convertToTint(counters.get("boulder passes")) >= 0) {
+            designation += "P? ";
+        }
+        if(convertToTint(counters.get("boulder shoves")) > 2) {
+            designation += "Sh ";
+        } else if(convertToTint(counters.get("boulder shoves")) >= 0) {
+            designation += "Sh? ";
+        }
+
+        System.out.println(designation);
     }
 
     public static Map<String, Integer> processTags(Tag[][] matches) throws ScriptException {
@@ -76,10 +105,14 @@ public class TagExpression {
                     //Retrieve the value of x
                     Object x = engine.get("x");
                     //Convert the java Object x into an int set highGoal equal to that value
-                    counters.put(tag.getCategory(), (x.getClass() == Double.class) ? (int) Math.round((Double) x) : (int) x);
+                    counters.put(tag.getCategory(), convertToTint(engine.get("x")));
                 }
             }
         }
         return counters;
+    }
+
+    private static int convertToTint(Object x) {
+        return (x.getClass() == Double.class) ? (int) Math.round((Double) x) : (int) x;
     }
 }
