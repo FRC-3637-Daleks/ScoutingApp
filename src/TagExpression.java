@@ -39,36 +39,35 @@ public class TagExpression {
         //Process the tags and get back the counter for each category
         Map<String, Integer> counters = processTags(matches);
         //Print counter values
-        for(Map.Entry<String, Integer> entry : counters.entrySet()) {
+        for (Map.Entry<String, Integer> entry : counters.entrySet()) {
             System.out.println(entry.getKey() + " : " + entry.getValue());
         }
 
         String designation = "";
-        if(convertToTint(counters.get("high goal")) > 2) {
+        if (convertToTint(counters.get("high goal")) > 2)
             designation += "S ";
-        } else if(convertToTint(counters.get("high goal")) >= 0) {
+        else if (convertToTint(counters.get("high goal")) >= 0)
             designation += "S? ";
-        }
-        if(convertToTint(counters.get("low goal")) > 2) {
+        if (convertToTint(counters.get("low goal")) > 2)
             designation += "L ";
-        } else if(convertToTint(counters.get("low goal")) >= 0) {
+        else if (convertToTint(counters.get("low goal")) >= 0)
             designation += "L? ";
-        }
-        if(convertToTint(counters.get("boulder carries")) > 2) {
-            designation += "C ";
-        } else if(convertToTint(counters.get("boulder carries")) >= 0) {
-            designation += "C? ";
-        }
-        if(convertToTint(counters.get("boulder passes")) > 2) {
-            designation += "P ";
-        } else if(convertToTint(counters.get("boulder passes")) >= 0) {
-            designation += "P? ";
-        }
-        if(convertToTint(counters.get("boulder shoves")) > 2) {
-            designation += "Sh ";
-        } else if(convertToTint(counters.get("boulder shoves")) >= 0) {
-            designation += "Sh? ";
-        }
+
+        String boulder = "B(";
+        if (convertToTint(counters.get("boulder carries")) > 2)
+            boulder += "C";
+        else if (convertToTint(counters.get("boulder carries")) >= 0)
+            boulder += "C?";
+        if (convertToTint(counters.get("boulder passes")) > 2)
+            boulder += "P";
+        else if (convertToTint(counters.get("boulder passes")) >= 0)
+            boulder += "P?";
+        if (convertToTint(counters.get("boulder shoves")) > 2)
+            boulder += "S";
+        else if (convertToTint(counters.get("boulder shoves")) >= 0)
+            boulder += "S?";
+        if (boulder.length() > 2)
+            designation += boulder + ") ";
 
         System.out.println(designation);
     }
