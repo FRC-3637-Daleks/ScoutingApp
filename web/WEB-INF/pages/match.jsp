@@ -35,8 +35,8 @@
             <div class="row data-row">
                 <div class="col-md-6">
                     <label for="matchTags">Match Tags <span id="matchTagsErr" class="error"></span></label>
-                    <select id="matchTags" class="chosen-select" name="matchTags" data-error="#matchTagsErr"
-                            multiple required>
+                    <select id="matchTags" class="chosen-select" name="matchTags"
+                            data-error="#matchTagsErr" multiple required>
                         <c:forEach var="tag" items="${matchTags}">
                             <option value="${tag}">${tag}</option>
                         </c:forEach>
@@ -92,9 +92,6 @@
     });
     $('#teamTags').val(usedTeamTags).chosen({width: '100%'});
     $('#teamTags_chosen').removeClass('chosen-disabled');
-    /*$(document).ready(function() {
-        $('#matchTags').outerWidth(230);
-    });*/
 </script>
 <script>
     //Set up the data validator and set it's options
