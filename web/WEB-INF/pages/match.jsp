@@ -36,18 +36,19 @@
                 <div class="col-md-6">
                     <label for="matchTags">Match Tags <span id="matchTagsErr" class="error"></span></label>
                     <select id="matchTags" class="chosen-select" name="matchTags" data-error="#matchTagsErr"
-                            style="width: 529px; height: 142px" multiple required>
+                            multiple required>
                         <c:forEach var="tag" items="${matchTags}">
                             <option value="${tag}">${tag}</option>
                         </c:forEach>
                     </select>
-                    <%--<input type="text" class="form-control"  data-limit="50"
-                            required/>--%>
                 </div>
                 <div class="col-md-6">
                     <label for="teamTags">Team Tags <span id="teamTagsErr" class="error"></span></label>
-                    <input type="text" class="form-control" id="teamTags" data-limit="50"
-                           name="teamTags" disabled/>
+                    <select id="teamTags" class="chosen-select" multiple disabled>
+                        <c:forEach var="tag" items="${teamTags}">
+                            <option value="${tag}">${tag}</option>
+                        </c:forEach>
+                    </select>
                 </div>
             </div>
             <div class="row data-row">
@@ -67,12 +68,8 @@
     </form:form>
 </div>
 <script>
-    var matchTags = [
-        <c:forEach var="tag" items="${matchTags}">
-        "${tag}",
-        </c:forEach>
-    ];
-    var teamTags = [
+    //Load existing match and team tags for this team
+    var usedTeamTags = [
         <c:forEach var="tag" items="${teamTags}">
         "${tag}",
         </c:forEach>
@@ -84,27 +81,24 @@
     ];
 </script>
 <script>
+    //Initalized the chosen widgets and set their options
     $('#matchTags').val(usedMatchTags).chosen({
         enable_split_word_search: false,
         max_selected_options: 50,
         no_results_text: 'No tags match',
         placeholder_text_multiple: 'Select some tags',
-        single_backstroke_delete: false
+        single_backstroke_delete: false,
+        width: '100%'
     });
+    $('#teamTags').val(usedTeamTags).chosen({width: '100%'});
+    $('#teamTags_chosen').removeClass('chosen-disabled');
+    /*$(document).ready(function() {
+        $('#matchTags').outerWidth(230);
+    });*/
 </script>
 <script>
-    /*$('#matchTags').tokenfield({
-        autocomplete: {
-            source: matchTags,
-            delay: 100
-        },
-        showAutocompleteOnFocus: true
-    }).tokenfield('setTokens', usedMatchTags);*/
-    $('#teamTags').tokenfield({
-        autocomplete: {
-            source: teamTags
-        }
-    }).tokenfield('setTokens', teamTags);
+    //Set up the data validator and set it's options
+    $.validator.setDefaults({ ignore: ":hidden:not(.chosen-select)" });
     $('#match').validate({
         rules: {
             score: {
