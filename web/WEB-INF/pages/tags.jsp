@@ -45,8 +45,6 @@
                             <option value="${tag}">${tag}</option>
                         </c:forEach>
                     </select>
-                    <%--<input type="text" class="form-control" id="matchTags"
-                           name="matchTags" data-error="#error"/>--%>
                 </div>
                 <div class="col-md-6">
                     <label for="teamTags">Team Tags</label>
@@ -56,8 +54,6 @@
                             <option value="${tag}">${tag}</option>
                         </c:forEach>
                     </select>
-                    <%--<input type="text" class="form-control" id="teamTags"
-                           name="teamTags" data-error="#error"/>--%>
                 </div>
             </div>
             <div class="row data-row">
@@ -100,33 +96,22 @@
     });
 </script>
 <script>
-/*    $('#matchTags').tokenfield({
-        autocomplete: {
-            delay: 100
+    //Set up the data validator and set it's options
+    $.validator.setDefaults({ignore: ":hidden:not(.chosen-select)"});
+    $('#tags').validate({
+        messages: {
+            matchTags: "(Please enter between 1 and 50 tags)",
+            teamTags: "(Please enter between 1 and 50 tags)"
         },
-        showAutocompleteOnFocus: true
-    }).tokenfield('setTokens', usedMatchTags);
-    $('#teamTags').tokenfield({
-        autocomplete: {
-            delay: 100
-        },
-        showAutocompleteOnFocus: true
-    }).tokenfield('setTokens', usedTeamTags);*/
-    $.validator.setDefaults({ ignore: ":hidden:not(.chosen-select)" });
-$('#tags').validate({
-    messages: {
-        matchTags: "(Please enter between 1 and 50 tags)",
-        teamTags: "(Please enter between 1 and 50 tags)"
-    },
-    errorPlacement: function(error, element) {
-        var placement = $(element).data('error');
-        if (placement) {
-            $(placement).append(error)
-        } else {
-            error.insertAfter(element);
+        errorPlacement: function (error, element) {
+            var placement = $(element).data('error');
+            if (placement) {
+                $(placement).append(error)
+            } else {
+                error.insertAfter(element);
+            }
         }
-    }
-});
+    });
 </script>
 </body>
 </html>

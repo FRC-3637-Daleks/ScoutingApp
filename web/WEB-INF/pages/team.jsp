@@ -103,6 +103,7 @@
     });
 </script>
 <script>
+    //Set up the data validator and set it's options
     $.validator.setDefaults({ ignore: ":hidden:not(.chosen-select)" });
     $('#team').validate({
         messages: {
