@@ -13,7 +13,7 @@ public class TagExpression {
                                 "else if (contains(arr, 'high goal fair shot')) {(x < 0) ? x = 0 : x++} " +
                                 "else if (contains(arr, 'high goal poor shot')) {x--}"),
                 new Tag("high goal poor shot", "match", "high goal", null),
-        },
+                },
                 new Tag[]{
                         new Tag("high goal fast", "match", "high goal",
                                 "if (contains(arr, 'high goal great shot')) {(x < 0) ? x = 1 : x += 2} " +
@@ -53,22 +53,23 @@ public class TagExpression {
         else if (convertToTint(counters.get("low goal")) >= 0)
             designation += "L? ";
 
-        String boulder = "B(";
-        if (convertToTint(counters.get("boulder carries")) > 2)
-            boulder += "C";
-        else if (convertToTint(counters.get("boulder carries")) >= 0)
-            boulder += "C?";
-        if (convertToTint(counters.get("boulder passes")) > 2)
-            boulder += "P";
-        else if (convertToTint(counters.get("boulder passes")) >= 0)
-            boulder += "P?";
-        if (convertToTint(counters.get("boulder shoves")) > 2)
-            boulder += "S";
-        else if (convertToTint(counters.get("boulder shoves")) >= 0)
-            boulder += "S?";
-        if (boulder.length() > 2)
-            designation += boulder + ") ";
+        String temp = "B(";
+        if (convertToTint(counters.get("temp carries")) > 2)
+            temp += "C";
+        else if (convertToTint(counters.get("temp carries")) >= 0)
+            temp += "C?";
+        if (convertToTint(counters.get("temp passes")) > 2)
+            temp += "P";
+        else if (convertToTint(counters.get("temp passes")) >= 0)
+            temp += "P?";
+        if (convertToTint(counters.get("temp shoves")) > 2)
+            temp += "S";
+        else if (convertToTint(counters.get("temp shoves")) >= 0)
+            temp += "S?";
+        if (temp.length() > 2)
+            designation += temp + ") ";
 
+        temp = "O(";
         System.out.println(designation);
     }
 
