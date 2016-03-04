@@ -4,7 +4,14 @@ import javax.script.ScriptException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TagExpression {
+public class TagDesignationGenerator {
+
+    private Map<String, Integer> counters;
+
+    public TagDesignationGenerator() {
+        counters = new HashMap<>();
+    }
+
     public static void main(String[] args) throws ScriptException {
         //Create a new matches tag
         Tag[][] matches = new Tag[][]{new Tag[]{
@@ -36,44 +43,119 @@ public class TagExpression {
                         new Tag("high goal fair shot", "match", "high goal", null),
                 }
         };
-        //Process the tags and get back the counter for each category
-        Map<String, Integer> counters = processTags(matches);
-        //Print counter values
-        for (Map.Entry<String, Integer> entry : counters.entrySet()) {
-            System.out.println(entry.getKey() + " : " + entry.getValue());
-        }
+
+        TagDesignationGenerator designationGenerator = new TagDesignationGenerator();
+        String designations = designationGenerator.generateDesignations(matches);
+        System.out.println(designationGenerator);
+        System.out.println(designations);
+    }
+
+    private String addDesignation(String category, String designation) {
+        String s = addDesignationNS(category, designation);
+        if(!s.equals(""))
+            return s + " ";
+        else
+            return s;
+    }
+
+    private String addDesignationNS(String category, String designation) {
+        if (convertToTint(counters.get(category)) > 2)
+            return designation;
+        else if (convertToTint(counters.get(category)) >= 0)
+            return designation + "?";
+        else
+            return "";
+    }
+
+    public String generateDesignations(Tag[][] matches) throws ScriptException {
+        processTags(matches);
 
         String designation = "";
-        if (convertToTint(counters.get("high goal")) > 2)
-            designation += "S ";
-        else if (convertToTint(counters.get("high goal")) >= 0)
-            designation += "S? ";
-        if (convertToTint(counters.get("low goal")) > 2)
-            designation += "L ";
-        else if (convertToTint(counters.get("low goal")) >= 0)
-            designation += "L? ";
+        designation += addDesignation("high goal", "S");
+        designation += addDesignation("low goal", "L");
+        designation += addDesignation("high goal", "S");
 
         String temp = "B(";
-        if (convertToTint(counters.get("temp carries")) > 2)
-            temp += "C";
-        else if (convertToTint(counters.get("temp carries")) >= 0)
-            temp += "C?";
-        if (convertToTint(counters.get("temp passes")) > 2)
-            temp += "P";
-        else if (convertToTint(counters.get("temp passes")) >= 0)
-            temp += "P?";
-        if (convertToTint(counters.get("temp shoves")) > 2)
-            temp += "S";
-        else if (convertToTint(counters.get("temp shoves")) >= 0)
-            temp += "S?";
+        temp += addDesignation("boulder carries", "C");
+        temp += addDesignation("boulder passes", "P");
+        temp += addDesignation("boulder shoves", "S");
         if (temp.length() > 2)
             designation += temp + ") ";
 
         temp = "O(";
-        System.out.println(designation);
+        temp += addDesignation("lowbar", "L");
+        String temp2 = "A";
+        temp2 += addDesignationNS("portcullis", "p");
+        temp2 += addDesignation("cheval", "c");
+        if(temp2.length() > 1)
+            temp += temp2;
+        temp2 = "B";
+        temp2 += addDesignationNS("moat", "m");
+        temp2 += addDesignation("ramparts", "r");
+        if(temp2.length() > 1)
+            temp += temp2;
+        temp2 = "C";
+        temp2 += addDesignationNS("drawbridge", "d");
+        temp2 += addDesignation("sally", "s");
+        if(temp2.length() > 1)
+            temp += temp2;
+        temp2 = "D";
+        temp2 += addDesignationNS("wall", "w");
+        temp2 += addDesignation("terrain", "t");
+        if(temp2.length() > 1)
+            temp += temp2;
+
+        temp2 = " <";
+        int fails = convertToTint(counters.get("lowbarstuck"));
+        if(fails != 0)
+            temp2 += "L" + fails + " ";
+        String temp3 = "A";
+        fails = convertToTint(counters.get("portcullisstuck"));
+        if(fails > 0)
+            temp3 += "p" + fails;
+        fails = convertToTint(counters.get("chevalstuck"));
+        if(fails > 0)
+            temp3 += "c" + fails;
+        if(temp3.length() > 1)
+            temp2 += temp3 + " ";
+        temp3 = "B";
+        fails = convertToTint(counters.get("moatstuck"));
+        if(fails > 0)
+            temp3 += "m" + fails;
+        fails = convertToTint(counters.get("rampartsstuck"));
+        if(fails > 0)
+            temp3 += "r" + fails;
+        if(temp3.length() > 1)
+            temp2 += temp3 + " ";
+        temp3 = "C";
+        fails = convertToTint(counters.get("drawbridgestuck"));
+        if(fails > 0)
+            temp3 += "d" + fails;
+        fails = convertToTint(counters.get("sallystuck"));
+        if(fails > 0)
+            temp3 += "s" + fails;
+        if(temp3.length() > 1)
+            temp2 += temp3 + " ";
+        temp3 = "D";
+        fails = convertToTint(counters.get("wallstuck"));
+        if(fails > 0)
+            temp3 += "w" + fails;
+        fails = convertToTint(counters.get("terrainstuck"));
+        if(fails > 0)
+            temp3 += "t" + fails;
+        if(temp3.length() > 1)
+            temp2 += temp3 + " ";
+
+        if(temp2.length() > 2)
+            temp += temp2 + ">";
+
+        if (temp.length() > 2)
+            designation += temp + ") ";
+
+        return designation;
     }
 
-    public static Map<String, Integer> processTags(Tag[][] matches) throws ScriptException {
+    private void processTags(Tag[][] matches) throws ScriptException {
         //Added an array contains function because Java's script engine doesn't contain ones
         String containsFunction = "function contains(arr, obj) {\n" +
                 "   for (var i = 0; i < arr.length; i++) {\n" +
@@ -83,9 +165,7 @@ public class TagExpression {
                 "   }\n" +
                 "   return false;\n" +
                 "}\n";
-
-        //Set the current high goal
-        Map<String, Integer> counters = new HashMap<>();
+        counters.clear();
         //Create new ScriptEngine that will process the javascript expression
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("javascript");
         for (Tag[] match : matches) {
@@ -109,10 +189,17 @@ public class TagExpression {
                 }
             }
         }
-        return counters;
     }
 
     private static int convertToTint(Object x) {
         return (x.getClass() == Double.class) ? (int) Math.round((Double) x) : (int) x;
+    }
+
+    public String toString() {
+        String string = "";
+        for (Map.Entry<String, Integer> entry : counters.entrySet()) {
+            string += entry.getKey() + " : " + entry.getValue();
+        }
+        return string;
     }
 }
