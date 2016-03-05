@@ -83,9 +83,10 @@ public class TeamServiceMySQLImpl implements TeamService {
     }
 
     @Override
-    public List<Team> getTeamByNumber(Integer teamNum) {
+    public Team getTeamByNumber(Integer teamNum) {
         String SQL = "SELECT * FROM teams WHERE team = ?";
-        return jdbcTemplateObject.query(SQL, new TeamMapper(), teamNum);
+        List<Team> results = jdbcTemplateObject.query(SQL, new TeamMapper(), teamNum);
+        return (results.size() > 0) ? results.get(0) : null;
     }
 
     @Override
@@ -110,7 +111,7 @@ public class TeamServiceMySQLImpl implements TeamService {
 
     @Override
     public void update(Team team) {
-        Team oldTeam = getTeamByNumber(team.getTeam()).get(0);
+        Team oldTeam = getTeamByNumber(team.getTeam());
         int diff = oldTeam.getTags().size() - team.getTags().size();
         String valuesSting = "team=?, avgscore=?, matches=?", SQL;
         List<Object> values = new ArrayList<>();

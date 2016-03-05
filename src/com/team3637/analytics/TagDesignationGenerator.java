@@ -6,6 +6,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TagDesignationGenerator {
@@ -32,11 +33,13 @@ public class TagDesignationGenerator {
             return "";
     }
 
-    public String generateDesignation(Tag[] tags) throws ScriptException {
+    public String generateDesignation(int teamNum, double avgScore, List<Tag> tags) throws ScriptException {
         processTags(tags);
 
-        String designation = "", temp = "", temp2 = "", temp3 = "";
-        int tempNum = 0;
+        String designation, temp, temp2, temp3;
+        int tempNum;
+
+        designation = "{ " + teamNum + " | " + avgScore + " ";
 
         //Start
         temp = "S(";
@@ -223,10 +226,10 @@ public class TagDesignationGenerator {
         else if (convertToTint(counters.get("unreliable")) == 0)
             designation += "U? ";
 
-        return designation.trim();
+        return designation.trim() + " }";
     }
 
-    private void processTags(Tag[] tags) throws ScriptException {
+    private void processTags(List<Tag>  tags) throws ScriptException {
         //Added an array contains function because Java's script engine doesn't contain ones
         String containsFunction = "function contains(arr, obj) {\n" +
                 "   for (var i = 0; i < arr.length; i++) {\n" +
@@ -240,13 +243,14 @@ public class TagDesignationGenerator {
         //Create new ScriptEngine that will process the javascript expression
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("javascript");
         for (Tag tag : tags) {
-            if (tag.getExpression() != null && !tag.getExpression().equals("") && !tag.getCategory().equals("")) {
+            if (tag.getExpression() != null && !tag.getExpression().equals("") &&
+                    tag.getCategory() != null && !tag.getCategory().equals("")) {
                 if (!counters.containsKey(tag.getCategory()))
                     counters.put(tag.getCategory(), 0);
                 //Set the javascript variable arr equal to the an array of strings of each tag
-                String[] stingTags = new String[tags.length];
-                for (int i = 0; i < tags.length; i++)
-                    stingTags[i] = tags[i].toString();
+                String[] stingTags = new String[tags.size()];
+                for (int i = 0; i < tags.size(); i++)
+                    stingTags[i] = tags.get(i).toString();
                 //Set the javascript variable x equal to the value of highGoal
                 engine.put("x", counters.get(tag.getCategory()));
                 engine.put("arr", stingTags);

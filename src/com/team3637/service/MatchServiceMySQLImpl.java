@@ -94,14 +94,15 @@ public class MatchServiceMySQLImpl implements MatchService {
     }
 
     @Override
-    public List<Match> getForMatchAndTeam(Integer matchNum, Integer teamNum) {
+    public Match getForMatchAndTeam(Integer matchNum, Integer teamNum) {
         String SQL = "SELECT * FROM matches WHERE matchNum = ? AND team = ?";
-        return jdbcTemplateObject.query(SQL, new MatchMapper(), matchNum, teamNum);
+        List<Match> results = jdbcTemplateObject.query(SQL, new MatchMapper(), matchNum, teamNum);
+        return (results.size() > 0) ? results.get(0) : null;
     }
 
     @Override
     public void update(Match match) {
-        Match oldMatch = getForMatchAndTeam(match.getMatchNum(), match.getTeam()).get(0);
+        Match oldMatch = getForMatchAndTeam(match.getMatchNum(), match.getTeam());
         int diff = oldMatch.getTags().size() - match.getTags().size();
         String valuesSting = "matchNum=?, team=?, score=?", SQL;
         SQL = "SELECT `score` FROM matches WHERE `matchNum` = ? AND `team` = ?";

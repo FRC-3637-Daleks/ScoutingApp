@@ -369,10 +369,7 @@ public class TagServiceMySQLImpl implements TagService {
                 tag.setTag(record.get(1));
                 tag.setType(record.get(2));
                 tag.setCategory(record.get(3));
-                String expression = record.get(4);
-                expression = expression.replace(" ", "");
-                expression = expression.replace("\n", "");
-                tag.setExpression(expression);
+                tag.setExpression(record.get(4).replace("\n", ""));
                 if(checkForTag(tag))
                     update(tag);
                 else
