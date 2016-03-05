@@ -21,53 +21,7 @@
 </nav>
 <div class="main container">
     <div class="container text-left">
-        <a class="btn btn-default" href="${pageContext.request.contextPath}/io/bundle.zip" download>Export Bundle</a>
-        <form action="${pageContext.request.contextPath}/io/bundle.zip" method="post" class="form-inline"
-              enctype="multipart/form-data">
-            <label for="bundle">Import Bundle</label>
-            <input type="file" name="file" id="bundle"/>
-            <input class="btn btn-default" type="submit" value="Upload">
-        </form>
-    </div>
-    <div class="container text-left">
-        <a class="btn btn-default" href="${pageContext.request.contextPath}/io/schedule.csv" download>Export
-            Schedule</a>
-        <form action="${pageContext.request.contextPath}/io/schedule.csv" method="post" class="form-inline"
-              enctype="multipart/form-data">
-            <label for="schedule">Import Schedule</label>
-            <input type="file" name="file" id="schedule"/>
-            <input class="btn btn-default" type="submit" value="Upload">
-        </form>
-    </div>
-    <div class="container text-left">
-        <a class="btn btn-default" href="${pageContext.request.contextPath}/io/matches.csv" download>Export
-            Matches</a>
-        <form action="${pageContext.request.contextPath}/io/matches.csv" method="post" class="form-inline"
-              enctype="multipart/form-data">
-            <label for="matches">Import Matches</label>
-            <input type="file" name="file" id="matches"/>
-            <input class="btn btn-default" type="submit" value="Upload">
-        </form>
-    </div>
-    <div class="container text-left">
-        <a class="btn btn-default" href="${pageContext.request.contextPath}/io/teams.csv" download>Export
-            Teams</a>
-        <form action="${pageContext.request.contextPath}/io/teams.csv" method="post" class="form-inline"
-              enctype="multipart/form-data">
-            <label for="teams">Import Teams</label>
-            <input type="file" name="file" id="teams"/>
-            <input class="btn btn-default" type="submit" value="Upload">
-        </form>
-    </div>
-    <div class="container text-left">
-        <a class="btn btn-default" href="${pageContext.request.contextPath}/io/tags.csv" download>Export
-            Tags</a>
-        <form action="${pageContext.request.contextPath}/io/tags.csv" method="post" class="form-inline"
-              enctype="multipart/form-data">
-            <label for="tags">Import Tags</label>
-            <input type="file" name="file" id="tags"/>
-            <input class="btn btn-default" type="submit" value="Upload">
-        </form>
+        <a class="btn btn-default" href="${pageContext.request.contextPath}/analytics/designations.txt" download>Generate Designations</a>
     </div>
 </div>
 </body>
