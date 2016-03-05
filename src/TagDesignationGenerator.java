@@ -20,7 +20,7 @@ public class TagDesignationGenerator {
                                 "else if (contains(arr, 'high goal fair shot')) {(x < 0) ? x = 0 : x++} " +
                                 "else if (contains(arr, 'high goal poor shot')) {x--}"),
                 new Tag("high goal poor shot", "match", "high goal", null),
-                },
+        },
                 new Tag[]{
                         new Tag("high goal fast", "match", "high goal",
                                 "if (contains(arr, 'high goal great shot')) {(x < 0) ? x = 1 : x += 2} " +
@@ -52,7 +52,7 @@ public class TagDesignationGenerator {
 
     private String addDesignation(String category, String designation) {
         String s = addDesignationNS(category, designation);
-        if(!s.equals(""))
+        if (!s.equals(""))
             return s + " ";
         else
             return s;
@@ -70,89 +70,195 @@ public class TagDesignationGenerator {
     public String generateDesignations(Tag[][] matches) throws ScriptException {
         processTags(matches);
 
-        String designation = "";
-        designation += addDesignation("high goal", "S");
-        designation += addDesignation("low goal", "L");
-        designation += addDesignation("high goal", "S");
+        String designation = "", temp = "", temp2 = "", temp3 = "";
+        int tempNum = 0;
 
-        String temp = "B(";
+        //Start
+        temp = "S(";
+        if (convertToTint(counters.get("boulder")) > 0)
+            temp += "B" + convertToTint(counters.get("boulder")) + " ";
+        if (convertToTint(counters.get("spybox")) > 0)
+            temp += "S" + convertToTint(counters.get("spybox")) + " ";
+        if (convertToTint(counters.get("neutral")) > 0)
+            temp += "N" + convertToTint(counters.get("neutral")) + " ";
+        if (temp.length() > 2)
+            designation += temp.trim() + ") ";
+
+        //Auton
+        temp = " A(";
+        tempNum = convertToTint(counters.get("auto carry"));
+        if (tempNum > 0)
+            temp += "B" + tempNum + " ";
+        tempNum = convertToTint(counters.get("auto high goal"));
+        if (tempNum > 0)
+            temp += "Hs" + tempNum + " ";
+        tempNum = convertToTint(counters.get("auto high fail"));
+        if (tempNum > 0)
+            temp += "Hf" + tempNum + " ";
+        tempNum = convertToTint(counters.get("auto low goal"));
+        if (tempNum > 0)
+            temp += "Ls" + tempNum + " ";
+        tempNum = convertToTint(counters.get("auto low fail"));
+        if (tempNum > 0)
+            temp += "Lf" + tempNum + " ";
+        temp2 = "C(";
+        tempNum = convertToTint(counters.get("auto cross l"));
+        if (tempNum > 0)
+            temp2 += "l" + tempNum + " ";
+        tempNum = convertToTint(counters.get("auto cross p"));
+        if (tempNum > 0)
+            temp2 += "p" + tempNum + " ";
+        tempNum = convertToTint(counters.get("auto cross c"));
+        if (tempNum > 0)
+            temp2 += "c" + tempNum + " ";
+        tempNum = convertToTint(counters.get("auto cross m"));
+        if (tempNum > 0)
+            temp2 += "m" + tempNum + " ";
+        tempNum = convertToTint(counters.get("auto cross r"));
+        if (tempNum > 0)
+            temp2 += "r" + tempNum + " ";
+        tempNum = convertToTint(counters.get("auto cross d"));
+        if (tempNum > 0)
+            temp2 += "d" + tempNum + " ";
+        tempNum = convertToTint(counters.get("auto cross s"));
+        if (tempNum > 0)
+            temp2 += "s" + tempNum + " ";
+        tempNum = convertToTint(counters.get("auto cross w"));
+        if (tempNum > 0)
+            temp2 += "w" + tempNum + " ";
+        tempNum = convertToTint(counters.get("auto cross t"));
+        if (tempNum > 0)
+            temp2 += "t" + tempNum + " ";
+        if (temp2.length() > 2)
+            temp += temp2.trim() + ") ";
+        if (temp.length() > 2)
+            designation += temp.trim() + ") ";
+
+        //Outerworks
+        temp = "O(";
+        temp += addDesignation("lowbar", "L");
+        temp2 = "A";
+        temp2 += addDesignation("portcullis", "p");
+        temp2 += addDesignation("cheval", "c");
+        if (temp2.length() > 1)
+            temp += temp2;
+        temp2 = "B";
+        temp2 += addDesignation("moat", "m");
+        temp2 += addDesignation("ramparts", "r");
+        if (temp2.length() > 1)
+            temp += temp2;
+        temp2 = "C";
+        temp2 += addDesignation("drawbridge", "d");
+        temp2 += addDesignation("sally", "s");
+        if (temp2.length() > 1)
+            temp += temp2;
+        temp2 = "D";
+        temp2 += addDesignation("wall", "w");
+        temp2 += addDesignation("terrain", "t");
+        if (temp2.length() > 1)
+            temp += temp2;
+        temp2 = " <";
+        tempNum = convertToTint(counters.get("low bar stuck"));
+        if (tempNum > 0)
+            temp2 += "L" + tempNum + " ";
+        temp3 = "A";
+        tempNum = convertToTint(counters.get("portcullis stuck"));
+        if (tempNum > 0)
+            temp3 += "p" + tempNum + " ";
+        tempNum = convertToTint(counters.get("cheval stuck"));
+        if (tempNum > 0)
+            temp3 += "c" + tempNum + " ";
+        if (temp3.length() > 1)
+            temp2 += temp3.trim() + " ";
+        temp3 = "B";
+        tempNum = convertToTint(counters.get("moat stuck"));
+        if (tempNum > 0)
+            temp3 += "m" + tempNum + " ";
+        tempNum = convertToTint(counters.get("ramparts stuck"));
+        if (tempNum > 0)
+            temp3 += "r" + tempNum + " ";
+        if (temp3.length() > 1)
+            temp2 += temp3.trim() + " ";
+        temp3 = "C";
+        tempNum = convertToTint(counters.get("drawbridge stuck"));
+        if (tempNum > 0)
+            temp3 += "d" + tempNum + " ";
+        tempNum = convertToTint(counters.get("sally stuck"));
+        if (tempNum > 0)
+            temp3 += "s" + tempNum + " ";
+        if (temp3.length() > 1)
+            temp2 += temp3.trim() + " ";
+        temp3 = "D";
+        tempNum = convertToTint(counters.get("rock wall stuck"));
+        if (tempNum > 0)
+            temp3 += "w" + tempNum + " ";
+        tempNum = convertToTint(counters.get("rough terrain stuck"));
+        if (tempNum > 0)
+            temp3 += "t" + tempNum + " ";
+        if (temp3.length() > 1)
+            temp2 += temp3.trim() + " ";
+        if (temp2.length() > 2)
+            temp += temp2.trim() + ">";
+        if (temp.length() > 2)
+            designation += temp.trim() + ") ";
+
+        //Boulder
+        temp = "B(";
         temp += addDesignation("boulder carries", "C");
         temp += addDesignation("boulder passes", "P");
         temp += addDesignation("boulder shoves", "S");
         if (temp.length() > 2)
             designation += temp + ") ";
 
-        temp = "O(";
-        temp += addDesignation("lowbar", "L");
-        String temp2 = "A";
-        temp2 += addDesignationNS("portcullis", "p");
-        temp2 += addDesignation("cheval", "c");
-        if(temp2.length() > 1)
-            temp += temp2;
-        temp2 = "B";
-        temp2 += addDesignationNS("moat", "m");
-        temp2 += addDesignation("ramparts", "r");
-        if(temp2.length() > 1)
-            temp += temp2;
-        temp2 = "C";
-        temp2 += addDesignationNS("drawbridge", "d");
-        temp2 += addDesignation("sally", "s");
-        if(temp2.length() > 1)
-            temp += temp2;
-        temp2 = "D";
-        temp2 += addDesignationNS("wall", "w");
-        temp2 += addDesignation("terrain", "t");
-        if(temp2.length() > 1)
-            temp += temp2;
+        //Low goal
+        designation += addDesignation("low goal", "L");
 
-        temp2 = " <";
-        int fails = convertToTint(counters.get("lowbarstuck"));
-        if(fails != 0)
-            temp2 += "L" + fails + " ";
-        String temp3 = "A";
-        fails = convertToTint(counters.get("portcullisstuck"));
-        if(fails > 0)
-            temp3 += "p" + fails;
-        fails = convertToTint(counters.get("chevalstuck"));
-        if(fails > 0)
-            temp3 += "c" + fails;
-        if(temp3.length() > 1)
-            temp2 += temp3 + " ";
-        temp3 = "B";
-        fails = convertToTint(counters.get("moatstuck"));
-        if(fails > 0)
-            temp3 += "m" + fails;
-        fails = convertToTint(counters.get("rampartsstuck"));
-        if(fails > 0)
-            temp3 += "r" + fails;
-        if(temp3.length() > 1)
-            temp2 += temp3 + " ";
-        temp3 = "C";
-        fails = convertToTint(counters.get("drawbridgestuck"));
-        if(fails > 0)
-            temp3 += "d" + fails;
-        fails = convertToTint(counters.get("sallystuck"));
-        if(fails > 0)
-            temp3 += "s" + fails;
-        if(temp3.length() > 1)
-            temp2 += temp3 + " ";
-        temp3 = "D";
-        fails = convertToTint(counters.get("wallstuck"));
-        if(fails > 0)
-            temp3 += "w" + fails;
-        fails = convertToTint(counters.get("terrainstuck"));
-        if(fails > 0)
-            temp3 += "t" + fails;
-        if(temp3.length() > 1)
-            temp2 += temp3 + " ";
+        //High goal
+        designation += addDesignation("high goal", "S");
 
-        if(temp2.length() > 2)
-            temp += temp2 + ">";
-
+        //Defender
+        temp = "D(";
+        temp += addDesignation("defender ground", "G");
+        temp += addDesignation("defender air", "A");
         if (temp.length() > 2)
-            designation += temp + ") ";
+            designation += temp.trim() + ") ";
 
-        return designation;
+        //Drivers
+        designation += addDesignation("drivers", "V");
+
+        //Human player
+        temp = "H(";
+        temp += addDesignation("bowling", "B");
+        temp += addDesignation("spy", "S");
+        if (temp.length() > 2)
+            designation += temp.trim() + ") ";
+
+        //End game
+        temp = "E(";
+        if (convertToTint(counters.get("challenges")) > 0)
+            temp += "Ch" + convertToTint(counters.get("challenges")) + " ";
+        if (convertToTint(counters.get("climbs")) > 0)
+            temp += "Cl" + convertToTint(counters.get("climbs")) + " ";
+        if (convertToTint(counters.get("wins")) > 0)
+            temp += "W" + convertToTint(counters.get("wins")) + " ";
+        if (convertToTint(counters.get("loses")) > 0)
+            temp += "L" + convertToTint(counters.get("loses")) + " ";
+        if (temp.length() > 2)
+            designation += temp.trim() + ") ";
+
+        //Toughness
+        if (convertToTint(counters.get("tough")) > 1)
+            designation += "T ";
+        else if (convertToTint(counters.get("tough")) == 0)
+            designation += "T? ";
+
+        //Unreliability
+        if (convertToTint(counters.get("unreliable")) > 1)
+            designation += "U ";
+        else if (convertToTint(counters.get("unreliable")) == 0)
+            designation += "U? ";
+
+        return designation.trim();
     }
 
     private void processTags(Tag[][] matches) throws ScriptException {
@@ -192,6 +298,8 @@ public class TagDesignationGenerator {
     }
 
     private static int convertToTint(Object x) {
+        if (x == null)
+            return -1;
         return (x.getClass() == Double.class) ? (int) Math.round((Double) x) : (int) x;
     }
 
