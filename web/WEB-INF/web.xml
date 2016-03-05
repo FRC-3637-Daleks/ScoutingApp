@@ -58,4 +58,15 @@
         <servlet-name>io</servlet-name>
         <url-pattern>/io/*</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>analytics</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>analytics</servlet-name>
+        <url-pattern>/analytics/*</url-pattern>
+    </servlet-mapping>
 </web-app>
