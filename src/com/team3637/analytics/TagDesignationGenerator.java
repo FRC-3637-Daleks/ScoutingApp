@@ -33,13 +33,13 @@ public class TagDesignationGenerator {
             return "";
     }
 
-    public String generateDesignation(int teamNum, double avgScore, List<Tag> tags) throws ScriptException {
+    public String generateDesignation(int teamNum, double avgScore, List<Tag> tags) {
         processTags(tags);
 
         String designation, temp, temp2, temp3;
         int tempNum;
 
-        designation = "{ " + teamNum + " | " + avgScore + " ";
+        designation = "{ " + teamNum + " | " + avgScore + " - ";
 
         //Start
         temp = "S(";
@@ -229,7 +229,7 @@ public class TagDesignationGenerator {
         return designation.trim() + " }";
     }
 
-    private void processTags(List<Tag>  tags) throws ScriptException {
+    private void processTags(List<Tag>  tags) {
         //Added an array contains function because Java's script engine doesn't contain ones
         String containsFunction = "function contains(arr, obj) {\n" +
                 "   for (var i = 0; i < arr.length; i++) {\n" +
@@ -255,7 +255,11 @@ public class TagDesignationGenerator {
                 engine.put("x", counters.get(tag.getCategory()));
                 engine.put("arr", stingTags);
                 //Evaluated to javascript expression
-                engine.eval(containsFunction + tag.getExpression());
+                try {
+                    engine.eval(containsFunction + tag.getExpression());
+                } catch (ScriptException e) {
+                    System.err.println("Tag error: " + tag.getTag());
+                }
                 //Retrieve the value of x
                 Object x = engine.get("x");
                 //Convert the java Object x into an int set highGoal equal to that value

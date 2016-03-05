@@ -34,40 +34,22 @@ public class AnalyticsController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String root() {
-        return "redirect:/";
-    }
-
-    @RequestMapping(value = "/designations", method = RequestMethod.GET)
-    public String designations() {
-
-        String designations;
-        List<Match> matches = matchService.getMatches();
-        for(Match match : matches) {
-
-        }
-
         return "designations";
     }
 
 
-    @RequestMapping(value = "/designations/gen", method = RequestMethod.GET)
+    @RequestMapping(value = "/designations.txt", method = RequestMethod.GET)
     @ResponseBody
     public String generateDesignations() {
-
         String designations = "";
         List<Match> matches = matchService.getMatches();
-        try {
-            for(Match match : matches) {
-                List<Tag> tags = new ArrayList<>();
-                Team team = teamService.getTeamByNumber(match.getTeam());
-                for(String tag : match.getTags())
-                    tags.add(tagService.getTagByName(tag));
-                designations += designationGenerator.generateDesignation(team.getTeam(), team.getAvgscore(), tags) + "\n";
-            }
-        } catch (ScriptException e) {
-            e.printStackTrace();
+        for (Match match : matches) {
+            List<Tag> tags = new ArrayList<>();
+            Team team = teamService.getTeamByNumber(match.getTeam());
+            for (String tag : match.getTags())
+                tags.add(tagService.getTagByName(tag));
+            designations += designationGenerator.generateDesignation(team.getTeam(), team.getAvgscore(), tags) + "\n";
         }
-
         return designations;
     }
 }
