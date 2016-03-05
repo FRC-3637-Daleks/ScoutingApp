@@ -85,7 +85,7 @@ public class TagDesignationGenerator {
             designation += temp.trim() + ") ";
 
         //Auton
-        temp = " A(";
+        temp = "A(";
         tempNum = convertToTint(counters.get("auto carry"));
         if (tempNum > 0)
             temp += "B" + tempNum + " ";
