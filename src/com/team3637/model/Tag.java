@@ -13,6 +13,11 @@ public class Tag {
         this.expression = expression;
     }
 
+    public Tag(String tag, String type) {
+        this.tag = tag;
+        this.type = type;
+    }
+
     public int getId() {
         return id;
     }
