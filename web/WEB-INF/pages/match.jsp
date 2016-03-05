@@ -70,7 +70,7 @@
 <script>
     //Load existing match and team tags for this team
     var usedTeamTags = [
-        <c:forEach var="tag" items="${teamTags}">
+        <c:forEach var="tag" items="${team.tags}">
         "${tag}",
         </c:forEach>
     ];
