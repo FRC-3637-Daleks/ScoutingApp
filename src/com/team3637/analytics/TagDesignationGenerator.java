@@ -39,7 +39,7 @@ public class TagDesignationGenerator {
         String designation, temp, temp2, temp3;
         int tempNum;
 
-        designation = "{ " + teamNum + " | " + avgScore + " - ";
+        designation = "{ " + teamNum + " | " + String.format("%.2f", avgScore) + " - ";
 
         //Start
         temp = "S(";
@@ -243,14 +243,18 @@ public class TagDesignationGenerator {
         //Create new ScriptEngine that will process the javascript expression
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("javascript");
         for (Tag tag : tags) {
-            if (tag.getExpression() != null && !tag.getExpression().equals("") &&
-                    tag.getCategory() != null && !tag.getCategory().equals("")) {
+            if (tag != null &&
+                    tag.getExpression() != null &&
+                    !tag.getExpression().equals("") &&
+                    tag.getCategory() != null &&
+                    !tag.getCategory().equals("")) {
                 if (!counters.containsKey(tag.getCategory()))
                     counters.put(tag.getCategory(), 0);
                 //Set the javascript variable arr equal to the an array of strings of each tag
                 String[] stingTags = new String[tags.size()];
                 for (int i = 0; i < tags.size(); i++)
-                    stingTags[i] = tags.get(i).toString();
+                    if(tags.get(i) != null)
+                        stingTags[i] = tags.get(i).toString();
                 //Set the javascript variable x equal to the value of highGoal
                 engine.put("x", counters.get(tag.getCategory()));
                 engine.put("arr", stingTags);

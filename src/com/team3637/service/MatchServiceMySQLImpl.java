@@ -77,20 +77,20 @@ public class MatchServiceMySQLImpl implements MatchService {
 
     @Override
     public List<Match> getMatches() {
-        String SQL = "SELECT * FROM matches";
+        String SQL = "SELECT * FROM matches ORDER BY team ASC ";
         return jdbcTemplateObject.query(SQL, new MatchMapper());
     }
 
     @Override
-    public List<Match> getForMatch(Integer teamNum) {
+    public List<Match> getForTeam(Integer teamNum) {
         String SQL = "SELECT * FROM matches WHERE team = ?";
         return jdbcTemplateObject.query(SQL, new MatchMapper(), teamNum);
     }
 
     @Override
-    public List<Match> getForTeam(Integer matchNum) {
+    public List<Match> getForMatch(Integer matchNum) {
         String SQL = "SELECT * FROM matches WHERE matchNum = ?";
-        return jdbcTemplateObject.query(SQL, new MatchMapper());
+        return jdbcTemplateObject.query(SQL, new MatchMapper(), matchNum);
     }
 
     @Override

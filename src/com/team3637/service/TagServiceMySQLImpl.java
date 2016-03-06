@@ -8,6 +8,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -57,7 +58,13 @@ public class TagServiceMySQLImpl implements TagService {
     @Override
     public Tag getTagByName(String name) {
         String SQL = "SELECT * FROM tags WHERE tag = ?";
-        return jdbcTemplateObject.queryForObject(SQL, new TagMapper(), name);
+        Tag tag = null;
+        try {
+            tag = jdbcTemplateObject.queryForObject(SQL, new TagMapper(), name);
+        } catch (IncorrectResultSizeDataAccessException e) {
+            System.err.println("Could not find tag: " + name);
+        }
+        return tag;
     }
 
     @Override
