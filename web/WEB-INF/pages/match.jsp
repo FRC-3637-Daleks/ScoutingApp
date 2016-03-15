@@ -51,13 +51,20 @@
             <div class="row data-row">
                 <div class="col-md-6">
                     <label for="matchTags">Match Tags <span id="matchTagsErr" class="error"></span></label>
-                    <input type="text" class="form-control" id="matchTags" data-limit="50"
-                           name="matchTags" data-error="#matchTagsErr" required/>
+                    <select id="matchTags" class="chosen-select" name="matchTags"
+                            data-error="#matchTagsErr" multiple required>
+                        <c:forEach var="tag" items="${matchTags}">
+                            <option value="${tag}">${tag}</option>
+                        </c:forEach>
+                    </select>
                 </div>
                 <div class="col-md-6">
                     <label for="teamTags">Team Tags <span id="teamTagsErr" class="error"></span></label>
-                    <input type="text" class="form-control" id="teamTags" data-limit="50"
-                           name="teamTags" disabled/>
+                    <select id="teamTags" class="chosen-select" multiple disabled>
+                        <c:forEach var="tag" items="${teamTags}">
+                            <option value="${tag}">${tag}</option>
+                        </c:forEach>
+                    </select>
                 </div>
             </div>
             <div class="row data-row">
@@ -77,13 +84,9 @@
     </form:form>
 </div>
 <script>
-    var matchTags = [
-        <c:forEach var="tag" items="${matchTags}">
-        "${tag}",
-        </c:forEach>
-    ];
-    var teamTags = [
-        <c:forEach var="tag" items="${teamTags}">
+    //Load existing match and team tags for this team
+    var usedTeamTags = [
+        <c:forEach var="tag" items="${team.tags}">
         "${tag}",
         </c:forEach>
     ];
@@ -94,18 +97,21 @@
     ];
 </script>
 <script>
-    $('#matchTags').tokenfield({
-        autocomplete: {
-            source: matchTags,
-            delay: 100
-        },
-        showAutocompleteOnFocus: true
-    }).tokenfield('setTokens', usedMatchTags);
-    $('#teamTags').tokenfield({
-        autocomplete: {
-            source: teamTags
-        }
-    }).tokenfield('setTokens', teamTags);
+    //Initalized the chosen widgets and set their options
+    $('#matchTags').val(usedMatchTags).chosen({
+        enable_split_word_search: false,
+        max_selected_options: 50,
+        no_results_text: 'No tags match',
+        placeholder_text_multiple: 'Select some tags',
+        single_backstroke_delete: false,
+        width: '100%'
+    });
+    $('#teamTags').val(usedTeamTags).chosen({width: '100%'});
+    $('#teamTags_chosen').removeClass('chosen-disabled');
+</script>
+<script>
+    //Set up the data validator and set it's options
+    $.validator.setDefaults({ ignore: ":hidden:not(.chosen-select)" });
     $('#match').validate({
         rules: {
             score: {

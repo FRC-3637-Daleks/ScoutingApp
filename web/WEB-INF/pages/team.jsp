@@ -53,12 +53,20 @@
         <div class="row data-row">
             <div class="col-md-6">
                 <label for="matchTags">Match Tags</label>
-                <input type="text" class="form-control" id="matchTags" name="matchTags" disabled/>
+                <select id="matchTags" class="chosen-select" multiple disabled>
+                    <c:forEach var="tag" items="${matchTags}">
+                        <option value="${tag}">${tag}</option>
+                    </c:forEach>
+                </select>
             </div>
             <div class="col-md-6">
                 <label for="teamTags">Team Tags <span id="teamTagsErr" class="error"></span></label>
-                <input type="text" class="form-control" id="teamTags"
-                       name="teamTags" data-error="#teamTagsErr"/>
+                <select id="teamTags" class="chosen-select" name="teamTags"
+                        data-error="#teamTagsErr" multiple required>
+                    <c:forEach var="tag" items="${teamTags}">
+                        <option value="${tag}">${tag}</option>
+                    </c:forEach>
+                </select>
             </div>
         </div>
     </div>
@@ -98,19 +106,21 @@
 
 </script>
 <script>
-    $('#matchTags').tokenfield({
-        autocomplete: {
-            delay: 100
-        },
-        showAutocompleteOnFocus: true
-    }).tokenfield('setTokens', usedMatchTags);
-    $('#teamTags').tokenfield({
-        autocomplete: {
-            source: teamTags,
-            delay: 100
-        },
-        showAutocompleteOnFocus: true
-    }).tokenfield('setTokens', usedTeamTags);
+    //Initalized the chosen widgets and set their options
+    $('#matchTags').val(usedMatchTags).chosen({width: '100%'});
+    $('#matchTags_chosen').removeClass('chosen-disabled');
+    $('#teamTags').val(usedTeamTags).chosen({
+        enable_split_word_search: false,
+        max_selected_options: 50,
+        no_results_text: 'No tags match',
+        placeholder_text_multiple: 'Select some tags',
+        single_backstroke_delete: false,
+        width: '100%'
+    });
+</script>
+<script>
+    //Set up the data validator and set it's options
+    $.validator.setDefaults({ ignore: ":hidden:not(.chosen-select)" });
     $('#team').validate({
         messages: {
             teamTags: "(Please enter at least 1 tag)"

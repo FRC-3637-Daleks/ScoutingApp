@@ -32,7 +32,7 @@ public interface TeamService extends Service {
 
     List<Team> getTeams();
 
-    List<Team> getTeamByNumber(Integer teamNum);
+    Team getTeamByNumber(Integer teamNum);
 
     Double[] getScoreRange();
 

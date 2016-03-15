@@ -17,14 +17,15 @@
 package com.team3637.model;
 
 public class Tag {
-    int id;
-    String tag, type, expression;
+    private int id;
+    private String tag, type, category, expression;
 
     public Tag() {}
 
-    public Tag(String tag, String type, String expression) {
+    public Tag(String tag, String type, String category, String expression) {
         this.tag = tag;
         this.type = type;
+        this.category = category;
         this.expression = expression;
     }
 
@@ -57,11 +58,24 @@ public class Tag {
         this.type = type;
     }
 
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
     public String getExpression() {
         return expression;
     }
 
     public void setExpression(String expression) {
         this.expression = expression;
+    }
+
+    @Override
+    public String toString() {
+        return tag;
     }
 }

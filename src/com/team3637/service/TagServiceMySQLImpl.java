@@ -24,6 +24,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -54,10 +55,11 @@ public class TagServiceMySQLImpl implements TagService {
 
     @Override
     public void create(Tag tag) {
-        String fieldsSting = "tag, type, expression", valuesSting = "?, ?, ?", SQL;
+        String fieldsSting = "tag, type, category, expression", valuesSting = "?, ?, ?, ?", SQL;
         List<Object> values = new ArrayList<>();
         values.add(tag.getTag());
         values.add(tag.getType());
+        values.add(tag.getCategory());
         values.add(tag.getExpression());
         SQL = "INSERT INTO tags (" + fieldsSting + ") VALUES (" + valuesSting + ");";
         jdbcTemplateObject.update(SQL, values.toArray());
@@ -72,7 +74,13 @@ public class TagServiceMySQLImpl implements TagService {
     @Override
     public Tag getTagByName(String name) {
         String SQL = "SELECT * FROM tags WHERE tag = ?";
-        return jdbcTemplateObject.queryForObject(SQL, new TagMapper(), name);
+        Tag tag = null;
+        try {
+            tag = jdbcTemplateObject.queryForObject(SQL, new TagMapper(), name);
+        } catch (IncorrectResultSizeDataAccessException e) {
+            System.err.println("Could not find tag: " + name);
+        }
+        return tag;
     }
 
     @Override
@@ -285,11 +293,12 @@ public class TagServiceMySQLImpl implements TagService {
 
     @Override
     public void update(Tag tag) {
-        String valuesSting = "id=?, tag=?, type=?, expression=?", SQL;
+        String valuesSting = "id=?, tag=?, type=?, category=?, expression=?", SQL;
         List<Object> values = new ArrayList<>();
         values.add(tag.getId());
         values.add(tag.getTag());
         values.add(tag.getType());
+        values.add(tag.getCategory());
         values.add(tag.getExpression());
         SQL = "UPDATE tags SET " + valuesSting + " WHERE id=" + tag.getId() + ";";
         jdbcTemplateObject.update(SQL, values.toArray());
@@ -382,7 +391,8 @@ public class TagServiceMySQLImpl implements TagService {
                 tag.setId(Integer.parseInt(record.get(0)));
                 tag.setTag(record.get(1));
                 tag.setType(record.get(2));
-                tag.setExpression(record.get(3));
+                tag.setCategory(record.get(3));
+                tag.setExpression(record.get(4).replace("\n", ""));
                 if(checkForTag(tag))
                     update(tag);
                 else

@@ -34,7 +34,7 @@ public interface MatchService extends Service {
 
     List<Match> getForTeam(Integer matchNum);
 
-    List<Match> getForMatchAndTeam(Integer matchNum, Integer teamNum);
+    Match getForMatchAndTeam(Integer matchNum, Integer teamNum);
 
     void update(Match match);
 

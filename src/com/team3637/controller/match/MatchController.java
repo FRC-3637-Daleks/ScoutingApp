@@ -64,22 +64,15 @@ public class MatchController {
                            @RequestParam("matchNum") Integer matchNum,
                            Model model) {
 
-        List<Match> matches = matchService.getForMatchAndTeam(matchNum, teamNum);
-        List<Team> teams = teamService.getTeamByNumber(teamNum);
+        Match match = matchService.getForMatchAndTeam(matchNum, teamNum);
+        Team team = teamService.getTeamByNumber(teamNum);
         List<String> matchTags = matchService.getTags();
         List<String> teamTags = teamService.getTags();
-        Match match;
-        Team team;
-        if (matches.size() == 0) {
+        if(match == null)
             match = new Match();
-        } else {
-            match = matches.get(0);
-        }
-        if (teams.size() == 0) {
+        if (team == null)
             team = new Team();
-        } else {
-            team = teams.get(0);
-        }
+
         model.addAttribute("match", match);
         model.addAttribute("team", team);
         model.addAttribute("teamNum", teamNum);
@@ -97,7 +90,7 @@ public class MatchController {
         if (match.getScore() == null)
             return new ResponseEntity<>("400 - Bad Request", HttpStatus.BAD_REQUEST);
         if (!matchTags.equals(""))
-            match.setTags(new ArrayList<>(new LinkedHashSet<>(Arrays.asList(matchTags.split(", ")))));
+            match.setTags(new ArrayList<>(new LinkedHashSet<>(Arrays.asList(matchTags.split(",")))));
 
         List<String> matchTagsList = matchService.getTags();
         if (match.getTags().size() > matchTagsList.size())

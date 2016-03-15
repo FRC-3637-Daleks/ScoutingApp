@@ -25,6 +25,7 @@
 <link href="${pageContext.request.contextPath}/css/bootstrap-tokenfield.css" rel="stylesheet"/>
 <link href="${pageContext.request.contextPath}/css/jquery-ui.css" rel="stylesheet"/>
 <link href="${pageContext.request.contextPath}/css/bootstrap-slider.css" rel="stylesheet"/>
+<link href="${pageContext.request.contextPath}/css/chosen.css" rel="stylesheet"/>
 <link href="${pageContext.request.contextPath}/css/main.css" rel="stylesheet"/>
 
 <script src="${pageContext.request.contextPath}/js/jquery.min.js"></script>
@@ -34,3 +35,4 @@
 <script src="${pageContext.request.contextPath}/js/jquery.tablesorter.min.js"></script>
 <script src="${pageContext.request.contextPath}/js/jquery.validate.min.js"></script>
 <script src="${pageContext.request.contextPath}/js/bootstrap-slider.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/chosen.jquery.js"></script>

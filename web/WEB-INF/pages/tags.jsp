@@ -46,7 +46,7 @@
     </div>
 </nav>
 <div class="container main">
-    <form:form method="post" action="${pageContext.request.contextPath}/m/tags" modelAttribute="tagWrapper">
+    <form:form id="tags" method="post" action="${pageContext.request.contextPath}/m/tags" modelAttribute="tagWrapper">
         <div>
             <p class="h2">Tags</p>
             <p id="error" class="error"></p>
@@ -55,13 +55,21 @@
             <div class="row data-row">
                 <div class="col-md-6">
                     <label for="matchTags">Match Tags</label>
-                    <input type="text" class="form-control" id="matchTags"
-                           name="matchTags" data-error="#error"/>
+                    <select id="matchTags" class="chosen-select" name="matchTags"
+                            data-error="#error" multiple required>
+                        <c:forEach var="tag" items="${matchTags}">
+                            <option value="${tag}">${tag}</option>
+                        </c:forEach>
+                    </select>
                 </div>
                 <div class="col-md-6">
-                    <label for="teamTags">Team Tags <span id="teamTagsErr" class="error"></span></label>
-                    <input type="text" class="form-control" id="teamTags"
-                           name="teamTags" data-error="#error"/>
+                    <label for="teamTags">Team Tags</label>
+                    <select id="teamTags" class="chosen-select" name="teamTags"
+                            data-error="#error" multiple required>
+                        <c:forEach var="tag" items="${teamTags}">
+                            <option value="${tag}">${tag}</option>
+                        </c:forEach>
+                    </select>
                 </div>
             </div>
             <div class="row data-row">
@@ -85,18 +93,41 @@
     ];
 </script>
 <script>
-    $('#matchTags').tokenfield({
-        autocomplete: {
-            delay: 100
+    //Initalized the chosen widgets and set their options
+    $('#matchTags').val(usedMatchTags).chosen({
+        enable_split_word_search: false,
+        max_selected_options: 50,
+        no_results_text: 'No tags match',
+        placeholder_text_multiple: 'Select some tags',
+        single_backstroke_delete: false,
+        width: '100%'
+    });
+    $('#teamTags').val(usedTeamTags).chosen({
+        enable_split_word_search: false,
+        max_selected_options: 50,
+        no_results_text: 'No tags match',
+        placeholder_text_multiple: 'Select some tags',
+        single_backstroke_delete: false,
+        width: '100%'
+    });
+</script>
+<script>
+    //Set up the data validator and set it's options
+    $.validator.setDefaults({ignore: ":hidden:not(.chosen-select)"});
+    $('#tags').validate({
+        messages: {
+            matchTags: "(Please enter between 1 and 50 tags)",
+            teamTags: "(Please enter between 1 and 50 tags)"
         },
-        showAutocompleteOnFocus: true
-    }).tokenfield('setTokens', usedMatchTags);
-    $('#teamTags').tokenfield({
-        autocomplete: {
-            delay: 100
-        },
-        showAutocompleteOnFocus: true
-    }).tokenfield('setTokens', usedTeamTags);
+        errorPlacement: function (error, element) {
+            var placement = $(element).data('error');
+            if (placement) {
+                $(placement).append(error)
+            } else {
+                error.insertAfter(element);
+            }
+        }
+    });
 </script>
 </body>
 </html>
