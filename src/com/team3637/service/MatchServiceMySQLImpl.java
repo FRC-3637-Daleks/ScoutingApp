@@ -77,7 +77,7 @@ public class MatchServiceMySQLImpl implements MatchService {
 
     @Override
     public List<Match> getMatches() {
-        String SQL = "SELECT * FROM matches";
+        String SQL = "SELECT * FROM matches ORDER BY team ASC ";
         return jdbcTemplateObject.query(SQL, new MatchMapper());
     }
 

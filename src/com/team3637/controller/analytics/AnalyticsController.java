@@ -48,7 +48,10 @@ public class AnalyticsController {
             Team team = teamService.getTeamByNumber(match.getTeam());
             for (String tag : match.getTags())
                 tags.add(tagService.getTagByName(tag));
-            designations += designationGenerator.generateDesignation(team.getTeam(), team.getAvgscore(), tags) + "\n";
+            if(team != null)
+                designations += designationGenerator.generateDesignation(team.getTeam(), team.getAvgscore(), tags) + "\n";
+            else
+                designations += designationGenerator.generateDesignation(match.getTeam(), -1, tags) + "\n";
         }
         return designations;
     }
