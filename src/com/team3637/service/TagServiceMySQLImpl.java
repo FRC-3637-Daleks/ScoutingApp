@@ -1,3 +1,19 @@
+/*Team 3637 Scouting App - An application for data collection/analytics at FIRST competitions
+ Copyright (C) 2016  Team 3637
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.team3637.service;
 
 import com.team3637.mapper.*;
@@ -8,6 +24,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -57,7 +74,13 @@ public class TagServiceMySQLImpl implements TagService {
     @Override
     public Tag getTagByName(String name) {
         String SQL = "SELECT * FROM tags WHERE tag = ?";
-        return jdbcTemplateObject.queryForObject(SQL, new TagMapper(), name);
+        Tag tag = null;
+        try {
+            tag = jdbcTemplateObject.queryForObject(SQL, new TagMapper(), name);
+        } catch (IncorrectResultSizeDataAccessException e) {
+            System.err.println("Could not find tag: " + name);
+        }
+        return tag;
     }
 
     @Override
