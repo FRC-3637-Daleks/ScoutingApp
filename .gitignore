@@ -12,6 +12,6 @@
 
 *.iml
 .idea/
-/out/
-
-
+out/
+build/
+dist/
