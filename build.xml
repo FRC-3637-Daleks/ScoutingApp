@@ -26,6 +26,10 @@
         <javac srcdir="${src.dir}" destdir="${build.dir}">
             <classpath refid="compile.classpath"/>
         </javac>
+        <mkdir dir="${build.dir}/com/team3637/scripts"/>
+        <copy todir="${build.dir}/com/team3637/scripts">
+            <fileset dir="${src.dir}/com/team3637/scripts" includes="**"/>
+        </copy>
     </target>
 
     <target name="dist" depends="compile">
