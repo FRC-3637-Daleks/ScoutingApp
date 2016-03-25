@@ -10,8 +10,9 @@ RUN mkdir /tmp/ScoutingApp
 WORKDIR /tmp/ScoutingApp
 RUN git clone https://github.com/FRC-3637-Daleks/ScoutingApp.git .
 RUN ant
-COPY /tmp/ScoutingApp/dist/ScoutingApp.war /tomcat8/webapps/ScoutingApp.war
+COPY dist/ScoutingApp.war /tomcat8/webapps/ScoutingApp.war
+COPY docker-run.sh /tomcat8/run.sh
 WORKDIR /tomcat8
 RUN rm -rf /tmp/ScoutingApp
 
-CMD /run.sh
+CMD run.sh
