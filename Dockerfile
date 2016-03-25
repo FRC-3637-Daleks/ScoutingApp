@@ -15,4 +15,4 @@ COPY docker-run.sh /tomcat8/run.sh
 WORKDIR /tomcat8
 RUN rm -rf /tmp/ScoutingApp
 
-CMD run.sh
+CMD /tomcat8/run.sh
