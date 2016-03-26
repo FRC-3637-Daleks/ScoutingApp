@@ -12,34 +12,34 @@ A new scouting app for a new year
 
 ### Deploy
 #### With Docker
-Pull the image `docker pull team3637/scoutingapp`
+ - Pull the image `docker pull team3637/scoutingapp`
 
 ###### Or
-Clone the repo as done above and cd into it
-Build the image `docker build - t team3637/scoutingapp .`
+- Clone the repo as done above and cd into it
+- Build the image `docker build - t team3637/scoutingapp .`
 
 ###### Then
-Create a volume to store presistant dat `docker volume create --name scoutingapp`
-Run the image `docker run -it -p 80:80 -v scoutingapp:/var/lib/mysql team3637/scoutingapp`
-Note spaw `-it` for `-d` to run as a daemon
+- Create a volume to store presistant dat `docker volume create --name scoutingapp`
+- Run the image `docker run -it -p 80:80 -v scoutingapp:/var/lib/mysql team3637/scoutingapp`
+- Note spaw `-it` for `-d` to run as a daemon
 
 #### Manually
 ##### Install Required Software
-Install <a href="https://tomcat.apache.org/download-80.cgi">Apache Tomcat</a>
-Install <a href="https://dev.mysql.com/downloads/mysql/">MySQL Community Server</a>
+- Install <a href="https://tomcat.apache.org/download-80.cgi">Apache Tomcat</a>
+- Install <a href="https://dev.mysql.com/downloads/mysql/">MySQL Community Server</a>
 
 ##### Setup Database
-Open command line and run `mysql -u root -p`
-Type the password you set during installation
-Enter the following commands
+- Open command line and run `mysql -u root -p`
+- Type the password you set during installation
+- Enter the following commands
  - `CREATE USER 'team3637'@'localhost' IDENTIFIED BY 'turing';`
  - `create schema scoutingtags;`
  - `grant all on scoutingtags.* to 'team3637'@'localhost';`
  - `exit;`
 
 ##### Install Scouting App
-Build the app as specified above
-Copy `dist/ScoutingApp.war` into tomcat's `webapps` directory
-Start MySQL
-Start tomcat
-All done!
+- Build the app as specified above
+- Copy `dist/ScoutingApp.war` into tomcat's `webapps` directory
+- Start MySQL
+- Start tomcat
+- All done!
