@@ -19,7 +19,9 @@ Clone the repo as done above and cd into it
 Build the image `docker build - t team3637/scoutingapp .`
 
 ###### Then
-Run the image `docker run -it -p 80:80 team3637/scoutingapp`
+Create a volume to store presistant dat `docker volume create --name scoutingapp`
+Run the image `docker run -it -p 80:80 -v scoutingapp:/var/lib/mysql team3637/scoutingapp`
+Note spaw `-it` for `-d` to run as a daemon
 
 #### Manually
 ##### Install Required Software
