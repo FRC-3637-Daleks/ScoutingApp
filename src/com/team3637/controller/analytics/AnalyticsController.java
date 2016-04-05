@@ -42,16 +42,15 @@ public class AnalyticsController {
     @ResponseBody
     public String generateDesignations() {
         String designations = "";
-        List<Match> matches = matchService.getMatches();
-        for (Match match : matches) {
+        List<Team> teams = teamService.getTeams();
+        for (Team team : teams) {
             List<Tag> tags = new ArrayList<>();
-            Team team = teamService.getTeamByNumber(match.getTeam());
-            for (String tag : match.getTags())
-                tags.add(tagService.getTagByName(tag));
-            if(team != null)
-                designations += designationGenerator.generateDesignation(team.getTeam(), team.getAvgscore(), tags) + "\n";
-            else
-                designations += designationGenerator.generateDesignation(match.getTeam(), -1, tags) + "\n";
+            List<Match> matches = matchService.getForTeam(team.getTeam());
+            for (Match match : matches) {
+                for (String tag : match.getTags())
+                    tags.add(tagService.getTagByName(tag));
+            }
+            designations += designationGenerator.generateDesignation(team.getTeam(), team.getAvgscore(), tags) + "\n";
         }
         return designations;
     }

@@ -250,24 +250,27 @@ public class TagDesignationGenerator {
                     !tag.getCategory().equals("")) {
                 if (!counters.containsKey(tag.getCategory()))
                     counters.put(tag.getCategory(), 0);
-                //Set the javascript variable arr equal to the an array of strings of each tag
-                String[] stingTags = new String[tags.size()];
-                for (int i = 0; i < tags.size(); i++)
-                    if(tags.get(i) != null)
-                        stingTags[i] = tags.get(i).toString();
-                //Set the javascript variable x equal to the value of highGoal
-                engine.put("x", counters.get(tag.getCategory()));
-                engine.put("arr", stingTags);
-                //Evaluated to javascript expression
-                try {
-                    engine.eval(containsFunction + tag.getExpression());
-                } catch (ScriptException e) {
-                    System.err.println("Tag error: " + tag.getTag());
+                if(tag.requiesEval()) {
+                    //Set the javascript variable arr equal to the an array of strings of each tag
+                    String[] stingTags = new String[tags.size()];
+                    for (int i = 0; i < tags.size(); i++)
+                        if (tags.get(i) != null)
+                            stingTags[i] = tags.get(i).toString();
+                    //Set the javascript variable x equal to the value of highGoal
+                    engine.put("x", counters.get(tag.getCategory()));
+                    engine.put("arr", stingTags);
+                    //Evaluated to javascript expression
+                    try {
+                        engine.eval(containsFunction + tag.getExpression());
+                    } catch (ScriptException e) {
+                        System.err.println("Tag error: " + tag.getTag());
+                    }
+                    //Convert the java Object x into an int set highGoal equal to that value
+                    counters.put(tag.getCategory(), convertToTint(engine.get("x")));
+                } else {
+                    counters.put(tag.getCategory(), convertToTint(counters.get(tag.getCategory())) +
+                            Integer.parseInt(tag.getExpression()));
                 }
-                //Retrieve the value of x
-                Object x = engine.get("x");
-                //Convert the java Object x into an int set highGoal equal to that value
-                counters.put(tag.getCategory(), convertToTint(engine.get("x")));
             }
         }
     }

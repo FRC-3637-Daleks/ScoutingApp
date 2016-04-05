@@ -61,7 +61,8 @@ CREATE PROCEDURE init()
       id   INT         NOT NULL AUTO_INCREMENT,
       tag  VARCHAR(45) NOT NULL,
       type VARCHAR(45) NOT NULL,
-      category varchar(45) NOT NULL DEFAULT '',
+      category VARCHAR(45) NOT NULL DEFAULT '',
+      eval BOOLEAN NOT NULL DEFAULT FALSE,
       expression VARCHAR(255) NULL,
       PRIMARY KEY (`tag`,`type`),
       UNIQUE KEY `id_UNIQUE` (`id`)

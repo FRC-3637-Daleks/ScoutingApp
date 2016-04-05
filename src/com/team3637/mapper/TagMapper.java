@@ -30,6 +30,7 @@ public class TagMapper implements RowMapper<Tag> {
         tag.setTag(resultSet.getString("tag"));
         tag.setType(resultSet.getString("type"));
         tag.setCategory(resultSet.getString("category"));
+        tag.setRequiesEval(resultSet.getBoolean("eval"));
         tag.setExpression(resultSet.getString("expression"));
         return tag;
     }

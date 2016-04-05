@@ -19,6 +19,7 @@ package com.team3637.model;
 public class Tag {
     private int id;
     private String tag, type, category, expression;
+    private boolean eval;
 
     public Tag() {}
 
@@ -64,6 +65,14 @@ public class Tag {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public boolean requiesEval() {
+        return eval;
+    }
+
+    public void setRequiesEval(boolean eval) {
+        this.eval = eval;
     }
 
     public String getExpression() {

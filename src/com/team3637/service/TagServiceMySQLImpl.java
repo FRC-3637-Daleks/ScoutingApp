@@ -55,11 +55,12 @@ public class TagServiceMySQLImpl implements TagService {
 
     @Override
     public void create(Tag tag) {
-        String fieldsSting = "tag, type, category, expression", valuesSting = "?, ?, ?, ?", SQL;
+        String fieldsSting = "tag, type, category, eval, expression", valuesSting = "?, ?, ?, ?, ?", SQL;
         List<Object> values = new ArrayList<>();
         values.add(tag.getTag());
         values.add(tag.getType());
         values.add(tag.getCategory());
+        values.add(tag.requiesEval());
         values.add(tag.getExpression());
         SQL = "INSERT INTO tags (" + fieldsSting + ") VALUES (" + valuesSting + ");";
         jdbcTemplateObject.update(SQL, values.toArray());
@@ -293,12 +294,13 @@ public class TagServiceMySQLImpl implements TagService {
 
     @Override
     public void update(Tag tag) {
-        String valuesSting = "id=?, tag=?, type=?, category=?, expression=?", SQL;
+        String valuesSting = "id=?, tag=?, type=?, category=?, eval=?, expression=?", SQL;
         List<Object> values = new ArrayList<>();
         values.add(tag.getId());
         values.add(tag.getTag());
         values.add(tag.getType());
         values.add(tag.getCategory());
+        values.add(tag.requiesEval());
         values.add(tag.getExpression());
         SQL = "UPDATE tags SET " + valuesSting + " WHERE id=" + tag.getId() + ";";
         jdbcTemplateObject.update(SQL, values.toArray());
@@ -392,7 +394,8 @@ public class TagServiceMySQLImpl implements TagService {
                 tag.setTag(record.get(1));
                 tag.setType(record.get(2));
                 tag.setCategory(record.get(3));
-                tag.setExpression(record.get(4).replace("\n", ""));
+                tag.setRequiesEval(Boolean.parseBoolean(record.get(4)));
+                tag.setExpression(record.get(5).replace("\n", ""));
                 if(checkForTag(tag))
                     update(tag);
                 else
