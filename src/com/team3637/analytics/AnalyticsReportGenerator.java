@@ -806,6 +806,8 @@ public class AnalyticsReportGenerator {
         ImageIO.write(bi, "png", bas);
         byte[] byteArray = bas.toByteArray();
         BASE64Encoder encoder = new BASE64Encoder();
+        f.getContentPane().remove(0);
+        f.dispose();
         return encoder.encode(byteArray);
     }
 
