@@ -58,23 +58,6 @@ public class AnalyticsController {
     }
 
 
-/*    @RequestMapping(value = "/designations.txt", method = RequestMethod.GET)
-    @ResponseBody
-    public String generateDesignations() {
-        String designations = "";
-        List<Team> teams = teamService.getTeams();
-        for (Team team : teams) {
-            List<Tag> tags = new ArrayList<>();
-            List<Match> matches = matchService.getForTeam(team.getTeam());
-            for (Match match : matches) {
-                for (String tag : match.getTags())
-                    tags.add(tagService.getTagByName(tag));
-            }
-            designations += designationGenerator.generateCodedDesignation(team.getTeam(), team.getAvgscore(), tags) + "\n";
-        }
-        return designations;
-    }*/
-
     @RequestMapping(value = "/scouting-report.html", method = RequestMethod.GET)
     public String generateScoutingReport(Model model) {
         AnalyticsReportGenerator generator = new AnalyticsReportGenerator();

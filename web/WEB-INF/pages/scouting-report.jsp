@@ -82,15 +82,15 @@
 
     <section id="list">
         <ul>
-            <li><a href="scouting-report.html?team=coded">All coded designations</a></li>
+            <li><a href="javascript:window.location.href=window.location.pathname + '?team=coded'">All coded designations</a></li>
             <c:forEach var="report" items="${reports.reports}">
-                <li><a href="scouting-report.html?team=${report.team.team}">Team ${report.team.team}</a></li>
+                <li><a href="javascript:window.location.href=window.location.pathname + '?team=${report.team.team}'">Team ${report.team.team}</a></li>
             </c:forEach>
         </ul>
     </section>
 
     <section id="coded" class="hidden">
-        <a href="scouting-report.html">Back</a><br/><br/>
+        <a href="javascript:window.location.href=window.location.pathname">Back</a><br/><br/>
         <p>
             <c:forEach var="report" items="${reports.reports}">
                 ${report.codedDesignation}<br/>
@@ -100,7 +100,7 @@
 
     <c:forEach var="report" items="${reports.reports}">
         <section id="${report.team.team}" class="hidden">
-            <a href="scouting-report.html">Back</a><br/><br/>
+            <a href="javascript:window.location.href=window.location.pathname">Back</a><br/><br/>
             <p>${report.codedDesignation}</p>
             <p>${report.englishDesignation}</p>
 
