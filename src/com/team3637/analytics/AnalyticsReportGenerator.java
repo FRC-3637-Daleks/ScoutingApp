@@ -51,7 +51,7 @@ public class AnalyticsReportGenerator {
         AnalyticsReport report = new AnalyticsReport();
         report.setTeam(team);
         report.setCodedDesignation(generateCodedDesignation(team.getTeam(), team.getAvgscore(), tags));
-        report.setEnglishDesignation(generateEngDesignation(team.getTeam(), team.getAvgscore(), team.getMatches(), tags).replaceAll("\n", "<br/>"));
+        report.setEnglishDesignation(generateEngDesignation(team.getTeam(), team.getAvgscore(), team.getMatches(), tags).replaceAll("\n", "<br/>\n"));
         report.setTableImage(generateTable(matches, tableTags));
         return report;
     }
@@ -436,10 +436,10 @@ public class AnalyticsReportGenerator {
     public String generateEngDesignation(int teamNum, double avgScore, int numMatches, List<Tag> tags) {
         processTags(tags);
 
-        String longdesignation, temp, temp2, temp3;
+        String engdesignation, temp, temp2, temp3;
         int tempNum;
 
-        longdesignation = "Team " + teamNum + "  Avg Score " + String.format("%.2f", avgScore) + "  Played " + numMatches + "\n";
+        engdesignation = "Team " + teamNum + "  Avg Score " + String.format("%.2f", avgScore) + "  Played " + numMatches + "\n";
 
         //Auton
         temp = "Auton ( ";
@@ -450,7 +450,7 @@ public class AnalyticsReportGenerator {
         if (tempNum > 0)
             temp += "Reach " + tempNum + " ";
         if (temp.length() > 8)
-            longdesignation += temp.trim() + ")\n";
+            engdesignation += temp.trim() + ")\n";
 
         temp = "Auton Cross ( ";
         tempNum = convertToTint(counters.get("auto cross l"));
@@ -479,9 +479,9 @@ public class AnalyticsReportGenerator {
             temp += "Wall " + tempNum + " ";
         tempNum = convertToTint(counters.get("auto cross t"));
         if (tempNum > 0)
-            temp += "Terr " + tempNum + " ";
+            temp += "Terr " + tempNum;
         if (temp.length() > 14)
-            longdesignation += temp.trim() + ")\n";
+            engdesignation += temp.trim() + " )\n";
 
         temp = "Auton Goals ( ";
         tempNum = convertToTint(counters.get("auto high goal"));
@@ -490,7 +490,7 @@ public class AnalyticsReportGenerator {
         tempNum = convertToTint(counters.get("auto low goal"));
         if (tempNum > 0)
             temp += "Low " + tempNum + " ";
-        temp2 = "Failed(";
+        temp2 = "Failed( ";
         tempNum = convertToTint(counters.get("auto high fail"));
         if (tempNum > 0)
             temp2 += "High " + tempNum + " ";
@@ -500,7 +500,7 @@ public class AnalyticsReportGenerator {
         if (temp2.length() > 7)
             temp += temp2.trim() + ") ";
         if (temp.length() > 14)
-            longdesignation += temp.trim() + ")\n";
+            engdesignation += temp.trim() + " )\n";
 
         //Outerworks
         temp = "OW Fast ( ";
@@ -532,7 +532,7 @@ public class AnalyticsReportGenerator {
         if (tempNum > 0)
             temp += "Terr " + tempNum + " ";
         if (temp.length() > 10)
-            longdesignation += temp.trim() + ")\n";
+            engdesignation += temp.trim() + ")\n";
 
         temp = "OW Slow ( ";
         tempNum = convertToTint(counters.get("low bar slow"));
@@ -563,7 +563,7 @@ public class AnalyticsReportGenerator {
         if (tempNum > 0)
             temp += "Terr " + tempNum + " ";
         if (temp.length() > 10)
-            longdesignation += temp.trim() + ")\n";
+            engdesignation += temp.trim() + ")\n";
 
         temp = "OW Fail ( ";
         tempNum = convertToTint(counters.get("low bar fail"));
@@ -594,7 +594,7 @@ public class AnalyticsReportGenerator {
         if (tempNum > 0)
             temp += "Terr " + tempNum + " ";
         if (temp.length() > 10)
-            longdesignation += temp.trim() + ")\n";
+            engdesignation += temp.trim() + ")\n";
 
 
         temp = "OW Stuck ( ";
@@ -626,7 +626,7 @@ public class AnalyticsReportGenerator {
         if (tempNum > 0)
             temp += "Terr " + tempNum + " ";
         if (temp.length() > 11)
-            longdesignation += temp.trim() + ")\n";
+            engdesignation += temp.trim() + ")\n";
 
         //High goal
         temp = "High Shooter ( ";
@@ -634,26 +634,26 @@ public class AnalyticsReportGenerator {
             temp += "Fast " + convertToTint(counters.get("highg fast")) + " ";
         if (convertToTint(counters.get("highg slow")) > 0)
             temp += "Slow " + convertToTint(counters.get("highg slow")) + " ";
-        temp2 = " Qual(";
+        temp2 = "Qual( ";
         if (convertToTint(counters.get("highg great")) > 0)
             temp2 += "Good " + convertToTint(counters.get("highg great")) + " ";
         if (convertToTint(counters.get("highg fair")) > 0)
             temp2 += "Fair " + convertToTint(counters.get("highg fair")) + " ";
         if (convertToTint(counters.get("highg bad")) > 0)
             temp2 += "Bad " + convertToTint(counters.get("highg bad")) + " ";
-        if (temp2.length() > 6)
-            temp += temp2.trim() + ")";
-        temp2 = " From(";
+        if (temp2.length() > 5)
+            temp += " " + temp2.trim() + ")";
+        temp2 = "From( ";
         if (convertToTint(counters.get("highg batter")) > 0)
             temp2 += "Batter " + convertToTint(counters.get("highg batter")) + " ";
         if (convertToTint(counters.get("highg outerworks")) > 0)
-            temp2 += "Outerworks" + convertToTint(counters.get("highg batter")) + " ";
+            temp2 += "Outerworks" + convertToTint(counters.get("highg outerworks")) + " ";
         if (convertToTint(counters.get("highg corner")) > 0)
             temp2 += "Corner" + convertToTint(counters.get("highg corner")) + " ";
-        if (temp2.length() > 6)
-            temp += temp2.trim() + ")";
+        if (temp2.length() > 5)
+            temp += " " + temp2.trim() + ")";
         if (temp.length() > 15)
-            longdesignation += temp.trim() + " )\n";
+            engdesignation += temp.trim() + " )\n";
 
         //Low goal
         temp = "Low Shooter ( ";
@@ -661,17 +661,17 @@ public class AnalyticsReportGenerator {
             temp += "Fast " + convertToTint(counters.get("lowg fast")) + " ";
         if (convertToTint(counters.get("lowg slow")) > 0)
             temp += "Slow " + convertToTint(counters.get("lowg slow")) + " ";
-        temp2 = " Qual(";
+        temp2 = "Qual( ";
         if (convertToTint(counters.get("lowg great")) > 0)
             temp2 += "Good " + convertToTint(counters.get("lowg great")) + " ";
         if (convertToTint(counters.get("lowg fair")) > 0)
             temp2 += "Fair " + convertToTint(counters.get("lowg fair")) + " ";
         if (convertToTint(counters.get("lowg bad")) > 0)
             temp2 += "Bad " + convertToTint(counters.get("lowg bad")) + " ";
-        if (temp2.length() > 6)
-            temp += temp2.trim() + ")";
+        if (temp2.length() > 5)
+            temp += " " + temp2.trim() + ")";
         if (temp.length() > 14)
-            longdesignation += temp.trim() + " )\n";
+            engdesignation += temp.trim() + " )\n";
 
         //Defender
         temp = "Defender ( ";
@@ -680,7 +680,7 @@ public class AnalyticsReportGenerator {
         if (convertToTint(counters.get("defender air")) > 0)
             temp += "High " + convertToTint(counters.get("defender air")) + " ";
         if (temp.length() > 11)
-            longdesignation += temp.trim() + ")\n";
+            engdesignation += temp.trim() + ")\n";
 
         //Drivers
         temp = "Driving ( ";
@@ -697,7 +697,7 @@ public class AnalyticsReportGenerator {
         if (convertToTint(counters.get("drivers jerky")) > 0)
             temp += "Jerky " + convertToTint(counters.get("drivers jerky")) + " ";
         if (temp.length() > 10)
-            longdesignation += temp.trim() + ")\n";
+            engdesignation += temp.trim() + ")\n";
 
         //Toughness
         temp = "Toughness ( ";
@@ -709,15 +709,16 @@ public class AnalyticsReportGenerator {
             temp += "Damaged " + convertToTint(counters.get("damaged")) + " ";
         if (convertToTint(counters.get("falling apart")) > 0)
             temp += "Falling Apart " + convertToTint(counters.get("falling apart")) + " ";
-        if (temp.length() > 12)
-            longdesignation += temp.trim() + ")\n";
+            if (temp.length() > 12)
+            engdesignation += temp.trim() + ")\n";
 
 
         //Reliability
+        temp = "Reliable ";
         if (convertToTint(counters.get("reliable")) > 0)
-            temp = "Reliable " + convertToTint(counters.get("reliable")) + "\n";
-        if (temp.length() > 1)
-            longdesignation += temp.trim();
+            temp += convertToTint(counters.get("reliable"));
+        if (temp.length() > 9)
+            engdesignation += temp.trim() + "\n";
 
         //Unreliability
         temp = "Unreliable ( ";
@@ -736,7 +737,7 @@ public class AnalyticsReportGenerator {
         if (convertToTint(counters.get("tips over")) > 0)
             temp += "Tips Over " + convertToTint(counters.get("tips over")) + " ";
         if (temp.length() > 13)
-            longdesignation += temp.trim() + ")\n";
+            engdesignation += temp.trim() + ")\n";
 
         //End game
         temp = "Endgame ( ";
@@ -749,9 +750,9 @@ public class AnalyticsReportGenerator {
         if (convertToTint(counters.get("loses")) > 0)
             temp += "Lose " + convertToTint(counters.get("loses")) + " ";
         if (temp.length() > 10)
-            longdesignation += temp.trim() + ")\n";
+            engdesignation += temp.trim() + ")\n";
 
-        return longdesignation.trim();
+        return engdesignation.trim();
     }
 
     public String generateTable(List<Match> matches, List<Tag> tableTags) throws IOException {
