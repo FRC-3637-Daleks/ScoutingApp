@@ -82,10 +82,20 @@
 
     <section id="list">
         <ul>
+            <li><a href="scouting-report.html?team=coded">All coded designations</a></li>
             <c:forEach var="report" items="${reports.reports}">
                 <li><a href="scouting-report.html?team=${report.team.team}">Team ${report.team.team}</a></li>
             </c:forEach>
         </ul>
+    </section>
+
+    <section id="coded" class="hidden">
+        <a href="scouting-report.html">Back</a><br/><br/>
+        <p>
+            <c:forEach var="report" items="${reports.reports}">
+                ${report.codedDesignation}<br/>
+            </c:forEach>
+        </p>
     </section>
 
     <c:forEach var="report" items="${reports.reports}">
