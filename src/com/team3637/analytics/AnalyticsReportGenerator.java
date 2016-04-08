@@ -49,16 +49,15 @@ public class AnalyticsReportGenerator {
     public AnalyticsReport generateAnalyticsReport(Team team, List<Tag> tags,
                                                    List<Match> matches, List<Tag> tableTags) throws IOException {
         AnalyticsReport report = new AnalyticsReport();
+        processTags(tags);
         report.setTeam(team);
-        report.setCodedDesignation(generateCodedDesignation(team.getTeam(), team.getAvgscore(), tags).replaceAll("<", "&lt").replaceAll(">", "&gt"));
-        report.setEnglishDesignation(generateEngDesignation(team.getTeam(), team.getAvgscore(), team.getMatches(), tags).replaceAll("\n", "<br/>\n"));
+        report.setCodedDesignation(generateCodedDesignation(team.getTeam(), team.getAvgscore()).replaceAll("<", "&lt").replaceAll(">", "&gt"));
+        report.setEnglishDesignation(generateEngDesignation(team.getTeam(), team.getAvgscore(), team.getMatches()).replaceAll("\n", "<br/>\n"));
         report.setTableImage(generateTable(matches, tableTags));
         return report;
     }
 
-    public String generateCodedDesignation(int teamNum, double avgScore, List<Tag> tags) {
-        processTags(tags);
-
+    public String generateCodedDesignation(int teamNum, double avgScore) {
         String designation, temp, temp2, temp3;
         int tempNum;
 
@@ -434,9 +433,7 @@ public class AnalyticsReportGenerator {
         return designation.trim() + " }";
     }
 
-    public String generateEngDesignation(int teamNum, double avgScore, int numMatches, List<Tag> tags) {
-        processTags(tags);
-
+    public String generateEngDesignation(int teamNum, double avgScore, int numMatches) {
         String engdesignation, temp, temp2, temp3;
         int tempNum;
 

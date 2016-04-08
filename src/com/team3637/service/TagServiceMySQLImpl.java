@@ -281,10 +281,23 @@ public class TagServiceMySQLImpl implements TagService {
 
     @Override
     public List<String> getMatchTagStringsForTeam(Integer teamNum) {
-        int matchRows = jdbcTemplateObject.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE " +
+        int matchCols = jdbcTemplateObject.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE " +
                 "TABLE_SCHEMA = 'scoutingtags' AND table_name = 'matches'", Integer.class) - 4;
         String SQL = "";
-        for (int i = 0; i < matchRows; i++) {
+        for (int i = 0; i < matchCols; i++) {
+            SQL += " SELECT `tag" + i + "` FROM matches WHERE `team`=" + teamNum +
+                    " AND `tag" + i + "` IS NOT NULL UNION ALL";
+        }
+        SQL = SQL.substring(0, SQL.length() - 9);
+        return jdbcTemplateObject.query(SQL, new TagStringMapper());
+    }
+
+    @Override
+    public List<String> getMatchUniqueTagStringsForTeam(Integer teamNum) {
+        int matchCols = jdbcTemplateObject.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE " +
+                "TABLE_SCHEMA = 'scoutingtags' AND table_name = 'matches'", Integer.class) - 4;
+        String SQL = "";
+        for (int i = 0; i < matchCols; i++) {
             SQL += " SELECT DISTINCT `tag" + i + "` FROM matches WHERE `team`=" + teamNum +
                     " AND `tag" + i + "` IS NOT NULL UNION ALL";
         }

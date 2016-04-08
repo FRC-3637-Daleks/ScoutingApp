@@ -48,6 +48,8 @@ public interface TagService extends Service {
 
     List<String> getMatchTagStringsForTeam(Integer teamNum);
 
+    List<String> getMatchUniqueTagStringsForTeam(Integer teamNum);
+
     void update(Tag tag);
 
     void deleteById(Integer id);
