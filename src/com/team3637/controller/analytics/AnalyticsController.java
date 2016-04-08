@@ -26,12 +26,21 @@ import com.team3637.model.Team;
 import com.team3637.service.*;
 import com.team3637.wrapper.AnalyticsReportWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,17 +59,39 @@ public class AnalyticsController {
     @Autowired
     private ServletContext context;
     @Autowired
-    private AnalyticsReportGenerator designationGenerator;
+    private AnalyticsReportGenerator analyticsReportGenerator;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String root() {
         return "designations";
     }
 
+    @RequestMapping("/cache-scouting-report")
+    public String cacheScoutingReport(HttpServletRequest request) {
+        String baseUrl = String.format("%s://%s:%d%s/",request.getScheme(),
+                request.getServerName(), request.getServerPort(), context.getContextPath());
+        RestTemplate rest = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "test/html");
+        headers.add("Accept", "*/*");
+        HttpEntity<String> requestEntity = new HttpEntity<String>("", headers);
+        ResponseEntity<String> responseEntity = rest.exchange(baseUrl + "analytics/scouting-report.html",
+                HttpMethod.GET, requestEntity, String.class);
+        String report = responseEntity.getBody();
+        File cachedReport = new File(context.getRealPath("/") + "cached-scouting-report.html");
+        try {
+            FileWriter fileWriter = new FileWriter(cachedReport);
+            fileWriter.write(report);
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "redirect:/cached-scouting-report.html";
+    }
 
     @RequestMapping(value = "/scouting-report.html", method = RequestMethod.GET)
     public String generateScoutingReport(Model model) {
-        AnalyticsReportGenerator generator = new AnalyticsReportGenerator();
         List<AnalyticsReport> reports = new ArrayList<>();
         List<Team> teams = teamService.getTeams();
         for (Team team : teams) {
@@ -81,7 +112,7 @@ public class AnalyticsController {
                 }
             }
             try {
-                reports.add(generator.generateAnalyticsReport(team, tags, matches, tableTags));
+                reports.add(analyticsReportGenerator.generateAnalyticsReport(team, tags, matches, tableTags));
             } catch (IOException e) {
                 e.printStackTrace();
             }

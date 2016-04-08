@@ -21,7 +21,13 @@
 </nav>
 <div class="main container">
     <div class="container text-left">
-        <a class="btn btn-default" href="${pageContext.request.contextPath}/analytics/scouting-report.html" download>Generate Scouting Report</a>
+        <a class="btn btn-default" href="${pageContext.request.contextPath}/analytics/cache-scouting-report"
+           target="_blank">View Scouting Report</a>
+        <a class="btn btn-default" href="${pageContext.request.contextPath}/analytics/scouting-report.html" download>Generate
+            Scouting Report</a>
+    </div>
+    <div class="container text-left">
+
     </div>
 </div>
 </body>
