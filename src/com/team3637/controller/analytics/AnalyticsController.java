@@ -81,16 +81,23 @@ public class AnalyticsController {
         AnalyticsReportGenerator generator = new AnalyticsReportGenerator();
         List<AnalyticsReport> reports = new ArrayList<>();
         List<Team> teams = teamService.getTeams();
-        for(Team team : teams) {
+        for (Team team : teams) {
             List<Match> matches = matchService.getForTeam(team.getTeam());
             List<Tag> tags = new ArrayList<>();
             List<String> tagStrings = tagService.getMatchTagStringsForTeam(team.getTeam());
-            for(String tagString : tagStrings)
+            for (String tagString : tagStrings)
                 tags.add(tagService.getTagByName(tagString));
             List<Tag> tableTags = new ArrayList<>();
-            for(Tag tag : tags)
-                if(tag.isInTable())
-                    tableTags.add(tag);
+            for (Tag tag : tags) {
+                if (tag.isInTable()) {
+                    boolean inList = false;
+                    for (Tag tagInTable : tableTags)
+                        if (tag.compareTo(tagInTable) == 0)
+                            inList = true;
+                    if (!inList)
+                        tableTags.add(tag);
+                }
+            }
             try {
                 reports.add(generator.generateAnalyticsReport(team, tags, matches, tableTags));
             } catch (IOException e) {

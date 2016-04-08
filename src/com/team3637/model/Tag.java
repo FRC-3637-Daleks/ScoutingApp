@@ -16,7 +16,7 @@
  */
 package com.team3637.model;
 
-public class Tag {
+public class Tag implements Comparable{
     private int id;
     private String tag, type, counter, expression;
     private boolean eval, inTable;
@@ -112,5 +112,12 @@ public class Tag {
     @Override
     public String toString() {
         return tag;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if(o.toString().equals(tag))
+            return 0;
+        return -1;
     }
 }
