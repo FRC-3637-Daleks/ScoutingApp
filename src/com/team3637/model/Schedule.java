@@ -17,6 +17,14 @@
 package com.team3637.model;
 
 public class Schedule {
+
+    public Schedule() {
+    }
+
+    public Schedule(Integer matchNum) {
+        this.matchNum = matchNum;
+    }
+
     private Integer id;
 
     private Integer matchNum = null;

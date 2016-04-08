@@ -19,10 +19,7 @@
 package com.team3637.controller.analytics;
 
 import com.team3637.analytics.AnalyticsReportGenerator;
-import com.team3637.model.AnalyticsReport;
-import com.team3637.model.Match;
-import com.team3637.model.Tag;
-import com.team3637.model.Team;
+import com.team3637.model.*;
 import com.team3637.service.*;
 import com.team3637.wrapper.AnalyticsReportWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +29,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.ServletContext;
@@ -62,8 +59,9 @@ public class AnalyticsController {
     private AnalyticsReportGenerator analyticsReportGenerator;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String root() {
-        return "designations";
+    public String root(Model model) {
+        model.addAttribute("schedule", scheduleService.getTeamsMatches(3637));
+        return "analytics";
     }
 
     @RequestMapping("/cache-scouting-report")
@@ -119,6 +117,73 @@ public class AnalyticsController {
         }
         model.addAttribute("reports", new AnalyticsReportWrapper(reports));
         return "scouting-report";
+    }
+
+
+    @RequestMapping("/cache-prematch-report-{matchNum}")
+    public String cachePreMatchReport(@PathVariable("matchNum") Integer matchNum, HttpServletRequest request) {
+        String baseUrl = String.format("%s://%s:%d%s/",request.getScheme(),
+                request.getServerName(), request.getServerPort(), context.getContextPath());
+        RestTemplate rest = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "test/html");
+        headers.add("Accept", "*/*");
+        HttpEntity<String> requestEntity = new HttpEntity<String>("", headers);
+        ResponseEntity<String> responseEntity = rest.exchange(baseUrl + "analytics/prematch-report-" +
+                matchNum + ".html", HttpMethod.GET, requestEntity, String.class);
+        String report = responseEntity.getBody();
+        File cachedReport = new File(context.getRealPath("/") + "cached-prematch-report.html");
+        try {
+            FileWriter fileWriter = new FileWriter(cachedReport);
+            fileWriter.write(report);
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "redirect:/cached-prematch-report.html";
+    }
+
+    @RequestMapping(value = "/prematch-report-{matchNum}.html", method = RequestMethod.GET)
+    public String generatePreMatchReport(@PathVariable("matchNum") Integer matchNum, Model model) {
+        if(!scheduleService.checkForMatch(new Schedule(matchNum))) {
+            return "analytics";
+        }
+        Schedule match = scheduleService.getMatch(matchNum);
+        List<AnalyticsReport> reports = new ArrayList<>();
+        List<Team> teams = new ArrayList<>();
+        teams.add(teamService.getTeamByNumber(match.getB1()));
+        teams.add(teamService.getTeamByNumber(match.getB2()));
+        teams.add(teamService.getTeamByNumber(match.getB3()));
+        teams.add(teamService.getTeamByNumber(match.getR1()));
+        teams.add(teamService.getTeamByNumber(match.getR2()));
+        teams.add(teamService.getTeamByNumber(match.getR3()));
+        for (Team team : teams) {
+            List<Match> matches = matchService.getForTeam(team.getTeam());
+            List<Tag> tags = new ArrayList<>();
+            List<String> tagStrings = tagService.getMatchTagStringsForTeam(team.getTeam());
+            for (String tagString : tagStrings)
+                tags.add(tagService.getTagByName(tagString));
+            List<Tag> tableTags = new ArrayList<>();
+            for (Tag tag : tags) {
+                if (tag.isInTable()) {
+                    boolean inList = false;
+                    for (Tag tagInTable : tableTags)
+                        if (tag.compareTo(tagInTable) == 0)
+                            inList = true;
+                    if (!inList)
+                        tableTags.add(tag);
+                }
+            }
+            try {
+                reports.add(analyticsReportGenerator.generateAnalyticsReport(team, tags, matches, tableTags));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        model.addAttribute("reports", new AnalyticsReportWrapper(reports));
+        model.addAttribute("matchNum", matchNum);
+        return "prematch-report";
     }
 
 }
