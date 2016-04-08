@@ -48,7 +48,7 @@
         <h2>Scouting Report</h2>
         <a class="btn btn-default" href="${pageContext.request.contextPath}/analytics/cache-scouting-report"
            target="_blank">View Scouting Report</a>
-        <a class="btn btn-default" href="${pageContext.request.contextPath}/analytics/scouting-report.html" download>Generate
+        <a class="btn btn-default" href="${pageContext.request.contextPath}/analytics/scouting-report.html" download>Download
             Scouting Report</a>
     </div>
     <div class="container text-left">
@@ -79,7 +79,8 @@
                     <td><a>${match.r3}</a></td>
                     <td class="download"><a
                             href="${pageContext.request.contextPath}/analytics/prematch-report-${matchNum}.html"
-                            class="download" download><span class="glyphicon glyphicon-save download" aria-hidden="true"></span></a></td>
+                            class="download" download><span class="glyphicon glyphicon-save download"
+                                                            aria-hidden="true"></span></a></td>
                 </tr>
             </c:forEach>
             </tbody>
@@ -88,7 +89,7 @@
 </div>
 <script type="text/javascript">
     $('#matches').find('tr').on('click', function (event) {
-        if(!event.toElement.classList.contains("download")) {
+        if (!event.toElement.classList.contains("download")) {
             window.open('${pageContext.request.contextPath}/analytics/cache-prematch-report-' + $(this).attr('data-matchnum'));
         }
     });
