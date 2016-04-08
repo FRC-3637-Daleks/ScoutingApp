@@ -18,15 +18,25 @@ package com.team3637.model;
 
 public class Tag {
     private int id;
-    private String tag, type, category, expression;
-    private boolean eval;
+    private String tag, type, counter, expression;
+    private boolean eval, inTable;
 
     public Tag() {}
 
-    public Tag(String tag, String type, String category, String expression) {
+    public Tag(int id, String tag, String type, String counter, String expression, boolean eval, boolean inTable) {
+        this.id = id;
         this.tag = tag;
         this.type = type;
-        this.category = category;
+        this.counter = counter;
+        this.expression = expression;
+        this.eval = eval;
+        this.inTable = inTable;
+    }
+
+    public Tag(String tag, String type, String counter, String expression) {
+        this.tag = tag;
+        this.type = type;
+        this.counter = counter;
         this.expression = expression;
     }
 
@@ -59,12 +69,12 @@ public class Tag {
         this.type = type;
     }
 
-    public String getCategory() {
-        return category;
+    public String getCounter() {
+        return counter;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCounter(String counter) {
+        this.counter = counter;
     }
 
     public boolean requiesEval() {
@@ -73,6 +83,22 @@ public class Tag {
 
     public void setRequiesEval(boolean eval) {
         this.eval = eval;
+    }
+
+    public boolean isEval() {
+        return eval;
+    }
+
+    public void setEval(boolean eval) {
+        this.eval = eval;
+    }
+
+    public boolean isInTable() {
+        return inTable;
+    }
+
+    public void setInTable(boolean inTable) {
+        this.inTable = inTable;
     }
 
     public String getExpression() {

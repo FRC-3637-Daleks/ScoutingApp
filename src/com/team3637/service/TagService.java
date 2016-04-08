@@ -46,7 +46,7 @@ public interface TagService extends Service {
 
     List<Team> searchTeams(Double minScore, Double maxScore, String... params);
 
-    List<String> getMatchTagsForTeam(Integer teamNum);
+    List<String> getMatchTagStringsForTeam(Integer teamNum);
 
     void update(Tag tag);
 

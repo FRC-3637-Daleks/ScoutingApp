@@ -70,7 +70,7 @@ public class TeamsController {
     public String getTeam(@PathVariable("teamNum") Integer teamNum, Model model) {
         if(teamService.checkForTeam(teamNum)) {
             Team team = teamService.getTeam(teamNum);
-            List<String> matchTags = tagService.getMatchTagsForTeam(teamNum);
+            List<String> matchTags = tagService.getMatchTagStringsForTeam(teamNum);
             List<String> teamTags = teamService.getTags();
             model.addAttribute("team", team);
             model.addAttribute("matchTags", matchTags);

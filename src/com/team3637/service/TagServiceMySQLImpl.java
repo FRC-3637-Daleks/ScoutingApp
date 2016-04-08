@@ -37,7 +37,6 @@ import java.lang.reflect.Field;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class TagServiceMySQLImpl implements TagService {
@@ -55,11 +54,12 @@ public class TagServiceMySQLImpl implements TagService {
 
     @Override
     public void create(Tag tag) {
-        String fieldsSting = "tag, type, category, eval, expression", valuesSting = "?, ?, ?, ?, ?", SQL;
+        String fieldsSting = "tag, type, counter, inTable, eval, expression", valuesSting = "?, ?, ?, ?, ?, ?", SQL;
         List<Object> values = new ArrayList<>();
         values.add(tag.getTag());
         values.add(tag.getType());
-        values.add(tag.getCategory());
+        values.add(tag.getCounter());
+        values.add(tag.isInTable());
         values.add(tag.requiesEval());
         values.add(tag.getExpression());
         SQL = "INSERT INTO tags (" + fieldsSting + ") VALUES (" + valuesSting + ");";
@@ -280,7 +280,7 @@ public class TagServiceMySQLImpl implements TagService {
     }
 
     @Override
-    public List<String> getMatchTagsForTeam(Integer teamNum) {
+    public List<String> getMatchTagStringsForTeam(Integer teamNum) {
         int matchRows = jdbcTemplateObject.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE " +
                 "TABLE_SCHEMA = 'scoutingtags' AND table_name = 'matches'", Integer.class) - 4;
         String SQL = "";
@@ -294,12 +294,13 @@ public class TagServiceMySQLImpl implements TagService {
 
     @Override
     public void update(Tag tag) {
-        String valuesSting = "id=?, tag=?, type=?, category=?, eval=?, expression=?", SQL;
+        String valuesSting = "id=?, tag=?, type=?, counter=?, inTable=?, eval=?, expression=?", SQL;
         List<Object> values = new ArrayList<>();
         values.add(tag.getId());
         values.add(tag.getTag());
         values.add(tag.getType());
-        values.add(tag.getCategory());
+        values.add(tag.getCounter());
+        values.add(tag.isInTable());
         values.add(tag.requiesEval());
         values.add(tag.getExpression());
         SQL = "UPDATE tags SET " + valuesSting + " WHERE id=" + tag.getId() + ";";
@@ -393,9 +394,10 @@ public class TagServiceMySQLImpl implements TagService {
                 tag.setId(Integer.parseInt(record.get(0)));
                 tag.setTag(record.get(1));
                 tag.setType(record.get(2));
-                tag.setCategory(record.get(3));
-                tag.setRequiesEval(Boolean.parseBoolean(record.get(4)));
-                tag.setExpression(record.get(5).replace("\n", ""));
+                tag.setCounter(record.get(3));
+                tag.setInTable(record.get(4).equals("1") || record.get(4).toLowerCase().equals("true"));
+                tag.setRequiesEval(record.get(5).equals("1") || record.get(5).toLowerCase().equals("true"));
+                tag.setExpression(record.get(6).replace("\n", ""));
                 if(checkForTag(tag))
                     update(tag);
                 else

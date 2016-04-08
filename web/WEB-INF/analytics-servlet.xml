@@ -27,7 +27,7 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="tagDesignationGenerator" class="com.team3637.analytics.TagDesignationGenerator"/>
+    <bean id="tagDesignationGenerator" class="com.team3637.analytics.AnalyticsReportGenerator"/>
 
     <context:component-scan base-package="com.team3637.controller.analytics"/>
     <mvc:annotation-driven />
