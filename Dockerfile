@@ -12,6 +12,8 @@ RUN mkdir /tmp/ScoutingApp
 WORKDIR /tmp/ScoutingApp
 RUN git clone https://github.com/FRC-3637-Daleks/ScoutingApp.git .
 RUN ant
+RUN apt-get purge -y openjdk-8-jdk
+RUN apt-get autoremove -y
 RUN cp /tmp/ScoutingApp/dist/ScoutingApp.war /tomcat8/webapps/ROOT.war
 COPY docker-run.sh /tomcat8/run.sh
 WORKDIR /tomcat8
