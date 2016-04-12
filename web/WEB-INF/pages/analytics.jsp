@@ -77,10 +77,11 @@
                     <td><a>${match.r1}</a></td>
                     <td><a>${match.r2}</a></td>
                     <td><a>${match.r3}</a></td>
-                    <td class="download"><a
-                            href="${pageContext.request.contextPath}/analytics/prematch-report-${matchNum}.html"
+                    <td class="download">
+                        <a href="${pageContext.request.contextPath}/analytics/prematch-report-${matchNum}.html"
                             class="download" download><span class="glyphicon glyphicon-save download"
-                                                            aria-hidden="true"></span></a></td>
+                                                            aria-hidden="true"></span></a>
+                    </td>
                 </tr>
             </c:forEach>
             </tbody>
