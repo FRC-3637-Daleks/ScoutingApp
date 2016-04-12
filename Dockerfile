@@ -2,7 +2,7 @@ FROM team3637/scoutingappbase
 
 MAINTAINER "Team 3637"
 
-EXPOSE 22 80
+EXPOSE 8080
 VOLUME /var/lib/mysql team3637/scoutingapp
 
 ENV CATALINA_HOME=/tomcat8
