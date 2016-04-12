@@ -2,7 +2,7 @@ version: '2'
 
 services:
   web:
-      build: .
+      image: team3637/scoutingapp
       ports:
         - "8080:80"
       networks:
