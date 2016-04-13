@@ -8,6 +8,14 @@ A new scouting app for a new year
  - Clone the repo `git clone https://github.com/FRC-3637-Daleks/ScoutingApp` and cd into it
  - Run the app `docker-compose up`
  
+##### Install systemd service
+ - Move the `ScoutingApp` directory to `/opt/ScoutingApp`
+ - Copy `scoutingapp.server` to `/usr/lib/systemd/system/scoutingapp.service`
+ 
+##### Install system V service
+ - Move the `ScoutingApp` directory to `/opt/ScoutingApp`
+ - Copy `scoutingapp.sh` to `/etc/init.d/scoutingapp`
+ 
 #### With Docker wo Compose
  - Install [Docker](https://docs.docker.com/engine/installation/)
  - Create a volume to store persistent data `docker volume create --name scoutingapp`
@@ -37,7 +45,7 @@ A new scouting app for a new year
 - Start tomcat
 - All done!
  
-### Build
+## Build
 #### Build the Scouting App with <a href="https://ant.apache.org/">Apache Ant</a>
  - Install <a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">JDK 8</a>
  - Clone the repo `git clone https://github.com/FRC-3637-Daleks/ScoutingApp`
