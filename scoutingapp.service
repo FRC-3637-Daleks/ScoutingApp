@@ -1,0 +1,12 @@
+[Unit]
+Description=condb container
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+ExecStart=/usr/local/bin/docker-compose -f /opt/ScoutingApp/docker-compose.yml up --no-recreate
+ExecStop=/usr/local/bin/docker-compose -f /opt/ScoutingApp/docker-compose.yml stop
+
+[Install]
+WantedBy=multi-user.target
