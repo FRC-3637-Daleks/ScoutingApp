@@ -19,27 +19,17 @@
 package com.team3637.model;
 
 
+import java.util.List;
+
 public class AnalyticsReport {
 
     private Team team;
     private String codedDesignation;
     private String englishDesignation;
-    private String tableImage;
+    private String[] tableHeaders;
+    private String[][] tableData;
 
     public AnalyticsReport() {}
-
-    public AnalyticsReport(String codedDesignation, String englishDesignation, String tableImage) {
-        this.codedDesignation = codedDesignation;
-        this.englishDesignation = englishDesignation;
-        this.tableImage = tableImage;
-    }
-
-    public AnalyticsReport(Team team, String codedDesignation, String englishDesignation, String tableImage) {
-        this.team = team;
-        this.codedDesignation = codedDesignation;
-        this.englishDesignation = englishDesignation;
-        this.tableImage = tableImage;
-    }
 
     public String getCodedDesignation() {
         return codedDesignation;
@@ -65,11 +55,19 @@ public class AnalyticsReport {
         this.englishDesignation = englishDesignation;
     }
 
-    public String getTableImage() {
-        return tableImage;
+    public String[] getTableHeaders() {
+        return tableHeaders;
     }
 
-    public void setTableImage(String tableImage) {
-        this.tableImage = tableImage;
+    public void setTableHeaders(String[] tableHeaders) {
+        this.tableHeaders = tableHeaders;
+    }
+
+    public String[][] getTableData() {
+        return tableData;
+    }
+
+    public void setTableData(String[][] tableData) {
+        this.tableData = tableData;
     }
 }

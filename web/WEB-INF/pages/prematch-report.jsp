@@ -72,7 +72,9 @@
             }
 
         }
-
+        .table-nonfluid {
+            width: auto !important;
+        }
     </style>
 
 </head>
@@ -104,8 +106,20 @@
             <p>${report.codedDesignation}</p>
             <p>${report.englishDesignation}</p>
 
-            <img src="data:image/png;base64,${report.tableImage}"/>
-
+            <table class="table table-striped table-bordered table-nonfluid">
+                <tr>
+                    <c:forEach var="tableHeader" items="${report.tableHeaders}">
+                        <th>${tableHeader}</th>
+                    </c:forEach>
+                </tr>
+                <c:forEach var="row" items="${report.tableData}">
+                    <tr>
+                        <c:forEach var="col" items="${row}">
+                            <td>${col}</td>
+                        </c:forEach>
+                    </tr>
+                </c:forEach>
+            </table>
         </section>
     </c:forEach>
 

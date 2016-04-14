@@ -53,11 +53,12 @@ public class AnalyticsReportGenerator {
         report.setTeam(team);
         report.setCodedDesignation(generateCodedDesignation(team.getTeam(), team.getAvgscore()).replaceAll("<", "&lt").replaceAll(">", "&gt"));
         report.setEnglishDesignation(generateEngDesignation(team.getTeam(), team.getAvgscore(), team.getMatches()).replaceAll("\n", "<br/>\n"));
-        report.setTableImage(generateTable(matches, tableTags));
+        report.setTableHeaders(generateTableHeaders(matches));
+        report.setTableData(generateTableData(matches, tableTags));
         return report;
     }
 
-    public String generateCodedDesignation(int teamNum, double avgScore) {
+    private String generateCodedDesignation(int teamNum, double avgScore) {
         String designation, temp, temp2, temp3;
         int tempNum;
 
@@ -433,7 +434,7 @@ public class AnalyticsReportGenerator {
         return designation.trim() + " }";
     }
 
-    public String generateEngDesignation(int teamNum, double avgScore, int numMatches) {
+    private String generateEngDesignation(int teamNum, double avgScore, int numMatches) {
         String engdesignation, temp, temp2, temp3;
         int tempNum;
 
@@ -753,9 +754,17 @@ public class AnalyticsReportGenerator {
         return engdesignation.trim();
     }
 
-    public String generateTable(List<Match> matches, List<Tag> tableTags) throws IOException {
-        String[][] tableData = new String[tableTags.size()][matches.size() + 1];
+    private String[] generateTableHeaders(List<Match> matches) {
         String[] columns = new String[matches.size() + 1];
+        columns[0] = "Tag";
+        for (int i = 0; i < matches.size(); i++) {
+            columns[i+1] = matches.get(i).getMatchNum().toString();
+        }
+        return columns;
+    }
+
+    private String[][] generateTableData(List<Match> matches, List<Tag> tableTags) {
+        String[][] tableData = new String[tableTags.size()][matches.size() + 1];
         for (int i = 0; i < tableTags.size(); i++) {
             tableData[i][0] = tableTags.get(i).getTag();
             for (int j = 0; j < matches.size(); j++) {
@@ -766,46 +775,7 @@ public class AnalyticsReportGenerator {
                 }
             }
         }
-        columns[0] = "Tag";
-        for (int i = 0; i < matches.size(); i++) {
-            columns[i+1] = matches.get(i).getMatchNum().toString();
-        }
-        JXTable table = new JXTable(tableData, columns);
-        table.packAll();
-        JScrollPane scroll = new JScrollPane(table);
-
-        JPanel p = new JPanel(new BorderLayout());
-        p.add(scroll, BorderLayout.CENTER);
-
-        // JTable must have been added to a TLC in order to render
-        // correctly - go figure.
-        JFrame f = new JFrame("Never shown");
-        f.setContentPane(scroll);
-        f.pack();
-
-        JTableHeader h = table.getTableHeader();
-        Dimension dH = h.getSize();
-        Dimension dT = table.getSize();
-        int x = (int) dH.getWidth();
-        int y = (int) dH.getHeight() + (int) dT.getHeight();
-
-        scroll.setDoubleBuffered(false);
-
-        BufferedImage bi = new BufferedImage(x, y, BufferedImage.TYPE_INT_RGB);
-
-        Graphics g = bi.createGraphics();
-        h.paint(g);
-        g.translate(0, h.getHeight());
-        table.paint(g);
-        g.dispose();
-
-        ByteArrayOutputStream bas = new ByteArrayOutputStream();
-        ImageIO.write(bi, "png", bas);
-        byte[] byteArray = bas.toByteArray();
-        BASE64Encoder encoder = new BASE64Encoder();
-        f.getContentPane().remove(0);
-        f.dispose();
-        return encoder.encode(byteArray);
+        return tableData;
     }
 
     private void processTags(List<Tag> tags) {

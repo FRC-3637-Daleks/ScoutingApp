@@ -72,7 +72,9 @@
             }
 
         }
-
+        .table-nonfluid {
+            width: auto !important;
+        }
     </style>
 
 </head>
@@ -82,9 +84,11 @@
 
     <section id="list">
         <ul>
-            <li><a href="javascript:window.location.href=window.location.pathname + '?team=coded'">All coded designations</a></li>
+            <li><a href="javascript:window.location.href=window.location.pathname + '?team=coded'">All coded
+                designations</a></li>
             <c:forEach var="report" items="${reports.reports}">
-                <li><a href="javascript:window.location.href=window.location.pathname + '?team=${report.team.team}'">Team ${report.team.team}</a></li>
+                <li><a href="javascript:window.location.href=window.location.pathname + '?team=${report.team.team}'">Team ${report.team.team}</a>
+                </li>
             </c:forEach>
         </ul>
     </section>
@@ -104,8 +108,20 @@
             <p>${report.codedDesignation}</p>
             <p>${report.englishDesignation}</p>
 
-            <img src="data:image/png;base64,${report.tableImage}"/>
-
+            <table class="table table-striped table-bordered table-nonfluid">
+                <tr>
+                    <c:forEach var="tableHeader" items="${report.tableHeaders}">
+                        <th>${tableHeader}</th>
+                    </c:forEach>
+                </tr>
+                <c:forEach var="row" items="${report.tableData}">
+                    <tr>
+                        <c:forEach var="col" items="${row}">
+                            <td>${col}</td>
+                        </c:forEach>
+                    </tr>
+                </c:forEach>
+            </table>
         </section>
     </c:forEach>
 
