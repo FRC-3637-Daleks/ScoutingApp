@@ -12,7 +12,9 @@ services:
   db:
     image: mysql
     networks:
-      - scouting
+      scouting:
+        aliases:
+          - scoutingsql
     volumes:
       - data:/var/lib/mysql
     environment:
