@@ -27,6 +27,10 @@
             color: black;
             text-decoration: none;
         }
+
+        td:hover {
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -79,8 +83,8 @@
                     <td><a>${match.r3}</a></td>
                     <td class="download">
                         <a href="${pageContext.request.contextPath}/analytics/prematch-report-${matchNum}.html"
-                            class="download" download><span class="glyphicon glyphicon-save download"
-                                                            aria-hidden="true"></span></a>
+                           class="download" download><span class="glyphicon glyphicon-save download"
+                                                           aria-hidden="true"></span></a>
                     </td>
                 </tr>
             </c:forEach>
