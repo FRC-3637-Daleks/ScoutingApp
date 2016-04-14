@@ -11,6 +11,7 @@ RUN mv /tomcat8/webapps/ROOT /tomcat8/webapps/old
 RUN mkdir /tmp/ScoutingApp
 WORKDIR /tmp/ScoutingApp
 RUN git clone https://github.com/FRC-3637-Daleks/ScoutingApp.git .
+RUN sed -i 's/127.0.0.1/scoutingsql/g' WEB-INF/applicationContext.xml
 RUN ant
 RUN apt-get purge -y openjdk-8-jdk
 RUN apt-get autoremove -y
