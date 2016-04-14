@@ -22,18 +22,10 @@ import com.team3637.model.AnalyticsReport;
 import com.team3637.model.Match;
 import com.team3637.model.Tag;
 import com.team3637.model.Team;
-import org.jdesktop.swingx.JXTable;
-import sun.misc.BASE64Encoder;
 
-import javax.imageio.ImageIO;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import javax.swing.*;
-import javax.swing.table.JTableHeader;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -435,7 +427,7 @@ public class AnalyticsReportGenerator {
     }
 
     private String generateEngDesignation(int teamNum, double avgScore, int numMatches) {
-        String engdesignation, temp, temp2, temp3;
+        String engdesignation, temp, temp2;
         int tempNum;
 
         engdesignation = "Team " + teamNum + "  Avg Score " + String.format("%.2f", avgScore) + "  Played " + numMatches + "\n";
