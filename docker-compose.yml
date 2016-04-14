@@ -16,7 +16,7 @@ services:
         aliases:
           - scoutingsql
     volumes:
-      - data:/var/lib/mysql
+      - /opt/scoutingdata:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: turing
       MYSQL_DATABASE: scoutingtags
