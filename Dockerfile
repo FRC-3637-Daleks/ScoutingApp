@@ -15,9 +15,7 @@ RUN ant
 RUN apt-get purge -y openjdk-8-jdk
 RUN apt-get autoremove -y
 RUN cp /tmp/ScoutingApp/dist/ScoutingApp.war /tomcat8/webapps/ROOT.war
-COPY docker-run.sh /tomcat8/run.sh
 WORKDIR /tomcat8
 RUN rm -rf /tmp/ScoutingApp
-RUN chmod +x run.sh
 
-CMD /tomcat8/run.sh
+CMD /tomcat8/bin/catalina.sh run
