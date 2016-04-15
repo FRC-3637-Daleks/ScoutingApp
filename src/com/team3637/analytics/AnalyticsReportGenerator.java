@@ -761,7 +761,7 @@ public class AnalyticsReportGenerator {
             tableData[i][0] = tableTags.get(i).getTag();
             for (int j = 0; j < matches.size(); j++) {
                 if (matches.get(j).getTags().contains(tableTags.get(i).getTag())) {
-                    tableData[i][j + 1] = "\u2713";
+                    tableData[i][j + 1] = "&#x2713";
                 } else {
                     tableData[i][j + 1] = "";
                 }
