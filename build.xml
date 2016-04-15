@@ -21,7 +21,7 @@
         <pathelement path="${build.dir}"/>
     </path>
 
-    <target name="compile">
+    <target name="compile" depends="clean">
         <mkdir dir="${build.dir}"/>
         <javac srcdir="${src.dir}" destdir="${build.dir}">
             <classpath refid="compile.classpath"/>
