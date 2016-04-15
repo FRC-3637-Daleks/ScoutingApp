@@ -4,11 +4,12 @@ services:
   web:
     image: team3637/scoutingapp
     ports:
-      - "8081:8080"
+      - "8081:8081"
     networks:
       - scouting
     depends_on:
       - db
+    command: /tomcat8/bin/catalina.sh run
   db:
     image: mysql
     networks:
