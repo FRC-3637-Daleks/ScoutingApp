@@ -69,4 +69,9 @@ public class Team {
     public Team() {
         tags = new ArrayList<>();
     }
+
+    @Override
+    public String toString() {
+        return Integer.toString(getTeam());
+    }
 }

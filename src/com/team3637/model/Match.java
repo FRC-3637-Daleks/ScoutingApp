@@ -74,4 +74,14 @@ public class Match {
     public Match() {
         tags = new ArrayList<>();
     }
+
+    @Override
+    public String toString() {
+        return "Match{" +
+                "matchNum=" + matchNum +
+                ", team=" + team +
+                ", score=" + score +
+                ", tags=" + tags +
+                '}';
+    }
 }

@@ -19,6 +19,7 @@
 package com.team3637.model;
 
 
+import java.util.Arrays;
 import java.util.List;
 
 public class AnalyticsReport {
@@ -69,5 +70,16 @@ public class AnalyticsReport {
 
     public void setTableData(String[][] tableData) {
         this.tableData = tableData;
+    }
+
+    @Override
+    public String toString() {
+        return "AnalyticsReport{" +
+                "team=" + team +
+                ", codedDesignation='" + codedDesignation + '\'' +
+                ", englishDesignation='" + englishDesignation + '\'' +
+                ", tableHeaders=" + Arrays.toString(tableHeaders) +
+                ", tableData=" + Arrays.toString(tableData) +
+                '}';
     }
 }
