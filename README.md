@@ -46,7 +46,7 @@ A new scouting app for a new year
 - All done!
  
 ## Build
-#### Build the Scouting App with <a href="https://ant.apache.org/">Apache Ant</a>
+#### Build the Scouting App with [Apache Ant](https://ant.apache.org/)
  - Install <a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">JDK 8</a>
  - Clone the repo `git clone https://github.com/FRC-3637-Daleks/ScoutingApp`
  - Cd into the directory `cd ScoutingApp`
