@@ -49,4 +49,20 @@
         <property name="maxUploadSize" value="100000000"/>
     </bean>
 
+    <bean id="scheduleService" class="com.team3637.service.ScheduleServiceMySQLImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="matchesService" class="com.team3637.service.MatchServiceMySQLImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="teamsService" class="com.team3637.service.TeamServiceMySQLImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="tagsService" class="com.team3637.service.TagServiceMySQLImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
 </beans>
