@@ -17,6 +17,7 @@
 package com.team3637.service;
 
 import com.team3637.model.Match;
+import com.team3637.model.Team;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -47,4 +48,6 @@ public interface MatchService extends Service {
     List<String> getTags();
 
     void mergeTags(String oldTag, String newTag);
+
+	Team getTeamInfo(Integer teamNum);
 }

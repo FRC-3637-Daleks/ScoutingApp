@@ -18,12 +18,16 @@ package com.team3637.service;
 
 import com.team3637.mapper.MatchMapper;
 import com.team3637.mapper.TagStringMapper;
+import com.team3637.mapper.TeamMapper;
 import com.team3637.model.Match;
+import com.team3637.model.Team;
+
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
@@ -35,6 +39,9 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -263,5 +270,26 @@ public class MatchServiceMySQLImpl implements MatchService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    
+    @Override
+    public Team getTeamInfo(Integer teamNum) {
+        String SQL = "SELECT team, sum(score)/count(*) as avgscore, count(*) as matches,"+ 
+"(select count(*) FROM scoutingtags.match a WHERE a.team = b.team and a.win = 1 group by team) as wins,"+ 
+"(select count(*) FROM scoutingtags.match a WHERE a.team = b.team and a.loss = 1 group by team) as losses "+ 
+"FROM scoutingtags.match b WHERE team = ? group by team";
+        return jdbcTemplateObject.queryForObject(SQL, new RowMapper<Team>() {
+            @Override
+            public Team mapRow(ResultSet resultSet, int rowNum) throws SQLException {
+                Team team = new Team();
+              //  team.setId(resultSet.getInt("id"));
+                team.setTeam(resultSet.getInt("team"));
+                team.setMatches(resultSet.getInt("matches"));
+                team.setAvgscore(resultSet.getFloat("avgscore"));
+                team.setWins(resultSet.getInt("wins"));
+                team.setLosses(resultSet.getInt("losses"));
+                return team;
+            }
+        }, teamNum);
     }
 }

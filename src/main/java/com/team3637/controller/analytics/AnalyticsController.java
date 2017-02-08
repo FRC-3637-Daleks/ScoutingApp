@@ -222,8 +222,15 @@ public class AnalyticsController
 	}
 
 	@RequestMapping(value = "/teamAnalytics", method = RequestMethod.GET)
-	public String teamAnalytics(@RequestParam("team") Integer team, Model model)
+	public String teamAnalytics(@RequestParam("team") Integer teamNum, Model model)
 	{
+		Team team = matchService.getTeamInfo(teamNum);
+		model.addAttribute("team", teamNum);
+		model.addAttribute("matches", team.getMatches());
+		model.addAttribute("avgScore", team.getAvgscore());
+		model.addAttribute("ourScore", 90);
+		model.addAttribute("wins", team.getWins());
+		model.addAttribute("losses", team.getLosses());
 		return "team-analytics";
 	}
 
