@@ -20,6 +20,7 @@ import com.team3637.mapper.MatchMapper;
 import com.team3637.mapper.TagStringMapper;
 import com.team3637.mapper.TeamMapper;
 import com.team3637.model.Match;
+import com.team3637.model.MatchStatistics;
 import com.team3637.model.Team;
 
 import org.apache.commons.csv.CSVFormat;
@@ -282,13 +283,35 @@ public class MatchServiceMySQLImpl implements MatchService {
             @Override
             public Team mapRow(ResultSet resultSet, int rowNum) throws SQLException {
                 Team team = new Team();
-              //  team.setId(resultSet.getInt("id"));
+                //team.setId(resultSet.getInt("id"));
                 team.setTeam(resultSet.getInt("team"));
                 team.setMatches(resultSet.getInt("matches"));
                 team.setAvgscore(resultSet.getFloat("avgscore"));
                 team.setWins(resultSet.getInt("wins"));
                 team.setLosses(resultSet.getInt("losses"));
                 return team;
+            }
+        }, teamNum);
+    }
+    
+    @Override
+    public List <MatchStatistics> getTeamMatchStatistics(Integer teamNum) {
+        String SQL = "SELECT grouping, category, m.tag, sum(occurences) as occurences "+
+"FROM scoutingtags.matchtags m "+
+		"inner join scoutingtags.tags t on m.tag = t.tag"+
+	   " where team = ?"+
+       " group by grouping, category, m.tag"+
+       " order by grouping, category, m.tag";
+        return jdbcTemplateObject.query(SQL, new RowMapper<MatchStatistics>() {
+            @Override
+            public MatchStatistics mapRow(ResultSet resultSet, int rowNum) throws SQLException {
+            	MatchStatistics matchStatistics = new MatchStatistics();
+                //team.setId(resultSet.getInt("id"));
+                matchStatistics.setGrouping(resultSet.getString("grouping"));
+                matchStatistics.setCategory(resultSet.getString("category"));
+                matchStatistics.setTotalOccurences(resultSet.getInt("occurences"));
+                matchStatistics.setTag(resultSet.getString("tag"));
+                return matchStatistics;
             }
         }, teamNum);
     }
