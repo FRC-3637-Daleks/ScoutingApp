@@ -51,12 +51,22 @@
 </#list>
 </table>
 <#assign grouping = ""> 
+<#assign category = ""> 
 <#list matchStatistics as matchStatistic>
 <#if grouping == "" || grouping != matchStatistic.grouping>
   <#assign grouping =  matchStatistic.grouping> 
+  <#if grouping != "">
+     </tr>
+  </table>   
+  </#if>
   <div class="sectionHeader">${grouping}</div>
+  <table id="categoryTable">
+    <tr>
 </#if>
-
+<#if category == "" || category != matchStatistic.category>
+   <td>
+   <div class="cellTitle">Gears</div><table>
+</#if>
 
 </#list>
 

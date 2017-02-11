@@ -232,9 +232,11 @@ public class AnalyticsController
 		model.addAttribute("ourScore", 90);
 		model.addAttribute("wins", team.getWins());
 		model.addAttribute("losses", team.getLosses());
+
 		List <MatchStatistics> matchStatistics = matchService.getTeamMatchStatistics(teamNum);
 		model.addAttribute("matchStatistics", matchStatistics);
 		return "team-analytics";
+
 	}
 
 }
