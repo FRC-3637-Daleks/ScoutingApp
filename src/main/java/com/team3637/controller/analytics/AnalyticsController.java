@@ -231,7 +231,7 @@ public class AnalyticsController
 		model.addAttribute("ourScore", 90);
 		model.addAttribute("wins", team.getWins());
 		model.addAttribute("losses", team.getLosses());
-		return "team-analytics";
+		return "teamAnalytics";
 	}
 
 }
