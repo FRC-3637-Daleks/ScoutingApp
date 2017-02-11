@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.team3637.analytics.AnalyticsReportGenerator;
 import com.team3637.model.AnalyticsReport;
 import com.team3637.model.Match;
+import com.team3637.model.MatchStatistics;
 import com.team3637.model.Schedule;
 import com.team3637.model.Tag;
 import com.team3637.model.Team;
@@ -231,6 +232,8 @@ public class AnalyticsController
 		model.addAttribute("ourScore", 90);
 		model.addAttribute("wins", team.getWins());
 		model.addAttribute("losses", team.getLosses());
+		List <MatchStatistics> matchStatistics = matchService.getTeamMatchStatistics(teamNum);
+		model.addAttribute("matchStatistics", matchStatistics);
 		return "team-analytics";
 	}
 
