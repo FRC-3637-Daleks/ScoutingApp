@@ -4,7 +4,8 @@
 <style>
 
 #categoryTable table{
-	width:100%
+	width:100%;
+	display:block;
 }
 
 #categoryTable td{
@@ -30,111 +31,82 @@
 .cellTitle {text-align: center; height: 50px}
 .columnTitle {text-align: center}
 </style>
+<script>
+function show(target) {
+    document.getElementById(target).style.display = 'block';
+}
+
+function hide(target) {
+    document.getElementById(target).style.display = 'none';
+}
+function toggle(target) {
+	if (document.getElementById(target).style.display == 'none') {
+		show(target);
+	}
+	else if (document.getElementById(target).style.display == 'block' || document.getElementById(target).style.display == '') {
+		hide(target);
+	}
+}
+</script>
 </head>
 <body>
 <table id="codxpl">
   <tr>
-    <th><p style="color:white">Team: ${team}</p></th>
+    <th onclick="toggle('${team}')"><p style="color:white">Team: ${team}</p></th>
     <th><p style="color:white">Matches Played: ${matches}</p></th>
     <th><p style="color:white">Avg.Score: ${avgScore}</p></th>
     <th><p style="color:white">Our Score: ${ourScore}</p></th>
     <th><p style="color:white">Win/Lose Ratio: ${wins}:${losses}</p></th>
   </tr>
 </table>
-<table>
-<#list matchStatistics as matchStatistic>
-  <tr>
-    <td>${matchStatistic.grouping}</td>    
-    <td>${matchStatistic.category}</td>  
-    <td>${matchStatistic.tag}</td>    
-  </tr>
-</#list>
-</table>
+<div id=${team}>
 <#assign grouping = ""> 
 <#assign category = ""> 
 <#list matchStatistics as matchStatistic>
-<#if grouping == "" || grouping != matchStatistic.grouping>
-  <#assign grouping =  matchStatistic.grouping> 
+<#if grouping == "" || grouping != matchStatistic.grouping> 
+   <#if category != "">
+   </tr>
+   </table>	
+   </td>
+   </#if>
   <#if grouping != "">
      </tr>
   </table>   
   </#if>
-  <div class="sectionHeader">${grouping}</div>
-  <table id="categoryTable">
+   <#assign grouping =  matchStatistic.grouping> 
+  <div class="sectionHeader" onclick="toggle('${grouping}')">${grouping}</div>
+  <table class="categoryTable" id="${grouping}">
     <tr>
+    <#assign category = ""> 
 </#if>
 <#if category == "" || category != matchStatistic.category>
+   <#if category != "">
+   </tr>
+   </table>	
+   </td>
+   </#if>
+   <#assign category =  matchStatistic.category>
    <td>
-   <div class="cellTitle">Gears</div><table>
+   <div class="cellTitle">${category}</div>
+   <table>
+   <tr>
+   <td> ${matchStatistic.tag} </td>
+   </tr>
+<#else>
+   <tr>
+   <td> ${matchStatistic.tag} </td>
+   </tr>
 </#if>
-
 </#list>
-
-
-<div class="sectionHeader">Auton</div>
-
-<table id="categoryTable">
-    <tr>
-    	<td>
-    	<div class="cellTitle">Gears</div><table>
-          <tr><td>Tag</td><td>Count</td></tr>
-          <tr><td>Tag</td><td>Count</td></tr>
-        </table>
-    	</td>
-    	<td>
-    	<div class="cellTitle">Fuel</div><table>
-          <tr><td>Tag</td><td>Count</td></tr>
-          <tr><td>Tag</td><td>Count</td></tr>
-        </table>
-    	</td>
-    	<td>
-    	<div class="cellTitle">Baseline</div><table>
-          <tr><td>Tag</td><td>Count</td></tr>
-          <tr><td>Tag</td><td>Count</td></tr>
-        </table>
-    	</td>
-    </tr>
-    <tr>
-        <th colspan = "3"><div class="columnTitle"><u><h1 style="font-size:150%;">Tele-Op</h1></u></div></th>
-    </tr>
-    <tr>
-    	<td>
-    	<div class="cellTitle">Gears</div><table>
-          <tr><td>Tag</td><td>Count</td></tr>
-          <tr><td>Tag</td><td>Count</td></tr>
-        </table>
-    	</td>
-    	<td>
-    	<div class="cellTitle">Fuel</div><table>
-          <tr><td>Tag</td><td>Count</td></tr>
-          <tr><td>Tag</td><td>Count</td></tr>
-        </table>
-    	</td>
-    	<td>
-    	<div class="cellTitle">Climb Rope</div><table>
-          <tr><td>Tag</td><td>Count</td></tr>
-          <tr><td>Tag</td><td>Count</td></tr>
-        </table>
-    	</td>
-    </tr>
-    <tr>
-        <th colspan = "2"><div class="columnTitle"><u><h1 style="font-size:150%;">Team</h1></u></div></th>
-    </tr>
-    <tr>
-    	<td>
-    	<div class="cellTitle">Reliability</div><table>
-          <tr><td>Tag</td><td>Count</td></tr>
-          <tr><td>Tag</td><td>Count</td></tr>
-        </table>
-    	</td>
-    	<td>
-    	<div class="cellTitle">Effectiveness</div><table>
-          <tr><td>Tag</td><td>Count</td></tr>
-          <tr><td>Tag</td><td>Count</td></tr>
-        </table>
-    	</td>
-    </tr>
-</table>
+ <#if category != "">
+   </tr>
+   </table>	
+   </td>
+   </#if>
+  <#if grouping != "">
+     </tr>
+  </table>   
+  </#if>
+ </div>
 </body>
 </html>
-

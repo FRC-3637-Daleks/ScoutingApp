@@ -16,3 +16,4 @@ out/
 build/
 dist/
 /target/
+/bin/
