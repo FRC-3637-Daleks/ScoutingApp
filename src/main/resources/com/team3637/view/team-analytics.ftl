@@ -3,17 +3,15 @@
 <head>
 <style>
 
-#categoryTable table{
+.categoryTable table{
 	width:100%;
 	display:block;
+	border-collapse:collapse;
 }
 
-#categoryTable td{
-    padding-right:2.38em;
-    padding-top:0.8em;
-    padding-bottom:0.8em;
-    padding-left:0.8em;
+.categoryTable td{
     border: 1px solid gray;
+    vertical-align:top;
 }
 
 .sectionHeader {
@@ -22,13 +20,13 @@
     text-align:center;
 }
 
-#codxpl th{
+.teamHeader th{
     background-color:#005EFF;
     font-weight:bold;
     padding:0.8em;
-    border: 1px solid;
+    border-collapse: collapse;
 }
-.cellTitle {text-align: center; height: 50px}
+.categoryTitle {text-align: center; height: 20px; background-color:#FFD500; font-size:13px; font-weight:bold}
 .columnTitle {text-align: center}
 </style>
 <script>
@@ -50,15 +48,17 @@ function toggle(target) {
 </script>
 </head>
 <body>
-<table id="codxpl">
+<div onclick="toggle('${team}')">
+<table class="teamHeader">
   <tr>
-    <th onclick="toggle('${team}')"><p style="color:white">Team: ${team}</p></th>
+    <th><p style="color:white">Team: ${team}</p></th>
     <th><p style="color:white">Matches Played: ${matches}</p></th>
     <th><p style="color:white">Avg.Score: ${avgScore}</p></th>
     <th><p style="color:white">Our Score: ${ourScore}</p></th>
     <th><p style="color:white">Win/Lose Ratio: ${wins}:${losses}</p></th>
   </tr>
 </table>
+</div>
 <div id=${team}>
 <#assign grouping = ""> 
 <#assign category = ""> 
@@ -87,14 +87,16 @@ function toggle(target) {
    </#if>
    <#assign category =  matchStatistic.category>
    <td>
-   <div class="cellTitle">${category}</div>
+   <div class="categoryTitle">${category}</div>
    <table>
    <tr>
    <td> ${matchStatistic.tag} </td>
+   <td> ${matchStatistic.totalOccurences} </td>
    </tr>
 <#else>
    <tr>
    <td> ${matchStatistic.tag} </td>
+   <td> ${matchStatistic.totalOccurences} </td>
    </tr>
 </#if>
 </#list>
