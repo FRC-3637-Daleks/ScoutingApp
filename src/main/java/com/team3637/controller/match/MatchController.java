@@ -31,6 +31,7 @@ import com.google.gson.Gson;
 import com.team3637.model.Match;
 import com.team3637.model.Tag;
 import com.team3637.model.Team;
+import com.team3637.model.TeamMatchTag;
 import com.team3637.service.MatchService;
 import com.team3637.service.TagService;
 import com.team3637.service.TeamService;
@@ -278,10 +279,11 @@ public class MatchController
 	@RequestMapping(value = "/matchEntry", method = RequestMethod.GET)
 	public String matchEntry(@RequestParam("team") Integer team, @RequestParam("match") Integer match, Model model)
 	{
-		// List<String> matchTags = matchService.getTags();
+		List<TeamMatchTag> matchTags = matchService.getTeamMatchTags(team, match);
 
 		model.addAttribute("team", team);
 		model.addAttribute("match", match);
+		model.addAttribute("matchTags", matchTags);
 		return "matchEntry";
 	}
 

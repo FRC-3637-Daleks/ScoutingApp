@@ -22,6 +22,7 @@ import com.team3637.mapper.TeamMapper;
 import com.team3637.model.Match;
 import com.team3637.model.MatchStatistics;
 import com.team3637.model.Team;
+import com.team3637.model.TeamMatchTag;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -315,4 +316,27 @@ public class MatchServiceMySQLImpl implements MatchService {
             }
         }, teamNum);
     }
-}
+    
+    
+    @Override
+    public List <TeamMatchTag> getTeamMatchTags(Integer teamNum, Integer matchNum) {
+        String SQL = "SELECT grouping, category, t.tag, occurences, input_type " + 
+        		"FROM scoutingtags.tags t " + 
+        		"LEFT OUTER JOIN scoutingtags.matchtags m on m.tag = t.tag and team = ? AND matchNum = ? " + 
+        		"WHERE t.type = 'matches' " + 
+        		"        order by grouping, category, t.tag;";
+        return jdbcTemplateObject.query(SQL, new RowMapper<TeamMatchTag>() {
+            @Override
+            public TeamMatchTag mapRow(ResultSet resultSet, int rowNum) throws SQLException {
+            	TeamMatchTag teamMatchTag = new TeamMatchTag();
+                teamMatchTag.setGrouping(resultSet.getString("grouping"));
+                teamMatchTag.setCategory(resultSet.getString("category"));
+                teamMatchTag.setOccurences(resultSet.getInt("occurences"));
+                teamMatchTag.setTag(resultSet.getString("tag"));
+                teamMatchTag.setInputType(resultSet.getString("input_type"));
+                return teamMatchTag;
+            }
+        }, teamNum, matchNum);
+    }
+}       
+        
