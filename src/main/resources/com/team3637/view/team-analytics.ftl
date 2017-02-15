@@ -23,7 +23,9 @@
 .teamHeader th{
     background-color:#005EFF;
     font-weight:bold;
-    padding:0.8em;
+    font-size:20px;
+    padding-left:25px;
+    padding-right:25px;
     border-collapse: collapse;
 }
 .categoryTitle {text-align: center; height: 20px; background-color:#FFD500; font-size:13px; font-weight:bold}
