@@ -2,20 +2,24 @@
 <html>
 <head>
 <style>
-#codexpl td{
+
+.categoryTable table{
+	width:100%;
+	display:block;
+}
+
+.categoryTable td{
     padding-right:2.38em;
     padding-top:0.8em;
     padding-bottom:0.8em;
     padding-left:0.8em;
     border: 1px solid gray;
 }
-#codexpl th{
+
+.sectionHeader {
     background-color:#53EA0C;
     font-weight:bold;
-    padding-right:2.38em;
-    padding-top:0.8em;
-    padding-bottom:0.8em;
-    padding-left:0.8em;
+    text-align:center;
 }
 
 #codxpl th{
@@ -27,58 +31,86 @@
 .cellTitle {text-align: center; height: 50px}
 .columnTitle {text-align: center}
 </style>
+<script>
+function show(target) {
+    document.getElementById(target).style.display = 'block';
+}
+
+function hide(target) {
+    document.getElementById(target).style.display = 'none';
+}
+function toggle(target) {
+	if (document.getElementById(target).style.display == 'none') {
+		show(target);
+	}
+	else if (document.getElementById(target).style.display == 'block' || document.getElementById(target).style.display == '') {
+		hide(target);
+	}
+}
+</script>
 </head>
 <body>
 <table id="codxpl">
   <tr>
-    <th><p style="color:white">Team: ${team}</p></th>
+    <th onclick="toggle('${team}')"><p style="color:white">Team: ${team}</p></th>
     <th><p style="color:white">Match: ${match}</p></th>
   </tr>
 </table>
-
-<table id="codexpl">
+<div id=${team}>
+<form>
+<#assign grouping = ""> 
+<#assign category = ""> 
+<#list matchTags as matchTag>
+<#if grouping == "" || grouping != matchTag.grouping> 
+   <#if category != "">
+   </tr>
+   </table>	
+   </td>
+   </#if>
+  <#if grouping != "">
+     </tr>
+  </table>   
+  </#if>
+   <#assign grouping =  matchTag.grouping> 
+  <div class="sectionHeader" onclick="toggle('${grouping}')">${grouping}</div>
+  <table class="categoryTable" id="${grouping}">
     <tr>
-        <th><div class="columnTitle"><u><h1 style="font-size:150%;">Auton</h1></u></div></th>
-        <th><div class="columnTitle"><u><h1 style="font-size:150%;">Tele-Op</h1></u></div></th>
-        <th><div class="columnTitle"><u><h1 style="font-size:150%;">Team</h1></u></div></th>
-    </tr>
-    <tr>
-        <td><div class="cellTitle">Gears</div><table>
-          <tr><td>Tag</td><td>Count</td></tr>
-          <tr><td>Tag</td><td>Count</td></tr>
-        </table></td>
-        <td><div class="cellTitle">Gears</div><table>
-          <tr><td>Tag</td><td>Count</td></tr>
-          <tr><td>Tag</td><td>Count</td></tr>
-        </table></td>
-        <td><div class="cellTitle">Reliability</div><table>
-          <tr><td>Tag</td><td>Count</td></tr>
-          <tr><td>Tag</td><td>Count</td></tr>
-        </table></td>
-    </tr>
-    <tr>
-        <td><div class="cellTitle">Fuel</div><table>
-          <tr><td>Tag</td><td>Count</td></tr>
-          <tr><td>Tag</td><td>Count</td></tr>
-        </table></td>
-        <td><div class="cellTitle">Fuel</div><table>
-          <tr><td>Tag</td><td>Count</td></tr>
-          <tr><td>Tag</td><td>Count</td></tr>
-        </table></td>
-        <td><div class="cellTitle">Effectiveness</div><table>
-          <tr><td>Tag</td><td>Count</td></tr>
-          <tr><td>Tag</td><td>Count</td></tr>
-        </table></td>
-    </tr>
-    <tr>
-        <td><div class="cellTitle">Baseline</div><table>
-          <tr><td>Yes</td><td>No</td></tr>
-        </table></td>
-        <td><div class="cellTitle">Climb Rope</div><table>
-          <tr><td>Tag</td><td>Count</td></tr>
-        </table></td>
-    </tr>
-</table>
+    <#assign category = ""> 
+</#if>
+<#if category == "" || category != matchTag.category>
+   <#if category != "">
+   </tr>
+   </table>	
+   </td>
+   </#if>
+   <#assign category =  matchTag.category>
+   <td>
+   <div class="cellTitle">${category}</div>
+   <table>
+   <tr>
+   <td> ${matchTag.tag} </td>
+   <td> 
+   <#if matchTag.inputType == "checkbox">
+   <input type="checkbox" />
+   </#if>
+   </td>
+   </tr>
+<#else>
+   <tr>
+   <td> ${matchTag.tag} </td>
+   </tr>
+</#if>
+</#list>
+ <#if category != "">
+   </tr>
+   </table>	
+   </td>
+   </#if>
+  <#if grouping != "">
+     </tr>
+  </table>   
+  </#if>
+  </form>
+ </div>
 </body>
 </html>
-
