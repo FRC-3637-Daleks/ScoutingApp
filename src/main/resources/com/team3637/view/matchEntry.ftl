@@ -31,6 +31,7 @@
 .cellTitle {text-align: center; height: 50px}
 .columnTitle {text-align: center}
 </style>
+<script src="../js/jquery.min.js"></script>
 <script>
 function show(target) {
     document.getElementById(target).style.display = 'block';
@@ -46,6 +47,35 @@ function toggle(target) {
 	else if (document.getElementById(target).style.display == 'block' || document.getElementById(target).style.display == '') {
 		hide(target);
 	}
+}
+
+var team=${team};
+var match=${match};
+function incrementTag(target) {
+	var incrementElement=document.getElementById(target+"-counter");
+	var currentValue=incrementElement.value;
+	if (!currentValue) {
+		currentValue="1";
+	}
+	else
+		currentValue=Number(currentValue)+1;
+	incrementElement.value=currentValue;
+	$.get("/incrementTag?tag="+target+"&team="+team+"&match="+match);
+}
+
+function decrementTag(target) {
+	var decrementElement=document.getElementById(target+"-counter");
+	var currentValue=decrementElement.value;
+	if (!currentValue) {
+		currentValue="1";
+	}
+	if (currentValue<="0") {
+		currenValue="0"
+		}
+	else
+		currentValue=Number(currentValue)-1;
+	decrementElement.value=currentValue;
+	$.get("/decrementTag?tag="+target+"&team="+team+"&match="+match);
 }
 </script>
 </head>
@@ -92,6 +122,10 @@ function toggle(target) {
    <td> 
    <#if matchTag.inputType == "checkbox">
    <input type="checkbox" />
+   <#elseif matchTag.inputType == "incremental">
+   <input type="text" size="2" id="${matchTag.tag}-counter" disabled />
+   <img src="../images/SmallPlus.png" onclick="incrementTag('${matchTag.tag}');" >
+   <img src="../images/SmallMinus.png" onclick="decrementTag('${matchTag.tag}');" >
    </#if>
    </td>
    </tr>
