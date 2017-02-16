@@ -47,9 +47,9 @@ public class AnalyticsReportGenerator
 		AnalyticsReport report = new AnalyticsReport();
 		processTags(tags);
 		report.setTeam(team);
-		report.setCodedDesignation(generateCodedDesignation(team.getTeam(), team.getAvgscore()).replaceAll("<", "&lt")
+		report.setCodedDesignation(generateCodedDesignation(team.getTeam(), team.getAvgScore()).replaceAll("<", "&lt")
 				.replaceAll(">", "&gt"));
-		report.setEnglishDesignation(generateEngDesignation(team.getTeam(), team.getAvgscore(), team.getMatches())
+		report.setEnglishDesignation(generateEngDesignation(team.getTeam(), team.getAvgScore(), team.getMatches())
 				.replaceAll("\n", "<br/>\n"));
 		report.setTableHeaders(generateTableHeaders(matches));
 		report.setTableData(generateTableData(matches, tableTags));

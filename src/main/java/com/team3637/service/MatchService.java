@@ -51,7 +51,7 @@ public interface MatchService extends Service {
 
     void mergeTags(String oldTag, String newTag);
 
-	Team getTeamInfo(Integer teamNum);
+	List<Team> getTeamInfo(Integer teamNum);
 
 	List<MatchStatistics> getTeamMatchStatistics(Integer teamNum);
 

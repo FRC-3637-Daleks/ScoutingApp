@@ -94,7 +94,7 @@ public class TeamsController {
                                      @RequestParam("matches") Integer matches) {
         Team team = new Team();
         team.setTeam(teamNum);
-        team.setAvgscore(score);
+        team.setAvgScore(score);
         team.setMatches(matches);
         if (!teamTags.equals(""))
             team.setTags(new ArrayList<>(new LinkedHashSet<>(Arrays.asList(teamTags.split(", ")))));

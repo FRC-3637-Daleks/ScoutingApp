@@ -27,19 +27,6 @@ import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import com.team3637.analytics.AnalyticsReportGenerator;
-import com.team3637.model.AnalyticsReport;
-import com.team3637.model.Match;
-import com.team3637.model.MatchStatistics;
-import com.team3637.model.Schedule;
-import com.team3637.model.Tag;
-import com.team3637.model.Team;
-import com.team3637.service.MatchService;
-import com.team3637.service.ScheduleService;
-import com.team3637.service.TagService;
-import com.team3637.service.TeamService;
-import com.team3637.wrapper.AnalyticsReportWrapper;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -52,6 +39,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
+
+import com.team3637.analytics.AnalyticsReportGenerator;
+import com.team3637.model.AnalyticsReport;
+import com.team3637.model.Match;
+import com.team3637.model.MatchStatistics;
+import com.team3637.model.Schedule;
+import com.team3637.model.Tag;
+import com.team3637.model.Team;
+import com.team3637.service.MatchService;
+import com.team3637.service.ScheduleService;
+import com.team3637.service.TagService;
+import com.team3637.service.TeamService;
+import com.team3637.wrapper.AnalyticsReportWrapper;
 
 @Controller
 public class AnalyticsController
@@ -223,18 +223,14 @@ public class AnalyticsController
 	}
 
 	@RequestMapping(value = "/teamAnalytics", method = RequestMethod.GET)
-	public String teamAnalytics(@RequestParam("team") Integer teamNum, Model model)
+	public String teamAnalytics(@RequestParam(value = "team", required = false) Integer teamNum, Model model)
 	{
-		Team team = matchService.getTeamInfo(teamNum);
-		model.addAttribute("team", teamNum);
-		model.addAttribute("matches", team.getMatches());
-		model.addAttribute("avgScore", team.getAvgscore());
-		model.addAttribute("ourScore", 90);
-		model.addAttribute("wins", team.getWins());
-		model.addAttribute("losses", team.getLosses());
-
-		List <MatchStatistics> matchStatistics = matchService.getTeamMatchStatistics(teamNum);
-		model.addAttribute("matchStatistics", matchStatistics);
+		List<Team> teams = matchService.getTeamInfo(teamNum);
+		model.addAttribute("teams", teams);
+		for (Team team : teams) {
+			List<MatchStatistics> matchStatistics = matchService.getTeamMatchStatistics(team.getTeam());
+			team.setMatchStatistics(matchStatistics);
+		}
 		return "team-analytics";
 
 	}

@@ -30,7 +30,7 @@ public class TeamMapper implements RowMapper<Team> {
         team.setId(resultSet.getInt("id"));
         team.setTeam(resultSet.getInt("team"));
         team.setMatches(resultSet.getInt("matches"));
-        team.setAvgscore(resultSet.getFloat("avgscore"));
+        team.setAvgScore(resultSet.getFloat("avgscore"));
         ResultSetMetaData rsmd = resultSet.getMetaData();
         int columns = rsmd.getColumnCount();
         for(int i = 5; i <= columns; i++) {

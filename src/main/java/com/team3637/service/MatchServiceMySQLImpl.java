@@ -16,13 +16,18 @@
  */
 package com.team3637.service;
 
-import com.team3637.mapper.MatchMapper;
-import com.team3637.mapper.TagStringMapper;
-import com.team3637.mapper.TeamMapper;
-import com.team3637.model.Match;
-import com.team3637.model.MatchStatistics;
-import com.team3637.model.Team;
-import com.team3637.model.TeamMatchTag;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.sql.DataSource;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -34,19 +39,12 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
-import javax.sql.DataSource;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import com.team3637.mapper.MatchMapper;
+import com.team3637.mapper.TagStringMapper;
+import com.team3637.model.Match;
+import com.team3637.model.MatchStatistics;
+import com.team3637.model.Team;
+import com.team3637.model.TeamMatchTag;
 
 public class MatchServiceMySQLImpl implements MatchService {
 
@@ -275,46 +273,47 @@ public class MatchServiceMySQLImpl implements MatchService {
     }
     
     @Override
-    public Team getTeamInfo(Integer teamNum) {
+    public List<Team> getTeamInfo(Integer teamNum) {
         String SQL = "SELECT team, sum(score)/count(*) as avgscore, count(*) as matches,"+ 
 "(select count(*) FROM scoutingtags.match a WHERE a.team = b.team and a.win = 1 group by team) as wins,"+ 
 "(select count(*) FROM scoutingtags.match a WHERE a.team = b.team and a.loss = 1 group by team) as losses "+ 
-"FROM scoutingtags.match b WHERE team = ? group by team";
-        return jdbcTemplateObject.queryForObject(SQL, new RowMapper<Team>() {
+"FROM scoutingtags.match b WHERE (? is null or team = ?) group by team";
+        return jdbcTemplateObject.query(SQL, new RowMapper<Team>() {
             @Override
             public Team mapRow(ResultSet resultSet, int rowNum) throws SQLException {
                 Team team = new Team();
                 //team.setId(resultSet.getInt("id"));
                 team.setTeam(resultSet.getInt("team"));
                 team.setMatches(resultSet.getInt("matches"));
-                team.setAvgscore(resultSet.getFloat("avgscore"));
+                team.setAvgScore(resultSet.getFloat("avgscore"));
                 team.setWins(resultSet.getInt("wins"));
                 team.setLosses(resultSet.getInt("losses"));
                 return team;
             }
-        }, teamNum);
+        }, teamNum, teamNum);
     }
     
     @Override
     public List <MatchStatistics> getTeamMatchStatistics(Integer teamNum) {
-        String SQL = "SELECT grouping, category, m.tag, sum(occurences) as occurences "+
+        String SQL = "SELECT team, grouping, category, m.tag, sum(occurences) as occurences "+
 "FROM scoutingtags.matchtags m "+
 		"inner join scoutingtags.tags t on m.tag = t.tag"+
-	   " where team = ?"+
-       " group by grouping, category, m.tag"+
-       " order by grouping, category, m.tag";
+	   " where (? is null or team = ?)"+
+       " group by team, grouping, category, m.tag"+
+       " order by team, grouping, category, m.tag";
         return jdbcTemplateObject.query(SQL, new RowMapper<MatchStatistics>() {
             @Override
             public MatchStatistics mapRow(ResultSet resultSet, int rowNum) throws SQLException {
             	MatchStatistics matchStatistics = new MatchStatistics();
                 //team.setId(resultSet.getInt("id"));
+            	matchStatistics.setTeam(resultSet.getInt("team"));
                 matchStatistics.setGrouping(resultSet.getString("grouping"));
                 matchStatistics.setCategory(resultSet.getString("category"));
                 matchStatistics.setTotalOccurences(resultSet.getInt("occurences"));
                 matchStatistics.setTag(resultSet.getString("tag"));
                 return matchStatistics;
             }
-        }, teamNum);
+        }, teamNum, teamNum);
     }
     
     

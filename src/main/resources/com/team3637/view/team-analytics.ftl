@@ -50,21 +50,28 @@ function toggle(target) {
 </script>
 </head>
 <body>
+<#assign teamNum = -1>
+<#list teams as team>
+<#if teamNum == -1 || teamNum != team.team>
+<#if teamNum != -1>
+</div>
+</#if>
 <div onclick="toggle('${team}')">
 <table class="teamHeader">
   <tr>
-    <th><p style="color:white">Team: ${team}</p></th>
-    <th><p style="color:white">Matches Played: ${matches}</p></th>
-    <th><p style="color:white">Avg.Score: ${avgScore}</p></th>
-    <th><p style="color:white">Our Score: ${ourScore}</p></th>
-    <th><p style="color:white">Win/Lose Ratio: ${wins}:${losses}</p></th>
+    <th><p style="color:white">Team: ${team.team}</p></th>
+    <th><p style="color:white">Matches Played: ${team.matches}</p></th>
+    <th><p style="color:white">Avg.Score: ${team.avgScore}</p></th>
+    <th><p style="color:white">Our Score: ${team.ourScore!}</p></th>
+    <th><p style="color:white">Win/Lose Ratio: ${team.wins}:${team.losses}</p></th>
   </tr>
 </table>
 </div>
-<div id=${team}>
+<div id=${team} style = "display:none;">
+</#if>
 <#assign grouping = ""> 
 <#assign category = ""> 
-<#list matchStatistics as matchStatistic>
+<#list team.matchStatistics as matchStatistic>
 <#if grouping == "" || grouping != matchStatistic.grouping> 
    <#if category != "">
    </tr>
@@ -75,9 +82,10 @@ function toggle(target) {
      </tr>
   </table>   
   </#if>
-   <#assign grouping =  matchStatistic.grouping> 
-  <div class="sectionHeader" onclick="toggle('${grouping}')">${grouping}</div>
-  <table class="categoryTable" id="${grouping}">
+   <#assign grouping = matchStatistic.grouping> 
+   <#assign tableId = team.team + "-" + grouping> 
+  <div class="sectionHeader" onclick="toggle('${tableId}')">${grouping}</div>
+  <table class="categoryTable" id="${tableId}">
     <tr>
     <#assign category = ""> 
 </#if>
@@ -111,6 +119,8 @@ function toggle(target) {
      </tr>
   </table>   
   </#if>
+ <#assign teamNum =  team.team>
+ </#list>
  </div>
 </body>
 </html>
