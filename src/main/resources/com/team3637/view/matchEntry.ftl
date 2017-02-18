@@ -31,6 +31,7 @@
 .cellTitle {text-align: center; height: 50px}
 .columnTitle {text-align: center}
 </style>
+<script src="../js/jquery.min.js"></script>
 <script>
 function show(target) {
     document.getElementById(target).style.display = 'block';
@@ -46,6 +47,44 @@ function toggle(target) {
 	else if (document.getElementById(target).style.display == 'block' || document.getElementById(target).style.display == '') {
 		hide(target);
 	}
+}
+
+function toggleTag(target, value) {
+	if (value)
+		$.get("../m/incrementTag?tag="+target+"&team="+team+"&match="+match);
+	else
+		$.get("../m/decrementTag?tag="+target+"&team="+team+"&match="+match);
+}
+
+var team=${team};
+var match=${match};
+function incrementTag(target) {
+	var incrementElement=document.getElementById(target+"-counter");
+	var currentValue=incrementElement.value;
+	if (!currentValue) {
+		currentValue="1";
+	}
+	else
+		currentValue=Number(currentValue)+1;
+	incrementElement.value=currentValue;
+	$.get("../m/incrementTag?tag="+target+"&team="+team+"&match="+match);
+}
+
+function decrementTag(target) {
+	var decrementElement=document.getElementById(target+"-counter");
+	var currentValue=decrementElement.value;
+	if (!currentValue) {
+		currentValue="1";
+	}
+	if (currentValue<="0") {
+		currenValue="0"
+		}
+	else {
+		currentValue=Number(currentValue)-1;
+		$.get("../m/decrementTag?tag="+target+"&team="+team+"&match="+match);
+	}
+	decrementElement.value=currentValue;
+	
 }
 </script>
 </head>
@@ -87,19 +126,23 @@ function toggle(target) {
    <td>
    <div class="cellTitle">${category}</div>
    <table>
+</#if>
    <tr>
    <td> ${matchTag.tag} </td>
    <td> 
    <#if matchTag.inputType == "checkbox">
-   <input type="checkbox" />
+   		<#if matchTag.occurences != 0>
+   			<input type="checkbox" onclick="toggleTag('${matchTag.tag}', this.checked);" checked>
+   		<#else> 
+   			<input type="checkbox" onclick="toggleTag('${matchTag.tag}', this.checked);">
+   		</#if> 
+   <#elseif matchTag.inputType == "incremental">
+   		<input type="text" size="2" id="${matchTag.tag}-counter" value="${matchTag.occurences}" disabled />
+   		<img src="../images/SmallPlus.png" onclick="incrementTag('${matchTag.tag}');" >
+   		<img src="../images/SmallMinus.png" onclick="decrementTag('${matchTag.tag}');" >
    </#if>
    </td>
    </tr>
-<#else>
-   <tr>
-   <td> ${matchTag.tag} </td>
-   </tr>
-</#if>
 </#list>
  <#if category != "">
    </tr>

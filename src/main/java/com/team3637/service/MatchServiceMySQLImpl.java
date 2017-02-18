@@ -265,7 +265,6 @@ public class MatchServiceMySQLImpl implements MatchService {
 		}
 	}
 
-	@Override
 	public List<Team> getTeamInfo(Integer teamNum) {
 		String SQL = "SELECT team, sum(score)/count(*) as avgscore, count(*) as matches,"
 				+ "(select count(*) FROM scoutingtags.match a WHERE a.team = b.team and a.win = 1 group by team) as wins,"
@@ -367,5 +366,21 @@ public class MatchServiceMySQLImpl implements MatchService {
 			}
 		}
 		return matchTeam;
+	}
+
+	@Override
+	public void incrementTag(Integer team, Integer match, String tag) {
+		String sql = "UPDATE scoutingtags.matchtags SET occurences=occurences+1 WHERE team=? AND matchNum=? AND tag=?";
+		int rowsUpdated = jdbcTemplateObject.update(sql, team, match, tag);
+		if (rowsUpdated < 1) {
+			String sqlInsert = "INSERT INTO scoutingtags.matchtags (team, matchNum, tag, occurences) VALUES (?,?,?,?)";
+			jdbcTemplateObject.update(sqlInsert, team, match, tag, 1);
+		}
+	}
+
+	@Override
+	public void decrementTag(Integer team, Integer match, String tag) {
+		String sql = "UPDATE scoutingtags.matchtags SET occurences=occurences-1 WHERE team=? AND matchNum=? AND tag=?";
+		jdbcTemplateObject.update(sql, team, match, tag);
 	}
 }

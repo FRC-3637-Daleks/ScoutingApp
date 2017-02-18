@@ -59,5 +59,9 @@ public interface MatchService extends Service {
 
 	List<TeamMatchTag> getTeamMatchTags(Integer teamNum, Integer matchNum);
 
+	void incrementTag(Integer team, Integer match, String tag);
+
+	void decrementTag(Integer team, Integer match, String tag);
+
 	List<MatchTeams> getMatchTeams(Integer match, List<Team> teams);
 }
