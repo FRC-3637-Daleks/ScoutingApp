@@ -311,7 +311,7 @@ public class MatchServiceMySQLImpl implements MatchService {
 	public List<TeamMatchTag> getTeamMatchTags(Integer teamNum, Integer matchNum) {
 		String SQL = "SELECT grouping, category, t.tag, occurences, input_type " + "FROM scoutingtags.tags t "
 				+ "LEFT OUTER JOIN scoutingtags.matchtags m on m.tag = t.tag and team = ? AND matchNum = ? "
-				+ "WHERE t.type = 'matches' " + "        order by grouping, category, t.tag;";
+				+ "        order by grouping, category, t.tag;";
 		return jdbcTemplateObject.query(SQL, new RowMapper<TeamMatchTag>() {
 			@Override
 			public TeamMatchTag mapRow(ResultSet resultSet, int rowNum) throws SQLException {
