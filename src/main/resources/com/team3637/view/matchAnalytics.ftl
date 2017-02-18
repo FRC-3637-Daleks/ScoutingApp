@@ -20,8 +20,26 @@
     text-align:center;
 }
 
-.teamHeader th{
-    background-color:#005EFF;
+.teamHeaderBlue th{
+    background-color:#0000FF;
+    font-weight:bold;
+    font-size:20px;
+    padding-left:25px;
+    padding-right:25px;
+    border-collapse:collapse;
+}
+
+.teamHeaderRed th{
+    background-color:#FF0000;
+    font-weight:bold;
+    font-size:20px;
+    padding-left:25px;
+    padding-right:25px;
+    border-collapse:collapse;
+}
+
+.matchHeader th{
+    background-color:#000000;
     font-weight:bold;
     font-size:20px;
     padding-left:25px;
@@ -50,14 +68,24 @@ function toggle(target) {
 </script>
 </head>
 <body>
+<#list matchTeamsList as matchTeams>
+<div onclick="toggle('${matchTeams.match}-match')">
+<table class = "matchHeader" cellspacing = "0">
+  <tr>
+    <th><p style="color:white; width:100px;">Match: ${matchTeams.match}</p></th>
+  </tr>
+</table>
+</div>
+<#assign teams = matchTeams.teams>
 <#assign teamNum = -1>
+<#assign teamHeaderStyle = "teamHeader" + matchTeams.allianceMap?api.get(team.team)>
 <#list teams as team>
 <#if teamNum == -1 || teamNum != team.team>
 <#if teamNum != -1>
 </div>
 </#if>
-<div onclick="toggle('${team}')">
-<table class = "teamHeader" cellspacing = "0">
+<div onclick="toggle('${team}-team')">
+<table class = "${teamHeaderStyle}" cellspacing = "0">
   <tr>
     <th><p style="color:white; width:100px;">Team: ${team.team}</p></th>
     <th><p style="color:white; width:170px;">Matches Played: ${team.matches}</p></th>
@@ -67,7 +95,7 @@ function toggle(target) {
   </tr>
 </table>
 </div>
-<div id=${team} style = "display:none;">
+<div id="${team}-team" style = "display:none;">
 </#if>
 <#assign grouping = ""> 
 <#assign category = ""> 
@@ -122,5 +150,6 @@ function toggle(target) {
  <#assign teamNum =  team.team>
  </#list>
  </div>
+ </#list>
 </body>
 </html>

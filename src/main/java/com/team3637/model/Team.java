@@ -20,76 +20,90 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Team {
-    private int id;
-    private int team;
-    private double avgscore;
-    private int matches;
-    private int wins;
-    private int losses;
-    public int getWins() {
+	private Integer id;
+	private Integer team;
+	private Double avgScore;
+	private Double ourScore;
+	private Integer matches;
+	private Integer wins;
+	private Integer losses;
+	private List<MatchStatistics> matchStatistics;
+	private List<String> tags = new ArrayList<String>();
+
+	public List<String> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<String> tags) {
+		this.tags = tags;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public Integer getTeam() {
+		return team;
+	}
+
+	public void setTeam(Integer team) {
+		this.team = team;
+	}
+
+	public Double getAvgScore() {
+		return avgScore;
+	}
+
+	public void setAvgScore(Double avgScore) {
+		this.avgScore = avgScore;
+	}
+
+	public Double getOurScore() {
+		return ourScore;
+	}
+
+	public void setOurScore(Double ourScore) {
+		this.ourScore = ourScore;
+	}
+
+	public Integer getMatches() {
+		return matches;
+	}
+
+	public void setMatches(Integer matches) {
+		this.matches = matches;
+	}
+
+	public Integer getWins() {
 		return wins;
 	}
 
-	public void setWins(int wins) {
+	public void setWins(Integer wins) {
 		this.wins = wins;
 	}
 
-	public int getLosses() {
+	public Integer getLosses() {
 		return losses;
 	}
 
-	public void setLosses(int losses) {
+	public void setLosses(Integer losses) {
 		this.losses = losses;
 	}
 
-	private List<String> tags;
+	public List<MatchStatistics> getMatchStatistics() {
+		return matchStatistics;
+	}
 
-    public int getId() {
-        return id;
-    }
+	public void setMatchStatistics(List<MatchStatistics> matchStatistics) {
+		this.matchStatistics = matchStatistics;
+	}
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getTeam() {
-        return team;
-    }
-
-    public void setTeam(int team) {
-        this.team = team;
-    }
-
-    public double getAvgscore() {
-        return avgscore;
-    }
-
-    public void setAvgscore(double avgscore) {
-        this.avgscore = avgscore;
-    }
-
-    public int getMatches() {
-        return matches;
-    }
-
-    public void setMatches(int matches) {
-        this.matches = matches;
-    }
-
-    public List<String> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<String> tags) {
-        this.tags = tags;
-    }
-
-    public Team() {
-        tags = new ArrayList<>();
-    }
-
-    @Override
-    public String toString() {
-        return Integer.toString(getTeam());
-    }
+	@Override
+	public String toString() {
+		return Integer.toString(getTeam());
+	}
 }

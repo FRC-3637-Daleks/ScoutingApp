@@ -58,7 +58,7 @@ public class TeamServiceMySQLImpl implements TeamService {
         String fieldsSting = "team, avgscore, matches", valuesSting = "?, ?, ?", SQL;
         List<Object> values = new ArrayList<>();
         values.add(team.getTeam());
-        values.add(team.getAvgscore());
+        values.add(team.getAvgScore());
         values.add(team.getMatches());
         for(int i = 0; i < team.getTags().size(); i++) {
             fieldsSting += ", tag" + i;
@@ -132,7 +132,7 @@ public class TeamServiceMySQLImpl implements TeamService {
         String valuesSting = "team=?, avgscore=?, matches=?", SQL;
         List<Object> values = new ArrayList<>();
         values.add(team.getTeam());
-        values.add(team.getAvgscore());
+        values.add(team.getAvgScore());
         values.add(team.getMatches());
         if(diff <= 0) {
             for (int i = 0; i < team.getTags().size(); i++) {
@@ -243,7 +243,7 @@ public class TeamServiceMySQLImpl implements TeamService {
                 Team team = new Team();
                 team.setId(Integer.parseInt(record.get(0)));
                 team.setTeam(Integer.parseInt(record.get(1)));
-                team.setAvgscore(Double.parseDouble(record.get(2)));
+                team.setAvgScore(Double.parseDouble(record.get(2)));
                 team.setMatches(Integer.parseInt(record.get(3)));
                 String[] tags = record.get(4).substring(1, record.get(4).length() - 1).split(",");
                 for(int i =0; i < tags.length; i++)

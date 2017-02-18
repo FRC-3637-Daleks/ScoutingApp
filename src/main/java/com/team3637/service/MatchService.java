@@ -22,6 +22,7 @@ import javax.sql.DataSource;
 
 import com.team3637.model.Match;
 import com.team3637.model.MatchStatistics;
+import com.team3637.model.MatchTeams;
 import com.team3637.model.Team;
 import com.team3637.model.TeamMatchTag;
 
@@ -52,7 +53,7 @@ public interface MatchService extends Service {
 
 	void mergeTags(String oldTag, String newTag);
 
-	Team getTeamInfo(Integer teamNum);
+	List<Team> getTeamInfo(Integer teamNum);
 
 	List<MatchStatistics> getTeamMatchStatistics(Integer teamNum);
 
@@ -62,4 +63,5 @@ public interface MatchService extends Service {
 
 	void decrementTag(Integer team, Integer match, String tag);
 
+	List<MatchTeams> getMatchTeams(Integer match, List<Team> teams);
 }

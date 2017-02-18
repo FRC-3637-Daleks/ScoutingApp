@@ -43,6 +43,7 @@ import com.team3637.mapper.MatchMapper;
 import com.team3637.mapper.TagStringMapper;
 import com.team3637.model.Match;
 import com.team3637.model.MatchStatistics;
+import com.team3637.model.MatchTeams;
 import com.team3637.model.Team;
 import com.team3637.model.TeamMatchTag;
 
@@ -264,44 +265,45 @@ public class MatchServiceMySQLImpl implements MatchService {
 		}
 	}
 
-	@Override
-	public Team getTeamInfo(Integer teamNum) {
+	public List<Team> getTeamInfo(Integer teamNum) {
 		String SQL = "SELECT team, sum(score)/count(*) as avgscore, count(*) as matches,"
 				+ "(select count(*) FROM scoutingtags.match a WHERE a.team = b.team and a.win = 1 group by team) as wins,"
 				+ "(select count(*) FROM scoutingtags.match a WHERE a.team = b.team and a.loss = 1 group by team) as losses "
-				+ "FROM scoutingtags.match b WHERE team = ? group by team";
-		return jdbcTemplateObject.queryForObject(SQL, new RowMapper<Team>() {
+				+ "FROM scoutingtags.match b WHERE (? is null or team = ?) group by team";
+		return jdbcTemplateObject.query(SQL, new RowMapper<Team>() {
 			@Override
 			public Team mapRow(ResultSet resultSet, int rowNum) throws SQLException {
 				Team team = new Team();
 				// team.setId(resultSet.getInt("id"));
 				team.setTeam(resultSet.getInt("team"));
 				team.setMatches(resultSet.getInt("matches"));
-				team.setAvgscore(resultSet.getFloat("avgscore"));
+				team.setAvgScore(resultSet.getDouble("avgscore"));
 				team.setWins(resultSet.getInt("wins"));
 				team.setLosses(resultSet.getInt("losses"));
 				return team;
 			}
-		}, teamNum);
+		}, teamNum, teamNum);
 	}
 
 	@Override
 	public List<MatchStatistics> getTeamMatchStatistics(Integer teamNum) {
-		String SQL = "SELECT grouping, category, m.tag, sum(occurences) as occurences "
+		String SQL = "SELECT team, grouping, category, m.tag, sum(occurences) as occurences "
 				+ "FROM scoutingtags.matchtags m " + "inner join scoutingtags.tags t on m.tag = t.tag"
-				+ " where team = ?" + " group by grouping, category, m.tag" + " order by grouping, category, m.tag";
+				+ " where (? is null or team = ?)" + " group by team, grouping, category, m.tag"
+				+ " order by team, grouping, category, m.tag";
 		return jdbcTemplateObject.query(SQL, new RowMapper<MatchStatistics>() {
 			@Override
 			public MatchStatistics mapRow(ResultSet resultSet, int rowNum) throws SQLException {
 				MatchStatistics matchStatistics = new MatchStatistics();
 				// team.setId(resultSet.getInt("id"));
+				matchStatistics.setTeam(resultSet.getInt("team"));
 				matchStatistics.setGrouping(resultSet.getString("grouping"));
 				matchStatistics.setCategory(resultSet.getString("category"));
 				matchStatistics.setTotalOccurences(resultSet.getInt("occurences"));
 				matchStatistics.setTag(resultSet.getString("tag"));
 				return matchStatistics;
 			}
-		}, teamNum);
+		}, teamNum, teamNum);
 	}
 
 	@Override
@@ -321,6 +323,49 @@ public class MatchServiceMySQLImpl implements MatchService {
 				return teamMatchTag;
 			}
 		}, teamNum, matchNum);
+	}
+
+	@Override
+	public List<MatchTeams> getMatchTeams(Integer match, final List<Team> teams) {
+		String SQL = "SELECT matchNum, b1, b2, b3, r1, r2, r3 FROM scoutingtags.schedule"
+				+ " where (? is null or matchNum = ?) " + "order by matchNum";
+		return jdbcTemplateObject.query(SQL, new RowMapper<MatchTeams>() {
+			@Override
+			public MatchTeams mapRow(ResultSet resultSet, int rowNum) throws SQLException {
+				MatchTeams matchTeams = new MatchTeams();
+				matchTeams.setMatch(resultSet.getInt("matchNum"));
+				Integer team = resultSet.getInt("b1");
+				matchTeams.getTeams().add(findTeam(teams, team));
+				matchTeams.getAllianceMap().put(team, "Blue");
+				team = resultSet.getInt("b2");
+				matchTeams.getTeams().add(findTeam(teams, team));
+				matchTeams.getAllianceMap().put(team, "Blue");
+				team = resultSet.getInt("b3");
+				matchTeams.getTeams().add(findTeam(teams, team));
+				matchTeams.getAllianceMap().put(team, "Blue");
+				team = resultSet.getInt("r1");
+				matchTeams.getTeams().add(findTeam(teams, team));
+				matchTeams.getAllianceMap().put(team, "Red");
+				team = resultSet.getInt("r2");
+				matchTeams.getTeams().add(findTeam(teams, team));
+				matchTeams.getAllianceMap().put(team, "Red");
+				team = resultSet.getInt("r3");
+				matchTeams.getTeams().add(findTeam(teams, team));
+				matchTeams.getAllianceMap().put(team, "Red");
+				return matchTeams;
+			}
+		}, match, match);
+	}
+
+	private Team findTeam(List<Team> teams, Integer teamNum) {
+		Team matchTeam = null;
+		for (int i = 0; i < teams.size() && matchTeam == null; i++) {
+			Team team = teams.get(i);
+			if (team.getTeam().equals(teamNum)) {
+				matchTeam = team;
+			}
+		}
+		return matchTeam;
 	}
 
 	@Override

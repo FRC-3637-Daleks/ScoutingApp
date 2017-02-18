@@ -6,6 +6,15 @@ public class MatchStatistics {
 	private String category;
 	private int totalOccurences;
 	private String tag;
+	private Integer team;
+
+	public Integer getTeam() {
+		return team;
+	}
+
+	public void setTeam(Integer team) {
+		this.team = team;
+	}
 
 	public String getTag() {
 		return tag;
