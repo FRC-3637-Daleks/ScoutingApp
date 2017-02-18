@@ -16,44 +16,48 @@
  */
 package com.team3637.service;
 
+import java.util.List;
+
+import javax.sql.DataSource;
+
 import com.team3637.model.Match;
 import com.team3637.model.MatchStatistics;
+import com.team3637.model.MatchTeams;
 import com.team3637.model.Team;
 import com.team3637.model.TeamMatchTag;
 
-import javax.sql.DataSource;
-import java.util.List;
-
 public interface MatchService extends Service {
-    void setDataSource(DataSource dataSource);
+	void setDataSource(DataSource dataSource);
 
-    void create(Match match);
+	void create(Match match);
 
-    Match getMatch(Integer id);
+	Match getMatch(Integer id);
 
-    List<Match> getMatches();
+	List<Match> getMatches();
 
-    List<Match> getForMatch(Integer teamNum);
+	List<Match> getForMatch(Integer teamNum);
 
-    List<Match> getForTeam(Integer matchNum);
+	List<Match> getForTeam(Integer matchNum);
 
-    Match getForMatchAndTeam(Integer matchNum, Integer teamNum);
+	Match getForMatchAndTeam(Integer matchNum, Integer teamNum);
 
-    void update(Match match);
+	void update(Match match);
 
-    void delete(Match match);
+	void delete(Match match);
 
-    boolean checkForId(Integer id);
+	boolean checkForId(Integer id);
 
-    boolean checkForMatch(Integer matchNum, Integer team);
+	boolean checkForMatch(Integer matchNum, Integer team);
 
-    List<String> getTags();
+	List<String> getTags();
 
-    void mergeTags(String oldTag, String newTag);
+	void mergeTags(String oldTag, String newTag);
 
 	List<Team> getTeamInfo(Integer teamNum);
 
 	List<MatchStatistics> getTeamMatchStatistics(Integer teamNum);
 
 	List<TeamMatchTag> getTeamMatchTags(Integer teamNum, Integer matchNum);
+
+	List<MatchTeams> getMatchTeams(Integer match, List<Team> teams);
 }

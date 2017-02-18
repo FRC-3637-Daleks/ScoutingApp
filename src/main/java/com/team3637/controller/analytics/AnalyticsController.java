@@ -44,6 +44,7 @@ import com.team3637.analytics.AnalyticsReportGenerator;
 import com.team3637.model.AnalyticsReport;
 import com.team3637.model.Match;
 import com.team3637.model.MatchStatistics;
+import com.team3637.model.MatchTeams;
 import com.team3637.model.Schedule;
 import com.team3637.model.Tag;
 import com.team3637.model.Team;
@@ -54,8 +55,7 @@ import com.team3637.service.TeamService;
 import com.team3637.wrapper.AnalyticsReportWrapper;
 
 @Controller
-public class AnalyticsController
-{
+public class AnalyticsController {
 
 	@Autowired
 	private ScheduleService scheduleService;
@@ -71,15 +71,13 @@ public class AnalyticsController
 	private AnalyticsReportGenerator analyticsReportGenerator;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String root(Model model)
-	{
+	public String root(Model model) {
 		model.addAttribute("schedule", scheduleService.getTeamsMatches(3637));
 		return "analytics";
 	}
 
 	@RequestMapping("/cache-scouting-report")
-	public String cacheScoutingReport(HttpServletRequest request)
-	{
+	public String cacheScoutingReport(HttpServletRequest request) {
 		String baseUrl = String.format("%s://%s:%d%s/", request.getScheme(), request.getServerName(),
 				request.getServerPort(), context.getContextPath());
 		RestTemplate rest = new RestTemplate();
@@ -91,37 +89,30 @@ public class AnalyticsController
 				HttpMethod.GET, requestEntity, String.class);
 		String report = responseEntity.getBody();
 		File cachedReport = new File(context.getRealPath("/") + "cached-scouting-report.html");
-		try
-		{
+		try {
 			FileWriter fileWriter = new FileWriter(cachedReport);
 			fileWriter.write(report);
 			fileWriter.flush();
 			fileWriter.close();
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return "redirect:/cached-scouting-report.html";
 	}
 
 	@RequestMapping(value = "/scouting-report.html", method = RequestMethod.GET)
-	public String generateScoutingReport(Model model)
-	{
+	public String generateScoutingReport(Model model) {
 		List<AnalyticsReport> reports = new ArrayList<>();
 		List<Team> teams = teamService.getTeams();
-		for (Team team : teams)
-		{
+		for (Team team : teams) {
 			List<Match> matches = matchService.getForTeam(team.getTeam());
 			List<Tag> tags = new ArrayList<>();
 			List<String> tagStrings = tagService.getMatchTagStringsForTeam(team.getTeam());
 			for (String tagString : tagStrings)
 				tags.add(tagService.getTagByName(tagString));
 			List<Tag> tableTags = new ArrayList<>();
-			for (Tag tag : tags)
-			{
-				if (tag.isInTable())
-				{
+			for (Tag tag : tags) {
+				if (tag.isInTable()) {
 					boolean inList = false;
 					for (Tag tagInTable : tableTags)
 						if (tag.compareTo(tagInTable) == 0)
@@ -130,12 +121,9 @@ public class AnalyticsController
 						tableTags.add(tag);
 				}
 			}
-			try
-			{
+			try {
 				reports.add(analyticsReportGenerator.generateAnalyticsReport(team, tags, matches, tableTags));
-			}
-			catch (IOException e)
-			{
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -144,8 +132,7 @@ public class AnalyticsController
 	}
 
 	@RequestMapping("/cache-prematch-report-{matchNum}")
-	public String cachePreMatchReport(@PathVariable("matchNum") Integer matchNum, HttpServletRequest request)
-	{
+	public String cachePreMatchReport(@PathVariable("matchNum") Integer matchNum, HttpServletRequest request) {
 		String baseUrl = String.format("%s://%s:%d%s/", request.getScheme(), request.getServerName(),
 				request.getServerPort(), context.getContextPath());
 		RestTemplate rest = new RestTemplate();
@@ -158,25 +145,20 @@ public class AnalyticsController
 				String.class);
 		String report = responseEntity.getBody();
 		File cachedReport = new File(context.getRealPath("/") + "cached-prematch-report.html");
-		try
-		{
+		try {
 			FileWriter fileWriter = new FileWriter(cachedReport);
 			fileWriter.write(report);
 			fileWriter.flush();
 			fileWriter.close();
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return "redirect:/cached-prematch-report.html";
 	}
 
 	@RequestMapping(value = "/prematch-report-{matchNum}.html", method = RequestMethod.GET)
-	public String generatePreMatchReport(@PathVariable("matchNum") Integer matchNum, Model model)
-	{
-		if (!scheduleService.checkForMatch(new Schedule(matchNum)))
-		{
+	public String generatePreMatchReport(@PathVariable("matchNum") Integer matchNum, Model model) {
+		if (!scheduleService.checkForMatch(new Schedule(matchNum))) {
 			return "analytics";
 		}
 		Schedule match = scheduleService.getMatch(matchNum);
@@ -188,18 +170,15 @@ public class AnalyticsController
 		teams.add(teamService.getTeamByNumber(match.getR1()));
 		teams.add(teamService.getTeamByNumber(match.getR2()));
 		teams.add(teamService.getTeamByNumber(match.getR3()));
-		for (Team team : teams)
-		{
+		for (Team team : teams) {
 			List<Match> matches = matchService.getForTeam(team.getTeam());
 			List<Tag> tags = new ArrayList<>();
 			List<String> tagStrings = tagService.getMatchTagStringsForTeam(team.getTeam());
 			for (String tagString : tagStrings)
 				tags.add(tagService.getTagByName(tagString));
 			List<Tag> tableTags = new ArrayList<>();
-			for (Tag tag : tags)
-			{
-				if (tag.isInTable())
-				{
+			for (Tag tag : tags) {
+				if (tag.isInTable()) {
 					boolean inList = false;
 					for (Tag tagInTable : tableTags)
 						if (tag.compareTo(tagInTable) == 0)
@@ -208,12 +187,9 @@ public class AnalyticsController
 						tableTags.add(tag);
 				}
 			}
-			try
-			{
+			try {
 				reports.add(analyticsReportGenerator.generateAnalyticsReport(team, tags, matches, tableTags));
-			}
-			catch (IOException e)
-			{
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -223,16 +199,27 @@ public class AnalyticsController
 	}
 
 	@RequestMapping(value = "/teamAnalytics", method = RequestMethod.GET)
-	public String teamAnalytics(@RequestParam(value = "team", required = false) Integer teamNum, Model model)
-	{
+	public String teamAnalytics(@RequestParam(value = "team", required = false) Integer teamNum, Model model) {
 		List<Team> teams = matchService.getTeamInfo(teamNum);
 		model.addAttribute("teams", teams);
 		for (Team team : teams) {
 			List<MatchStatistics> matchStatistics = matchService.getTeamMatchStatistics(team.getTeam());
 			team.setMatchStatistics(matchStatistics);
 		}
-		return "team-analytics";
+		return "teamAnalytics";
 
 	}
 
+	@RequestMapping(value = "/teamAnalyticsByMatch", method = RequestMethod.GET)
+	public String teamAnalyticsByMatch(@RequestParam(value = "match", required = false) Integer match, Model model) {
+		List<Team> teams = matchService.getTeamInfo(null);
+		for (Team team : teams) {
+			List<MatchStatistics> matchStatistics = matchService.getTeamMatchStatistics(team.getTeam());
+			team.setMatchStatistics(matchStatistics);
+		}
+		List<MatchTeams> matchTeamsList = matchService.getMatchTeams(match, teams);
+		model.addAttribute("matchTeamsList", matchTeamsList);
+		return "matchAnalytics";
+
+	}
 }

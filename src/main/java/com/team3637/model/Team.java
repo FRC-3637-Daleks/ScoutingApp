@@ -20,80 +20,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Team {
-	private int id;
-	private int team;
-	private double avgScore;
-	private double ourScore;
-	private int matches;
-	private int wins;
-	private int losses;
+	private Integer id;
+	private Integer team;
+	private Double avgScore;
+	private Double ourScore;
+	private Integer matches;
+	private Integer wins;
+	private Integer losses;
 	private List<MatchStatistics> matchStatistics;
-
-	public double getOurScore() {
-		return ourScore;
-	}
-
-	public void setOurScore(double ourScore) {
-		this.ourScore = ourScore;
-	}
-
-	public List<MatchStatistics> getMatchStatistics() {
-		return matchStatistics;
-	}
-
-	public void setMatchStatistics(List<MatchStatistics> matchStatistics) {
-		this.matchStatistics = matchStatistics;
-	}
-
-	public int getWins() {
-		return wins;
-	}
-
-	public void setWins(int wins) {
-		this.wins = wins;
-	}
-
-	public int getLosses() {
-		return losses;
-	}
-
-	public void setLosses(int losses) {
-		this.losses = losses;
-	}
-
-	private List<String> tags;
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public int getTeam() {
-		return team;
-	}
-
-	public void setTeam(int team) {
-		this.team = team;
-	}
-
-	public double getAvgScore() {
-		return avgScore;
-	}
-
-	public void setAvgScore(double avgScore) {
-		this.avgScore = avgScore;
-	}
-
-	public int getMatches() {
-		return matches;
-	}
-
-	public void setMatches(int matches) {
-		this.matches = matches;
-	}
+	private List<String> tags = new ArrayList<String>();
 
 	public List<String> getTags() {
 		return tags;
@@ -103,8 +38,68 @@ public class Team {
 		this.tags = tags;
 	}
 
-	public Team() {
-		tags = new ArrayList<>();
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public Integer getTeam() {
+		return team;
+	}
+
+	public void setTeam(Integer team) {
+		this.team = team;
+	}
+
+	public Double getAvgScore() {
+		return avgScore;
+	}
+
+	public void setAvgScore(Double avgScore) {
+		this.avgScore = avgScore;
+	}
+
+	public Double getOurScore() {
+		return ourScore;
+	}
+
+	public void setOurScore(Double ourScore) {
+		this.ourScore = ourScore;
+	}
+
+	public Integer getMatches() {
+		return matches;
+	}
+
+	public void setMatches(Integer matches) {
+		this.matches = matches;
+	}
+
+	public Integer getWins() {
+		return wins;
+	}
+
+	public void setWins(Integer wins) {
+		this.wins = wins;
+	}
+
+	public Integer getLosses() {
+		return losses;
+	}
+
+	public void setLosses(Integer losses) {
+		this.losses = losses;
+	}
+
+	public List<MatchStatistics> getMatchStatistics() {
+		return matchStatistics;
+	}
+
+	public void setMatchStatistics(List<MatchStatistics> matchStatistics) {
+		this.matchStatistics = matchStatistics;
 	}
 
 	@Override
