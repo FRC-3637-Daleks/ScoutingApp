@@ -26,16 +26,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 import javax.servlet.ServletContext;
-
-import com.google.gson.Gson;
-import com.team3637.model.Match;
-import com.team3637.model.Tag;
-import com.team3637.model.Team;
-import com.team3637.model.TeamMatchTag;
-import com.team3637.service.MatchService;
-import com.team3637.service.TagService;
-import com.team3637.service.TeamService;
-import com.team3637.wrapper.MatchWrapper;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -49,9 +40,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.gson.Gson;
+import com.team3637.model.Match;
+import com.team3637.model.Tag;
+import com.team3637.model.Team;
+import com.team3637.model.TeamMatchTag;
+import com.team3637.service.MatchService;
+import com.team3637.service.TagService;
+import com.team3637.service.TeamService;
+import com.team3637.wrapper.MatchWrapper;
+
 @Controller
-public class MatchController
-{
+public class MatchController {
 
 	@Autowired
 	private MatchService matchService;
@@ -63,15 +63,13 @@ public class MatchController
 	private ServletContext context;
 
 	@RequestMapping("/")
-	public String index()
-	{
+	public String index() {
 		return "redirect:" + context.getContextPath() + "/";
 	}
 
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
 	public String newMatch(@RequestParam("teamNum") Integer teamNum, @RequestParam("matchNum") Integer matchNum,
-			Model model)
-	{
+			Model model) {
 
 		Match match = matchService.getForMatchAndTeam(matchNum, teamNum);
 		Team team = teamService.getTeamByNumber(teamNum);
@@ -95,8 +93,7 @@ public class MatchController
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<?> submitNewMatch(@ModelAttribute("match") Match match,
-			@RequestParam("matchTags") String matchTags)
-	{
+			@RequestParam("matchTags") String matchTags) {
 		if (match.getScore() == null)
 			return new ResponseEntity<>("400 - Bad Request", HttpStatus.BAD_REQUEST);
 		if (!matchTags.equals(""))
@@ -105,10 +102,8 @@ public class MatchController
 		List<String> matchTagsList = matchService.getTags();
 		if (match.getTags().size() > matchTagsList.size())
 			return new ResponseEntity<>("400 - More tags in request than in tag list", HttpStatus.BAD_REQUEST);
-		for (int i = 0; i < match.getTags().size(); i++)
-		{
-			if (!matchTagsList.contains(match.getTags().get(i)))
-			{
+		for (int i = 0; i < match.getTags().size(); i++) {
+			if (!matchTagsList.contains(match.getTags().get(i))) {
 				match.getTags().remove(match.getTags().get(i));
 			}
 		}
@@ -130,22 +125,17 @@ public class MatchController
 	}
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
-	public String listMatches(Model model)
-	{
+	public String listMatches(Model model) {
 		List<Match> matches = matchService.getMatches();
 		model.addAttribute("matchWrapper", new MatchWrapper(matches, new boolean[matches.size()]));
 		return "match-list";
 	}
 
 	@RequestMapping(value = "/list", method = RequestMethod.POST)
-	public String listMatches(@ModelAttribute("matchWrapper") MatchWrapper wrapper)
-	{
-		if (wrapper.getMatches() != null && wrapper.getMatches().size() > 0)
-		{
-			for (int i = 0; i < wrapper.getMatches().size(); i++)
-			{
-				if (wrapper.getDeleted()[i])
-				{
+	public String listMatches(@ModelAttribute("matchWrapper") MatchWrapper wrapper) {
+		if (wrapper.getMatches() != null && wrapper.getMatches().size() > 0) {
+			for (int i = 0; i < wrapper.getMatches().size(); i++) {
+				if (wrapper.getDeleted()[i]) {
 					matchService.delete(wrapper.getMatches().get(i));
 				}
 			}
@@ -154,8 +144,7 @@ public class MatchController
 	}
 
 	@RequestMapping(value = "/tags", method = RequestMethod.GET)
-	public String tags(Model model)
-	{
+	public String tags(Model model) {
 		List<String> matchTags = matchService.getTags();
 		List<String> teamTags = teamService.getTags();
 		model.addAttribute("matchTags", matchTags);
@@ -165,54 +154,41 @@ public class MatchController
 
 	@RequestMapping(value = "/tags", method = RequestMethod.POST)
 	public String tags(@RequestParam("matchTags") String matchTagsString,
-			@RequestParam("teamTags") String teamTagsString)
-	{
+			@RequestParam("teamTags") String teamTagsString) {
 		List<String> matchTags = new ArrayList<>(new LinkedHashSet<>(Arrays.asList(matchTagsString.split(", "))));
 		List<String> teamTags = new ArrayList<>(new LinkedHashSet<>(Arrays.asList(teamTagsString.split(", "))));
 		List<String> currentMatchTags = matchService.getTags();
 		List<String> currentTeamTags = teamService.getTags();
 		boolean dne;
-		for (String matchTag : matchTags)
-		{
-			if (!tagService.checkForTag(new Tag(matchTag, "matches")))
-			{
+		for (String matchTag : matchTags) {
+			if (!tagService.checkForTag(new Tag(matchTag, "matches"))) {
 				tagService.create(new Tag(matchTag, "matches"));
 			}
 		}
-		for (String currentMatchTag : currentMatchTags)
-		{
+		for (String currentMatchTag : currentMatchTags) {
 			dne = true;
-			for (String matchTag : matchTags)
-			{
-				if (currentMatchTag.equals(matchTag))
-				{
+			for (String matchTag : matchTags) {
+				if (currentMatchTag.equals(matchTag)) {
 					dne = false;
 				}
 			}
-			if (dne)
-			{
+			if (dne) {
 				tagService.delete(currentMatchTag);
 			}
 		}
-		for (String teamTag : teamTags)
-		{
-			if (!tagService.checkForTag(new Tag(teamTag, "teams")))
-			{
+		for (String teamTag : teamTags) {
+			if (!tagService.checkForTag(new Tag(teamTag, "teams"))) {
 				tagService.create(new Tag(teamTag, "teams"));
 			}
 		}
-		for (String currentTeamTag : currentTeamTags)
-		{
+		for (String currentTeamTag : currentTeamTags) {
 			dne = true;
-			for (String teamTag : teamTags)
-			{
-				if (currentTeamTag.equals(teamTag))
-				{
+			for (String teamTag : teamTags) {
+				if (currentTeamTag.equals(teamTag)) {
 					dne = false;
 				}
 			}
-			if (dne)
-			{
+			if (dne) {
 				tagService.delete(currentTeamTag);
 			}
 		}
@@ -220,39 +196,34 @@ public class MatchController
 	}
 
 	@RequestMapping(value = "/tags/mergeMatch", method = RequestMethod.GET)
-	public String mergeMatchTags(Model model)
-	{
+	public String mergeMatchTags(Model model) {
 		List<String> matchTags = matchService.getTags();
 		model.addAttribute("matchTags", matchTags);
 		return "merge-match-tags";
 	}
 
 	@RequestMapping(value = "/tags/mergeMatch", method = RequestMethod.POST)
-	public String mergeMatchTags(@RequestParam("oldTag") String oldTag, @RequestParam("newTag") String newTag)
-	{
+	public String mergeMatchTags(@RequestParam("oldTag") String oldTag, @RequestParam("newTag") String newTag) {
 		tagService.mergeTags(new Tag(oldTag, "matches"), new Tag(newTag, "matches"));
 		return "redirect:" + context.getContextPath() + "/m/tags";
 	}
 
 	@RequestMapping(value = "/tags/mergeTeam", method = RequestMethod.GET)
-	public String mergeTeamTags(Model model)
-	{
+	public String mergeTeamTags(Model model) {
 		List<String> teamTags = teamService.getTags();
 		model.addAttribute("teamTags", teamTags);
 		return "merge-team-tags";
 	}
 
 	@RequestMapping(value = "/tags/mergeTeam", method = RequestMethod.POST)
-	public String mergeTeamTags(@RequestParam("oldTag") String oldTag, @RequestParam("newTag") String newTag)
-	{
+	public String mergeTeamTags(@RequestParam("oldTag") String oldTag, @RequestParam("newTag") String newTag) {
 		tagService.mergeTags(new Tag(oldTag, "teams"), new Tag(newTag, "teams"));
 		return "redirect:" + context.getContextPath() + "/m/tags";
 	}
 
 	@RequestMapping("/export/csv")
 	@ResponseBody
-	public String exportCSV() throws IOException
-	{
+	public String exportCSV() throws IOException {
 		String file = "matches.csv";
 		File exportDirectory = new File(context.getRealPath("/") + "/export");
 		if (!exportDirectory.exists())
@@ -264,21 +235,18 @@ public class MatchController
 
 	@RequestMapping("/matchTags")
 	@ResponseBody
-	public String getMatchTags()
-	{
+	public String getMatchTags() {
 		return new Gson().toJson(matchService.getTags());
 	}
 
 	@RequestMapping("/teamTags")
 	@ResponseBody
-	public String getTeamTags()
-	{
+	public String getTeamTags() {
 		return new Gson().toJson(teamService.getTags());
 	}
 
 	@RequestMapping(value = "/matchEntry", method = RequestMethod.GET)
-	public String matchEntry(@RequestParam("team") Integer team, @RequestParam("match") Integer match, Model model)
-	{
+	public String matchEntry(@RequestParam("team") Integer team, @RequestParam("match") Integer match, Model model) {
 		List<TeamMatchTag> matchTags = matchService.getTeamMatchTags(team, match);
 
 		model.addAttribute("team", team);
@@ -287,4 +255,17 @@ public class MatchController
 		return "matchEntry";
 	}
 
+	@RequestMapping(value = "/incrementTag", method = RequestMethod.GET)
+	public void incrementTag(@RequestParam("team") Integer team, @RequestParam("match") Integer match,
+			@RequestParam("tag") String tag, HttpServletResponse response) {
+		matchService.incrementTag(team, match, tag);
+		response.setStatus(200);
+	}
+
+	@RequestMapping(value = "/decrementTag", method = RequestMethod.GET)
+	public void decrementTag(@RequestParam("team") Integer team, @RequestParam("match") Integer match,
+			@RequestParam("tag") String tag, HttpServletResponse response) {
+		matchService.decrementTag(team, match, tag);
+		response.setStatus(200);
+	}
 }
