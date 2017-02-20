@@ -268,13 +268,20 @@ public class MatchServiceMySQLImpl implements MatchService {
 
 	@Override
 	public List<Team> getTeamMatchSummaryInfo(Integer teamNum) {
-		// @formatter:off
-		String sql = "SELECT team, sum(score)/count(*) as avgscore, count(*) as matches,"
+		//@formatter:off
+		String sql = 
+				    "SELECT team, sum(score)/count(*) as avgscore, count(*) as matches,"
 				+ "               (SELECT count(*) FROM scoutingtags.match m2 WHERE m2.team = m.team and m.win = 1) as wins,"
-				+ "               (SELECT count(*) FROM scoutingtags.match m2 WHERE m2.team = m.team and m.tie = 1) as ties, "
-				+ "               (SELECT count(*) FROM scoutingtags.match m2  WHERE m2.team = m.team and m.loss = 1) as losses "
-				+ "FROM scoutingtags.match m " + "WHERE ? is null or team = ? " + "GROUP BY team";
-		// @formatter:on
+				+ "               (SELECT count(*) FROM scoutingtags.match m2 WHERE m2.team = m.team and m.tie = 1) as ties, "				    		
+				+ "               (SELECT count(*) FROM scoutingtags.match m2  WHERE m2.team = m.team and m.loss = 1) as losses, "
+				+ "				  (SELECT sum(occurences * t.point_value) "
+				+ "                FROM scoutingtags.matchtags mt "
+			    + "				        inner join scoutingtags.tags t on mt.tag = t.tag "
+                + "                where mt.team = m.team) as ourscore "
+				+ "FROM scoutingtags.match m "
+				+ "WHERE ? is null or team = ? "
+				+ "GROUP BY team";
+		//@formatter:on		
 		return jdbcTemplateObject.query(sql, new RowMapper<Team>() {
 			@Override
 			public Team mapRow(ResultSet resultSet, int rowNum) throws SQLException {
@@ -285,6 +292,7 @@ public class MatchServiceMySQLImpl implements MatchService {
 				team.setWins(resultSet.getInt("wins"));
 				team.setTies(resultSet.getInt("ties"));
 				team.setLosses(resultSet.getInt("losses"));
+				team.setOurScore(resultSet.getDouble("ourscore"));
 				return team;
 			}
 		}, teamNum, teamNum);
@@ -292,17 +300,27 @@ public class MatchServiceMySQLImpl implements MatchService {
 
 	@Override
 	public List<MatchStatistics> getTeamMatchStatistics(Integer teamNum) {
-		// @formatter:off
-		String sql = "SELECT team, grouping, category, m.tag, sum(occurences) as occurences "
-				+ " FROM scoutingtags.matchtags m " + "              inner join scoutingtags.tags t on m.tag = t.tag "
-				+ "WHERE (? is null or team = ?) " + "GROUP BY team, grouping, category, m.tag "
-				+ "ORDER BY team, grouping, category, m.tag";
-		// @formatter:on
+		//@formatter:off
+		String sql = 
+				  "SELECT team, t.grouping, category, m.tag, tg.sequence, sum(occurences) as occurences "
+				+ " FROM scoutingtags.matchtags m " 
+			    + "      inner join scoutingtags.tags t on m.tag = t.tag "
+			    + "      inner join scoutingtags.taggrouping tg on tg.grouping = t.grouping "
+				+ "WHERE (? is null or team = ?) "
+			    + "GROUP BY team, t.grouping,sequence, category, m.tag "
+			    + "union "
+				+ "SELECT team, t.grouping, category, m.tag, tg.sequence, sum(occurences) as occurences "
+				+ " FROM scoutingtags.teamtags m " 
+			    + "      inner join scoutingtags.tags t on m.tag = t.tag "
+			    + "      inner join scoutingtags.taggrouping tg on tg.grouping = t.grouping "
+				+ "WHERE (? is null or team = ?) "
+				+ "GROUP BY team, t.grouping, sequence, category, m.tag "
+				+ "ORDER BY team, sequence, category, tag";
+        //@formatter:on		
 		return jdbcTemplateObject.query(sql, new RowMapper<MatchStatistics>() {
 			@Override
 			public MatchStatistics mapRow(ResultSet resultSet, int rowNum) throws SQLException {
 				MatchStatistics matchStatistics = new MatchStatistics();
-				// team.setId(resultSet.getInt("id"));
 				matchStatistics.setTeam(resultSet.getInt("team"));
 				matchStatistics.setGrouping(resultSet.getString("grouping"));
 				matchStatistics.setCategory(resultSet.getString("category"));
@@ -310,16 +328,19 @@ public class MatchServiceMySQLImpl implements MatchService {
 				matchStatistics.setTag(resultSet.getString("tag"));
 				return matchStatistics;
 			}
-		}, teamNum, teamNum);
+		}, teamNum, teamNum, teamNum, teamNum);
 	}
 
 	@Override
 	public List<TeamMatchTag> getTeamMatchTags(Integer teamNum, Integer matchNum) {
-		// @formatter:off
-		String sql = "SELECT grouping, category, t.tag, occurences, input_type " + "FROM scoutingtags.tags t "
+		//@formatter:off
+		String sql = 
+				   "SELECT grouping, category, t.tag, occurences, input_type " 
+		        + "FROM scoutingtags.tags t "
 				+ "             LEFT OUTER JOIN scoutingtags.matchtags m on m.tag = t.tag and team = ? AND matchNum = ? "
-				+ " WHERE t.type = 'matches' " + "ORDER BY grouping, category, t.tag;";
-		// @formatter:on
+				+ " WHERE t.type = 'matches' " 
+				+ "ORDER BY grouping, category, t.tag;";
+		//@formatter:on
 		return jdbcTemplateObject.query(sql, new RowMapper<TeamMatchTag>() {
 			@Override
 			public TeamMatchTag mapRow(ResultSet resultSet, int rowNum) throws SQLException {
@@ -336,11 +357,15 @@ public class MatchServiceMySQLImpl implements MatchService {
 
 	@Override
 	public List<MatchTeams> getMatchTeams(Integer match, final List<Team> teams) {
-		// @formatter:off
-		String sql = "SELECT matchNum, b1, b2, b3, r1, r2, r3 " + "FROM scoutingtags.schedule "
-				+ "WHERE ? is null or matchNum = ? " + "ORDER BY matchNum";
-		// @formatter:oN
-		return jdbcTemplateObject.query(sql, new RowMapper<MatchTeams>() {
+		//@formatter:off
+		String sql = 
+			   "SELECT matchNum, b1, b2, b3, r1, r2, r3 "
+		    + "FROM scoutingtags.schedule "
+			+ "WHERE ? is null or matchNum = ? " 
+		    + "ORDER BY matchNum";
+		//@formatter:oN
+		return jdbcTemplateObject.query(sql, new RowMapper<MatchTeams>()
+		{
 			@Override
 			public MatchTeams mapRow(ResultSet resultSet, int rowNum) throws SQLException {
 				MatchTeams matchTeams = new MatchTeams();

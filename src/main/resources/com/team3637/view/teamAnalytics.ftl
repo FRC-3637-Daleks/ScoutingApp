@@ -119,10 +119,10 @@ function toggle(target) {
 <table class = "teamHeader" cellspacing = "0">
   <tr>
     <th><p style="color:white; width:100px;">Team: ${team.team}</p></th>
-    <th><p style="color:white; width:170px;">Matches Played: ${team.matches}</p></th>
+    <th><p style="color:white; width:140px;">Matches Played: ${team.matches}</p></th>
     <th><p style="color:white; width:150px;">Avg.Score: ${team.avgScore}</p></th>
     <th><p style="color:white; width:130px;">Our Score: ${team.ourScore!}</p></th>
-    <th><p style="color:white; width:180px;">Win/Lose Ratio: ${team.wins}/${team.losses}/${team.ties}</p></th>
+    <th><p style="color:white; width:180px;">W/L/T Ratio: ${team.wins}/${team.losses}/${team.ties}</p></th>
   </tr>
 </table>
 </div>
@@ -148,8 +148,8 @@ function toggle(target) {
    <#assign tableId = team.team + "-" + grouping> 
   <div class="sectionWrapper">
   <div class="sectionParent">
-  <div class="sectionHeader" onclick="toggle('${grouping}')">${grouping}</div>
-  <table class="categoryTable" id="${grouping}">
+  <div class="sectionHeader" onclick="toggle('${team}-${grouping}')">${grouping}</div>
+  <table class="categoryTable" id="${team}-${grouping}">
     <tr>
     <#assign category = ""> 
 </#if>
@@ -161,8 +161,8 @@ function toggle(target) {
    </#if>
    <#assign category =  matchStatistic.category>
    <td>
-   <div class="categoryTitle" onclick="toggle('${grouping}-${category}-table')">${category}</div>
-   <table class="tagTable"  id="${grouping}-${category}-table">
+   <div class="categoryTitle" onclick="toggle('${team}-${grouping}-${category}-table')">${category}</div>
+   <table class="tagTable"  id="${team}-${grouping}-${category}-table">
    <tr>
    <td> ${matchStatistic.tag} </td>
    <td> ${matchStatistic.totalOccurences} </td>
