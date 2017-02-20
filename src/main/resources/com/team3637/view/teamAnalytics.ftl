@@ -2,34 +2,93 @@
 <html>
 <head>
 <style>
-
-.categoryTable table{
-	width:100%;
-	display:block;
-	border-collapse:collapse;
+.categoryTable{
+    border-spacing: 0px;  
 }
 
-.categoryTable td{
-    border: 1px solid gray;
+.categoryTable table{
+    width:100%;
+    display:block;
+    border-collapse:collapse;
+}
+
+.tagTable td{
+    font-size: 12px;
+    border-collapse: collapse;  
+    border: 1px solid gray !important; 
+}
+  
+.categoryTable td{ 
+    border: 0px solid gray; 
     vertical-align:top;
 }
 
+.sectionWrapper {
+  display: inline-block;
+}
+
+.sectionParent {
+  display: flex;
+  flex-direction: column;
+} 
+
 .sectionHeader {
     background-color:#53EA0C;
-    font-weight:bold;
+    font-weight:bold; 
     text-align:center;
+    padding-right:15px;
+    padding-left:15px;    
+    border: 1px solid gray;            
+} 
+
+.teamHeader { 
+    width:100%;
+    border-spacing: 0px;
 }
 
 .teamHeader th{
-    background-color:#005EFF;
+    background-color:#005EFF; 
     font-weight:bold;
-    font-size:20px;
-    padding-left:25px;
+    font-size:17px;
+    padding-left:25px;  
     padding-right:25px;
     border-collapse:collapse;
+    color:white;     
+    text-align:left;
 }
-.categoryTitle {text-align: center; height: 20px; background-color:#FFD500; font-size:13px; font-weight:bold}
-.columnTitle {text-align: center}
+
+.teamHeader label{
+    background-color:#005EFF;
+    font-weight:bold;
+    font-size:14px;
+    padding-left:0px;
+    padding-right:0px; 
+    border-collapse:collapse; 
+    color:white; 
+} 
+
+.teamInput {
+    width:50px;
+    color:black;
+    font-weight:normal;
+    height: 25px;
+    border: 1px solid gray !important;    
+}    
+
+.categoryTitle {
+    text-align: 
+    center; height: 20px; 
+    background-color:#FFD500; 
+    font-size:13px;  
+    font-weight:bold;
+    padding-right:15px;
+    padding-left:15px;    
+    border: 1px solid gray;        
+}
+
+.columnTitle {
+     text-align: center
+}
 </style>
 <script>
 function show(target) {
@@ -56,21 +115,21 @@ function toggle(target) {
 <#if teamNum != -1>
 </div>
 </#if>
-<div onclick="toggle('${team}')">
+<div onclick="toggle('${team}-team')">
 <table class = "teamHeader" cellspacing = "0">
   <tr>
     <th><p style="color:white; width:100px;">Team: ${team.team}</p></th>
     <th><p style="color:white; width:170px;">Matches Played: ${team.matches}</p></th>
-    <th><p style="color:white; width:130px;">Avg.Score: ${team.avgScore}</p></th>
+    <th><p style="color:white; width:150px;">Avg.Score: ${team.avgScore}</p></th>
     <th><p style="color:white; width:130px;">Our Score: ${team.ourScore!}</p></th>
-    <th><p style="color:white; width:180px;">Win/Lose Ratio: ${team.wins}:${team.losses}</p></th>
+    <th><p style="color:white; width:180px;">Win/Lose Ratio: ${team.wins}/${team.losses}/${team.ties}</p></th>
   </tr>
 </table>
 </div>
-<div id=${team} style = "display:none;">
+<div id="${team}-team" style = "display:none;">
 </#if>
 <#assign grouping = ""> 
-<#assign category = ""> 
+<#assign category = "">  
 <#list team.matchStatistics as matchStatistic>
 <#if grouping == "" || grouping != matchStatistic.grouping> 
    <#if category != "">
@@ -81,11 +140,16 @@ function toggle(target) {
   <#if grouping != "">
      </tr>
   </table>   
+  </div>
+  </div>
+  <br>
   </#if>
    <#assign grouping = matchStatistic.grouping> 
    <#assign tableId = team.team + "-" + grouping> 
-  <div class="sectionHeader" onclick="toggle('${tableId}')">${grouping}</div>
-  <table class="categoryTable" id="${tableId}">
+  <div class="sectionWrapper">
+  <div class="sectionParent">
+  <div class="sectionHeader" onclick="toggle('${grouping}')">${grouping}</div>
+  <table class="categoryTable" id="${grouping}">
     <tr>
     <#assign category = ""> 
 </#if>
@@ -97,14 +161,14 @@ function toggle(target) {
    </#if>
    <#assign category =  matchStatistic.category>
    <td>
-   <div class="categoryTitle">${category}</div>
-   <table>
+   <div class="categoryTitle" onclick="toggle('${grouping}-${category}-table')">${category}</div>
+   <table class="tagTable"  id="${grouping}-${category}-table">
    <tr>
    <td> ${matchStatistic.tag} </td>
    <td> ${matchStatistic.totalOccurences} </td>
    </tr>
 <#else>
-   <tr>
+   <tr> 
    <td> ${matchStatistic.tag} </td>
    <td> ${matchStatistic.totalOccurences} </td>
    </tr>
@@ -118,6 +182,9 @@ function toggle(target) {
   <#if grouping != "">
      </tr>
   </table>   
+ </div>
+  </div>
+  </div>
   </#if>
  <#assign teamNum =  team.team>
  </#list>

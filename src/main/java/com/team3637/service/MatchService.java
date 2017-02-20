@@ -24,9 +24,11 @@ import com.team3637.model.Match;
 import com.team3637.model.MatchStatistics;
 import com.team3637.model.MatchTeams;
 import com.team3637.model.Team;
+import com.team3637.model.TeamMatchResult;
 import com.team3637.model.TeamMatchTag;
 
-public interface MatchService extends Service {
+public interface MatchService extends Service
+{
 	void setDataSource(DataSource dataSource);
 
 	void create(Match match);
@@ -53,7 +55,7 @@ public interface MatchService extends Service {
 
 	void mergeTags(String oldTag, String newTag);
 
-	List<Team> getTeamInfo(Integer teamNum);
+	List<Team> getTeamMatchSummaryInfo(Integer teamNum);
 
 	List<MatchStatistics> getTeamMatchStatistics(Integer teamNum);
 
@@ -64,4 +66,11 @@ public interface MatchService extends Service {
 	void decrementTag(Integer team, Integer match, String tag);
 
 	List<MatchTeams> getMatchTeams(Integer match, List<Team> teams);
+
+	void saveMatchResult(Integer team, Integer match, String result);
+
+	void saveMatchScore(Integer team, Integer match, String score);
+
+	TeamMatchResult getTeamMatchResult(Integer team, Integer match);
+
 }

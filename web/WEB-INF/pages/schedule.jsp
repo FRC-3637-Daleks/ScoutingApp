@@ -67,12 +67,12 @@
                 <c:forEach var="match" items="${schedule}">
                     <tr>
                         <td>${match.matchNum}</td>
-                        <td><a href="${pageContext.request.contextPath}/m/add?teamNum=${match.b1}&matchNum=${match.matchNum}">${match.b1}</a></td>
-                        <td><a href="${pageContext.request.contextPath}/m/add?teamNum=${match.b2}&matchNum=${match.matchNum}">${match.b2}</a></td>
-                        <td><a href="${pageContext.request.contextPath}/m/add?teamNum=${match.b3}&matchNum=${match.matchNum}">${match.b3}</a></td>
-                        <td><a href="${pageContext.request.contextPath}/m/add?teamNum=${match.r1}&matchNum=${match.matchNum}">${match.r1}</a></td>
-                        <td><a href="${pageContext.request.contextPath}/m/add?teamNum=${match.r2}&matchNum=${match.matchNum}">${match.r2}</a></td>
-                        <td><a href="${pageContext.request.contextPath}/m/add?teamNum=${match.r3}&matchNum=${match.matchNum}">${match.r3}</a></td>
+                        <td><a href="${pageContext.request.contextPath}/m/matchEntry?team=${match.b1}&match=${match.matchNum}">${match.b1}</a></td>
+                        <td><a href="${pageContext.request.contextPath}/m/matchEntry?team=${match.b2}&match=${match.matchNum}">${match.b2}</a></td>
+                        <td><a href="${pageContext.request.contextPath}/m/matchEntry?team=${match.b3}&match=${match.matchNum}">${match.b3}</a></td>
+                        <td><a href="${pageContext.request.contextPath}/m/matchEntry?team=${match.r1}&match=${match.matchNum}">${match.r1}</a></td>
+                        <td><a href="${pageContext.request.contextPath}/m/matchEntry?team=${match.r2}&match=${match.matchNum}">${match.r2}</a></td>
+                        <td><a href="${pageContext.request.contextPath}/m/matchEntry?team=${match.r3}&match=${match.matchNum}">${match.r3}</a></td>
                     </tr>
                 </c:forEach>
                 </tbody>
