@@ -2,6 +2,10 @@
 <html>
 <head>
 <style>
+.body {
+    background-color: #9fb7b7;
+}
+
 .categoryTable{
     border-spacing: 0px;  
 }
@@ -33,7 +37,7 @@
 } 
 
 .sectionHeader {
-    background-color:#53EA0C;
+    background-color:#00A22E;
     font-weight:bold; 
     text-align:center;
     padding-right:15px;
@@ -47,7 +51,7 @@
 }
 
 .teamHeader th{
-    background-color:#005EFF; 
+    background-color:#8F0000; 
     font-weight:bold;
     font-size:20px;
     padding-left:25px;
@@ -57,7 +61,7 @@
 }
 
 .teamHeader label{
-    background-color:#005EFF;
+    background-color:#8F0000;
     font-weight:bold;
     font-size:20px;
     padding-left:0px;
@@ -77,7 +81,7 @@
 .categoryTitle {
     text-align: 
     center; height: 20px; 
-    background-color:#FFD500; 
+    background-color:#CFA600; 
     font-size:13px;  
     font-weight:bold;
     padding-right:15px;
@@ -162,6 +166,20 @@ function saveMatchScore(score) {
            alert("Enter valid score.");   
 }  
 
+function saveMatchRankingPoints(rankingPoints) {
+        if (isInt(rankingPoints)) 
+           $.get("../m/saveMatchRankingPoints?team="+team+"&match="+match+"&rankingPoints="+rankingPoints);
+        else 
+           alert("Enter valid ranking.");   
+}  
+
+function saveMatchPenalty(penalty) {
+        if (isInt(penalty)) 
+           $.get("../m/saveMatchPenalty?team="+team+"&match="+match+"&penalty="+penalty);
+        else 
+           alert("Enter valid score.");   
+} 
+
 function isInt(value) {
   return !isNaN(value) && 
          parseInt(Number(value)) == value && 
@@ -188,6 +206,8 @@ function isInt(value) {
     <th onclick="toggle('${teamMatchResult.team}')">Team: ${teamMatchResult.team}</th>
     <th>Match: ${teamMatchResult.match}</th>
     <th>Score: <input type="text" name="score" class="teamInput" onchange="saveMatchScore(this.value);" value="${teamMatchResult.score!}"></th>
+    <th>Ranking Points: <input type="text" name="rankingPoints" class="teamInput" onchange="saveMatchRankingPoints(this.value);" value="${teamMatchResult.rankingPoints!}"></th>
+    <th>Penalty Points: <input type="text" name="penalty" class="teamInput" onchange="saveMatchPenalty(this.value);" value="${teamMatchResult.penalty!}"></th>
     <th><input type="radio" name="result" id="radioWin" value="win" onclick="saveMatchResult(this.value)"  <#if teamMatchResult.win>checked</#if>><label for="radioWin">Win</label></th>
     <th><input type="radio" name="result" id="radioTie" value="tie"  onclick="saveMatchResult(this.value)"  <#if teamMatchResult.tie>checked</#if>><label for="radioTie">Tie</label></th>
     <th><input type="radio" name="result" id="radioLoss" value="loss"  onclick="saveMatchResult(this.value)"  <#if teamMatchResult.loss>checked</#if>><label for="radioLoss">Loss</label></th>    
