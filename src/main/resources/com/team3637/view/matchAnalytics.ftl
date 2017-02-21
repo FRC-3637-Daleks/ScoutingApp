@@ -76,15 +76,17 @@ function toggle(target) {
   </tr>
 </table>
 </div>
-<#assign teams = matchTeams.teams>
-<#assign teamNum = -1>
-<#assign teamHeaderStyle = "teamHeader" + matchTeams.allianceMap?api.get(team.team)>
+<div id="${matchTeams.match}-match"  style = "display:none;">
+<#assign teams = matchTeams.teams> 
+<#assign teamNum = -1> 
+
+<#assign teamHeaderStyle = "teamHeaderRed">
 <#list teams as team>
 <#if teamNum == -1 || teamNum != team.team>
-<#if teamNum != -1>
+<#if teamNum != -1>  
 </div>
 </#if>
-<div onclick="toggle('${team}-team')">
+<div onclick="toggle('${matchTeams.match}-match-${team}-team')">
 <table class = "${teamHeaderStyle}" cellspacing = "0">
   <tr>
     <th><p style="color:white; width:100px;">Team: ${team.team}</p></th>
@@ -93,15 +95,15 @@ function toggle(target) {
     <th><p style="color:white; width:130px;">Our Score: ${team.ourScore!}</p></th>
     <th><p style="color:white; width:180px;">Win/Lose Ratio: ${team.wins}:${team.losses}</p></th>
   </tr>
-</table>
+</table>  
 </div>
-<div id="${team}-team" style = "display:none;">
+<div id="${matchTeams.match}-match-${team}-team" style = "display:none;">
 </#if>
 <#assign grouping = ""> 
 <#assign category = ""> 
 <#list team.matchStatistics as matchStatistic>
-<#if grouping == "" || grouping != matchStatistic.grouping> 
-   <#if category != "">
+<#if grouping == "" || grouping != matchStatistic.grouping>   
+   <#if category != "">   
    </tr>
    </table>	
    </td>
@@ -112,20 +114,20 @@ function toggle(target) {
   </#if>
    <#assign grouping = matchStatistic.grouping> 
    <#assign tableId = team.team + "-" + grouping> 
-  <div class="sectionHeader" onclick="toggle('${tableId}')">${grouping}</div>
-  <table class="categoryTable" id="${tableId}">
+  <div class="sectionHeader" onclick="toggle('${matchTeams.match}-match-${tableId}')">${grouping}</div>
+  <table class="categoryTable" id="${matchTeams.match}-match-${tableId}')">
     <tr>
     <#assign category = ""> 
 </#if>
 <#if category == "" || category != matchStatistic.category>
    <#if category != "">
-   </tr>
+   </tr>  
    </table>	
    </td>
    </#if>
    <#assign category =  matchStatistic.category>
    <td>
-   <div class="categoryTitle">${category}</div>
+   <div class="categoryTitle">${category}</div>  
    <table>
    <tr>
    <td> ${matchStatistic.tag} </td>
@@ -149,6 +151,8 @@ function toggle(target) {
   </#if>
  <#assign teamNum =  team.team>
  </#list>
+ </div>
+ </div>
  </div>
  </#list>
 </body>
