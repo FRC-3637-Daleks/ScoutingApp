@@ -27,8 +27,7 @@ import com.team3637.model.Team;
 import com.team3637.model.TeamMatchResult;
 import com.team3637.model.TeamMatchTag;
 
-public interface MatchService extends Service
-{
+public interface MatchService extends Service {
 	void setDataSource(DataSource dataSource);
 
 	void create(Match match);
@@ -72,5 +71,9 @@ public interface MatchService extends Service
 	void saveMatchScore(Integer team, Integer match, String score);
 
 	TeamMatchResult getTeamMatchResult(Integer team, Integer match);
+
+	void saveMatchRankingPoints(Integer team, Integer match, String rankingPoints);
+
+	void saveMatchPenalty(Integer team, Integer match, String penalty);
 
 }

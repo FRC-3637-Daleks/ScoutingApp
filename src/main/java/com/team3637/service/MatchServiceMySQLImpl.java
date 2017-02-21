@@ -418,8 +418,7 @@ public class MatchServiceMySQLImpl implements MatchService
 		return jdbcTemplateObject.query(sql, new RowMapper<MatchTeams>()
 		{
 			@Override
-			public MatchTeams mapRow(ResultSet resultSet, int rowNum) throws SQLException
-			{
+			public MatchTeams mapRow(ResultSet resultSet, int rowNum) throws SQLException {
 				MatchTeams matchTeams = new MatchTeams();
 				matchTeams.setMatch(resultSet.getInt("matchNum"));
 				Integer team = resultSet.getInt("b1");
@@ -445,14 +444,11 @@ public class MatchServiceMySQLImpl implements MatchService
 		}, match, match);
 	}
 
-	private Team findTeam(List<Team> teams, Integer teamNum)
-	{
+	private Team findTeam(List<Team> teams, Integer teamNum) {
 		Team matchTeam = null;
-		for (int i = 0; i < teams.size() && matchTeam == null; i++)
-		{
+		for (int i = 0; i < teams.size() && matchTeam == null; i++) {
 			Team team = teams.get(i);
-			if (team.getTeam().equals(teamNum))
-			{
+			if (team.getTeam().equals(teamNum)) {
 				matchTeam = team;
 			}
 		}
@@ -460,27 +456,23 @@ public class MatchServiceMySQLImpl implements MatchService
 	}
 
 	@Override
-	public void incrementTag(Integer team, Integer match, String tag)
-	{
+	public void incrementTag(Integer team, Integer match, String tag) {
 		String sql = "UPDATE scoutingtags.matchtags SET occurences=occurences+1 WHERE team=? AND matchNum=? AND tag=?";
 		int rowsUpdated = jdbcTemplateObject.update(sql, team, match, tag);
-		if (rowsUpdated < 1)
-		{
+		if (rowsUpdated < 1) {
 			String sqlInsert = "INSERT INTO scoutingtags.matchtags (team, matchNum, tag, occurences) VALUES (?,?,?,?)";
 			jdbcTemplateObject.update(sqlInsert, team, match, tag, 1);
 		}
 	}
 
 	@Override
-	public void decrementTag(Integer team, Integer match, String tag)
-	{
+	public void decrementTag(Integer team, Integer match, String tag) {
 		String sql = "UPDATE scoutingtags.matchtags SET occurences=occurences-1 WHERE team=? AND matchNum=? AND tag=?";
 		jdbcTemplateObject.update(sql, team, match, tag);
 	}
 
 	@Override
-	public void saveMatchResult(Integer team, Integer match, String result)
-	{
+	public void saveMatchResult(Integer team, Integer match, String result) {
 		Integer win = null;
 		Integer tie = null;
 		Integer loss = null;
@@ -492,36 +484,52 @@ public class MatchServiceMySQLImpl implements MatchService
 			loss = 1;
 		String sql = "UPDATE scoutingtags.match SET win = ?, tie = ?,  loss = ? WHERE team=? AND matchNum=?";
 		int rowsUpdated = jdbcTemplateObject.update(sql, win, tie, loss, team, match);
-		if (rowsUpdated < 1)
-		{
+		if (rowsUpdated < 1) {
 			String sqlInsert = "INSERT INTO scoutingtags.match (team, matchNum, win, tie, loss) VALUES (?,?,?,?,?)";
 			jdbcTemplateObject.update(sqlInsert, team, match, win, tie, loss);
 		}
 	}
 
 	@Override
-	public void saveMatchScore(Integer team, Integer match, String score)
-	{
+	public void saveMatchScore(Integer team, Integer match, String score) {
 		String sql = "UPDATE scoutingtags.match SET score = ? WHERE team=? AND matchNum=?";
 		int rowsUpdated = jdbcTemplateObject.update(sql, score, team, match);
-		if (rowsUpdated < 1)
-		{
+		if (rowsUpdated < 1) {
 			String sqlInsert = "INSERT INTO scoutingtags.match (team, matchNum, score) VALUES (?,?,?)";
 			jdbcTemplateObject.update(sqlInsert, team, match, score);
 		}
 	}
 
 	@Override
-	public TeamMatchResult getTeamMatchResult(Integer team, Integer match)
-	{
-		//@formatter:off
-		String sql = 
-				    "SELECT team, matchNum, score, win, tie, loss "
-				+ "FROM scoutingtags.match m "
-				+ "WHERE  team = ? and matchNum = ?";
-		//@formatter:on		
+
+	public void saveMatchRankingPoints(Integer team, Integer match, String rankingPoints) {
+		String sql = "UPDATE scoutingtags.match SET ranking_points = ? WHERE team=? AND matchNum=?";
+		int rowsUpdated = jdbcTemplateObject.update(sql, rankingPoints, team, match);
+		if (rowsUpdated < 1) {
+			String sqlInsert = "INSERT INTO scoutingtags.match (team, matchNum, ranking_points) VALUES (?,?,?)";
+			jdbcTemplateObject.update(sqlInsert, team, match, rankingPoints);
+		}
+	}
+
+	@Override
+	public void saveMatchPenalty(Integer team, Integer match, String penalty) {
+		String sql = "UPDATE scoutingtags.match SET penalty = ? WHERE team=? AND matchNum=?";
+		int rowsUpdated = jdbcTemplateObject.update(sql, penalty, team, match);
+		if (rowsUpdated < 1) {
+			String sqlInsert = "INSERT INTO scoutingtags.match (team, matchNum, penalty) VALUES (?,?,?)";
+			jdbcTemplateObject.update(sqlInsert, team, match, penalty);
+		}
+	}
+
+	@Override
+	public TeamMatchResult getTeamMatchResult(Integer team, Integer match) {
+		// @formatter:off
+		String sql = "SELECT team, matchNum, score, win, tie, loss, ranking_points, penalty "
+				+ "FROM scoutingtags.match m " + "WHERE  team = ? and matchNum = ?";
+		// @formatter:on
 		return jdbcTemplateObject.queryForObject(sql, new RowMapper<TeamMatchResult>()
 		{
+
 			@Override
 			public TeamMatchResult mapRow(ResultSet resultSet, int rowNum) throws SQLException
 			{
@@ -531,6 +539,12 @@ public class MatchServiceMySQLImpl implements MatchService
 				Integer score = resultSet.getInt("score");
 				if (!resultSet.wasNull())
 					teamMatchResult.setScore(score);
+				Integer rankingPoints = resultSet.getInt("ranking_points");
+				if (!resultSet.wasNull())
+					teamMatchResult.setRankingPoints(rankingPoints);
+				Integer penalty = resultSet.getInt("penalty");
+				if (!resultSet.wasNull())
+					teamMatchResult.setPenalty(penalty);
 				Integer result = resultSet.getInt("win");
 				teamMatchResult.setWin(!resultSet.wasNull() && result > 0);
 				result = resultSet.getInt("tie");
