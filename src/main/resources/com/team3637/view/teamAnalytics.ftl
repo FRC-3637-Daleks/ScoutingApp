@@ -2,6 +2,11 @@
 <html>
 <head>
 <style>
+
+body {
+	background-color: #9fb7b7;
+}
+
 .categoryTable{
     border-spacing: 0px;  
 }
@@ -33,7 +38,7 @@
 } 
 
 .sectionHeader {
-    background-color:#53EA0C;
+    background-color:#00A22E;
     font-weight:bold; 
     text-align:center;
     padding-right:15px;
@@ -47,7 +52,7 @@
 }
 
 .teamHeader th{
-    background-color:#005EFF; 
+    background-color:#8F0000; 
     font-weight:bold;
     font-size:17px;
     padding-left:25px;  
@@ -78,7 +83,7 @@
 .categoryTitle {
     text-align: 
     center; height: 20px; 
-    background-color:#FFD500; 
+    background-color:#CFA600; 
     font-size:13px;  
     font-weight:bold;
     padding-right:15px;
