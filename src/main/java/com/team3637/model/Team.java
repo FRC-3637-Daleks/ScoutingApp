@@ -19,8 +19,7 @@ package com.team3637.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Team
-{
+public class Team {
 	private Integer id;
 	private Integer team;
 	private Double avgScore;
@@ -31,110 +30,98 @@ public class Team
 	private Integer losses;
 	private List<MatchStatistics> matchStatistics;
 	private List<String> tags = new ArrayList<String>();
+	private Integer rankingpoints;
 
-	public List<String> getTags()
-	{
+	public Integer getRankingpoints() {
+		return rankingpoints;
+	}
+
+	public void setRankingpoints(Integer rankingpoints) {
+		this.rankingpoints = rankingpoints;
+	}
+
+	public List<String> getTags() {
 		return tags;
 	}
 
-	public void setTags(List<String> tags)
-	{
+	public void setTags(List<String> tags) {
 		this.tags = tags;
 	}
 
-	public Integer getId()
-	{
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Integer id)
-	{
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	public Integer getTeam()
-	{
+	public Integer getTeam() {
 		return team;
 	}
 
-	public void setTeam(Integer team)
-	{
+	public void setTeam(Integer team) {
 		this.team = team;
 	}
 
-	public Double getAvgScore()
-	{
+	public Double getAvgScore() {
 		return avgScore;
 	}
 
-	public void setAvgScore(Double avgScore)
-	{
+	public void setAvgScore(Double avgScore) {
 		this.avgScore = avgScore;
 	}
 
-	public Double getOurScore()
-	{
+	public Double getOurScore() {
 		return ourScore;
 	}
 
-	public void setOurScore(Double ourScore)
-	{
+	public void setOurScore(Double ourScore) {
 		this.ourScore = ourScore;
 	}
 
-	public Integer getMatches()
-	{
+	public Integer getMatches() {
 		return matches;
 	}
 
-	public void setMatches(Integer matches)
-	{
+	public void setMatches(Integer matches) {
 		this.matches = matches;
 	}
 
-	public Integer getWins()
-	{
+	public Integer getWins() {
 		return wins;
 	}
 
-	public void setWins(Integer wins)
-	{
+	public void setWins(Integer wins) {
 		this.wins = wins;
 	}
 
-	public Integer getLosses()
-	{
+	public Integer getLosses() {
 		return losses;
 	}
 
-	public void setLosses(Integer losses)
-	{
+	public void setLosses(Integer losses) {
 		this.losses = losses;
 	}
 
-	public List<MatchStatistics> getMatchStatistics()
-	{
+	public List<MatchStatistics> getMatchStatistics() {
 		return matchStatistics;
 	}
 
-	public void setMatchStatistics(List<MatchStatistics> matchStatistics)
-	{
+	public void setMatchStatistics(List<MatchStatistics> matchStatistics) {
 		this.matchStatistics = matchStatistics;
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return Integer.toString(getTeam());
 	}
 
-	public Integer getTies()
-	{
+	public Integer getTies() {
 		return ties;
 	}
 
-	public void setTies(Integer ties)
-	{
+	public void setTies(Integer ties) {
 		this.ties = ties;
 	}
 }
