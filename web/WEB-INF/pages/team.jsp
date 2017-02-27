@@ -73,7 +73,7 @@
     <div class="row data-row">
         <div class="col-md-4 col-md-offset-2 text-center">
             <label for="score">Average Score</label>
-            <input id="score" name="score" class="form-control" type="text" value="${team.avgscore}" readonly/>
+            <input id="score" name="score" class="form-control" type="text" value="${team.avgScore}" readonly/>
         </div>
         <div class="col-md-4 text-center">
             <label for="matches">Matches Played</label>

@@ -4,7 +4,7 @@
 <style>
 
 body {
-	background-color: #9fb7b7;
+	background-color: #ebebe0;
 }
 
 .categoryTable{
@@ -21,6 +21,8 @@ body {
     font-size: 12px;
     border-collapse: collapse;  
     border: 1px solid gray !important; 
+    padding-right: 5px;
+    padding-left: 5px;  
 }
   
 .categoryTable td{ 
@@ -148,14 +150,13 @@ function toggle(target) {
 <div id="${matchTeams.match}-match"  style = "display:none;">
 <#assign teams = matchTeams.teams> 
 <#assign teamNum = -1> 
-
-<#assign teamHeaderStyle = "teamHeaderRed">
 <#list teams as team>
 <#if teamNum == -1 || teamNum != team.team>
 <#if teamNum != -1>  
 </div>
 </#if>
-<div onclick="toggle('${matchTeams.match}-match-${team}-team')">
+<#assign teamHeaderStyle = "teamHeader"+ matchTeams.allianceMap[team.team?string]> 
+<div onclick="toggle('${matchTeams.match}-match-${team}-team')"> 
 <table class = "${teamHeaderStyle}" cellspacing = "0">
   <tr>
     <th><p style="color:white; width:100px;">Team: ${team.team}</p></th>

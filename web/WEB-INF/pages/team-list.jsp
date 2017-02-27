@@ -17,6 +17,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -56,6 +57,9 @@
                 <th>Team # <span class="glyphicon glyphicon-sort"></span></th>
                 <th>Matches Played <span class="glyphicon glyphicon-sort"></span></th>
                 <th>Average Score <span class="glyphicon glyphicon-sort"></span></th>
+                <th>Our Score <span class="glyphicon glyphicon-sort"></span></th>
+                <th>Ranking Points <span class="glyphicon glyphicon-sort"></span></th>    
+                <th>W/L/T</th>        
                 <th>Actions</th>
             </tr>
             </thead>
@@ -65,21 +69,17 @@
                     <form:hidden path="teams[${status.index}].id" value="${team.id}"/>
                     <td class="block">${team.team}</td>
                     <td class="block">${team.matches}</td>
-                    <td class="block">${team.avgscore}</td>
+                    <td class="block"><fmt:formatNumber type="number" maxFractionDigits="1" value="${team.avgScore}"/></td>
+                    <td class="block">${team.ourScore}</td>
+                    <td class="block">${team.rankingpoints}</td>
+                    <td class="block">${team.wins}/${team.ties}/${team.losses}</td>                                          
                     <td class="block">
                         <a class="btn btn-info"
-                           href="${pageContext.request.contextPath}/t/view/${team.team}">View</a>
-                        <input type="button" class="btn btn-danger delete" value="Delete"/>
-                        <form:hidden path="deleted[${status.index}]" value="${false}"/>
+                           href="${pageContext.request.contextPath}/t/teamScouting?team=${team.team}">Scout</a>
                     </td>
                 </tr>
             </c:forEach>
             </tbody>
-            <tfoot>
-            <tr>
-                <td colspan="5"><input class="btn btn-success" type="submit" value="Save"/></td>
-            </tr>
-            </tfoot>
         </table>
     </form:form>
 </div>
@@ -98,7 +98,7 @@
             }
     );
     function addTeam() {
-        window.location = '${pageContext.request.contextPath}/t/view/' + $('input[name=teamNum]').val();
+        window.location = '${pageContext.request.contextPath}/t/add/' + $('input[name=teamNum]').val();
     }
 </script>
 </body>

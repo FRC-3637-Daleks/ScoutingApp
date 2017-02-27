@@ -16,37 +16,46 @@
  */
 package com.team3637.service;
 
-import com.team3637.model.Team;
-
-import javax.sql.DataSource;
 import java.util.List;
 
-public interface TeamService extends Service {
-    void setDataSource(DataSource dataSource);
+import javax.sql.DataSource;
 
-    void create(Team team);
+import com.team3637.model.Team;
+import com.team3637.model.TeamTag;
 
-    Team getTeam(Integer id);
+public interface TeamService extends Service
+{
+	void setDataSource(DataSource dataSource);
 
-    Team getTeamById(Integer id);
+	void create(Integer teamNum);
 
-    List<Team> getTeams();
+	Team getTeam(Integer id);
 
-    Team getTeamByNumber(Integer teamNum);
+	Team getTeamById(Integer id);
 
-    Double[] getScoreRange();
+	List<Team> getTeams();
 
-    Integer[] getScoreRangeFor(Team team);
+	Team getTeamByNumber(Integer teamNum);
 
-    void update(Team team);
+	Double[] getScoreRange();
 
-    void delete(Team team);
+	Integer[] getScoreRangeFor(Team team);
 
-    boolean checkForId(Integer id);
+	void update(Team team);
 
-    boolean checkForTeam(Integer id);
+	void delete(Team team);
 
-    List<String> getTags();
+	boolean checkForId(Integer id);
 
-    void mergeTags(String oldTag, String newTag);
+	boolean checkForTeam(Integer id);
+
+	List<String> getTags();
+
+	void mergeTags(String oldTag, String newTag);
+
+	void incrementTag(Integer team, String tag);
+
+	void decrementTag(Integer team, String tag);
+
+	List<TeamTag> getTeamTags(Integer teamNum);
 }

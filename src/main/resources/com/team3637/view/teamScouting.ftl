@@ -101,8 +101,7 @@
 <link href="../css/main.css" rel="stylesheet"/>
 <script src="../js/jquery.min.js"></script>
 <script>
-var team=${teamMatchResult.team};
-var match=${teamMatchResult.match};
+var team=${team.team};
 function show(target) {
     document.getElementById(target).style.display = 'block';
 }
@@ -121,21 +120,21 @@ function toggle(target) {
 
 function toggleTag(target, value) {
 	if (value)
-		$.get("../m/incrementTag?tag="+target+"&team="+team+"&match="+match);
+		$.get("../t/incrementTag?tag="+target+"&team="+team);
 	else
-		$.get("../m/decrementTag?tag="+target+"&team="+team+"&match="+match);
+		$.get("../t/decrementTag?tag="+target+"&team="+team);
 }
 
 function incrementTag(target) {
 	var incrementElement=document.getElementById(target+"-counter");
 	var currentValue=incrementElement.value;
 	if (!currentValue) {
-		currentValue="1";
+		currentValue="1";  
 	}
 	else
 		currentValue=Number(currentValue)+1;
 	incrementElement.value=currentValue;
-	$.get("../m/incrementTag?tag="+target+"&team="+team+"&match="+match);
+	$.get("../t/incrementTag?tag="+target+"&team="+team);
 }
 
 function decrementTag(target) {
@@ -149,36 +148,18 @@ function decrementTag(target) {
 		}
 	else {
 		currentValue=Number(currentValue)-1;
-		$.get("../m/decrementTag?tag="+target+"&team="+team+"&match="+match);
+		$.get("../t/decrementTag?tag="+target+"&team="+team);
 	}
 	decrementElement.value=currentValue;
 	
 }
 
-function saveMatchResult(result) { 
-        $.get("../m/saveMatchResult?team="+team+"&match="+match+"&result="+result);
-}
-
-function saveMatchScore(score) {
+function saveTeamRankingPoints(rankingPoints) {
         if (isInt(score)) 
-           $.get("../m/saveMatchScore?team="+team+"&match="+match+"&score="+score);
+           $.get("../t/teamRankingPoints?team="+team+"&rankingPoints="+rankingPoints);
         else 
-           alert("Enter valid score.");   
+           alert("Enter valid ranking points.");   
 }  
-
-function saveMatchRankingPoints(rankingPoints) {
-        if (isInt(rankingPoints)) 
-           $.get("../m/saveMatchRankingPoints?team="+team+"&match="+match+"&rankingPoints="+rankingPoints);
-        else 
-           alert("Enter valid ranking.");   
-}  
-
-function saveMatchPenalty(penalty) {
-        if (isInt(penalty)) 
-           $.get("../m/saveMatchPenalty?team="+team+"&match="+match+"&penalty="+penalty);
-        else 
-           alert("Enter valid score.");   
-} 
 
 function isInt(value) {
   return !isNaN(value) && 
@@ -195,31 +176,29 @@ function isInt(value) {
         </div>
         <div id="navbar" class="collapse navbar-collapse"> 
             <ul class="nav navbar-nav"> 
-                <li><a href="../s/">Save & Exit</a></li>
+                <li><a href="../t/">Save & Exit</a></li>
             </ul> 
         </div>
     </div>
 </nav>
-<form style="margin:0;">
+<form style="margin:0;"> 
 <table class = "teamHeader">
   <tr>
-    <th onclick="toggle('${teamMatchResult.team}')">Team: ${teamMatchResult.team}</th>
-    <th>Match: ${teamMatchResult.match}</th>
-    <th>Score: <input type="text" name="score" class="teamInput" onchange="saveMatchScore(this.value);" value="${teamMatchResult.score!}"></th>
-    <th>Ranking Points: <input type="text" name="rankingPoints" class="teamInput" onchange="saveMatchRankingPoints(this.value);" value="${teamMatchResult.rankingPoints!}"></th>
-    <th>Penalty Points: <input type="text" name="penalty" class="teamInput" onchange="saveMatchPenalty(this.value);" value="${teamMatchResult.penalty!}"></th>
-    <th><input type="radio" name="result" id="radioWin" value="win" onclick="saveMatchResult(this.value)"  <#if teamMatchResult.win>checked</#if>><label for="radioWin">Win</label></th>
-    <th><input type="radio" name="result" id="radioTie" value="tie"  onclick="saveMatchResult(this.value)"  <#if teamMatchResult.tie>checked</#if>><label for="radioTie">Tie</label></th>
-    <th><input type="radio" name="result" id="radioLoss" value="loss"  onclick="saveMatchResult(this.value)"  <#if teamMatchResult.loss>checked</#if>><label for="radioLoss">Loss</label></th>    
+    <th onclick="toggle('${team.team}')">Team: ${team.team}</th>
+    <th>Avg. Score:  ${team.avgScore!?string("0.#")}</th>
+    <th>Ranking Points: ${team.rankingPoints!}</th>  
+    <th>Wins: ${team.wins}</th>
+    <th>Ties: ${team.wins}</th>
+    <th>Losses: ${team.wins}</th>       
   </tr>
 </table>
 </form>
-<div id="${teamMatchResult.team}-team">  
+<div id="${team.team}-team">  
 <form>
 <#assign grouping = ""> 
 <#assign category = ""> 
-<#list matchTags as matchTag>
-<#if grouping == "" || grouping != matchTag.grouping> 
+<#list team.teamTags as teamTag>
+<#if grouping == "" || grouping != teamTag.grouping> 
    <#if category != "">
    </tr>
    </table>	
@@ -232,7 +211,7 @@ function isInt(value) {
   </div>
   <br>  
   </#if>
-   <#assign grouping =  matchTag.grouping> 
+   <#assign grouping =  teamTag.grouping> 
   <div class="sectionWrapper">
   <div class="sectionParent">
   <div class="sectionHeader" onclick="toggle('${grouping}')">${grouping}</div>
@@ -240,30 +219,30 @@ function isInt(value) {
     <tr>
     <#assign category = ""> 
 </#if>
-<#if category == "" || category != matchTag.category>
+<#if category == "" || category != teamTag.category>
    <#if category != "">
    </tr>
    </table>	
    </td>
    </#if>
-   <#assign category =  matchTag.category>
+   <#assign category =  teamTag.category>
    <td>
    <div class="categoryTitle" onclick="toggle('${grouping}-${category}-table')">${category}</div>
    <table class="tagTable"  id="${grouping}-${category}-table">
 </#if> 
    <tr>
-   <td> ${matchTag.tag} </td>
+   <td> ${teamTag.tag} </td>
    <td> 
-   <#if matchTag.inputType == "checkbox">
-   		<#if matchTag.occurences != 0>
-   			<input type="checkbox" onclick="toggleTag('${matchTag.tag}', this.checked);" checked>
+   <#if teamTag.inputType == "checkbox">
+   		<#if teamTag.occurences != 0>
+   			<input type="checkbox" onclick="toggleTag('${teamTag.tag}', this.checked);" checked>
    		<#else> 
-   			<input type="checkbox" onclick="toggleTag('${matchTag.tag}', this.checked);">
+   			<input type="checkbox" onclick="toggleTag('${teamTag.tag}', this.checked);">
    		</#if> 
-   <#elseif matchTag.inputType == "incremental">
-   		<input type="text" style="width: 20px;" id="${matchTag.tag}-counter" value="${matchTag.occurences}" disabled />
-   		<img src="../images/SmallPlus.png" onclick="incrementTag('${matchTag.tag}');" >
-   		<img src="../images/SmallMinus.png" onclick="decrementTag('${matchTag.tag}');" >
+   <#elseif teamTag.inputType == "incremental">
+   		<input type="text" style="width: 20px;" id="${teamTag.tag}-counter" value="${teamTag.occurences}" disabled />
+   		<img src="../images/SmallPlus.png" onclick="incrementTag('${teamTag.tag}');" >
+   		<img src="../images/SmallMinus.png" onclick="decrementTag('${teamTag.tag}');" >
    </#if>
    </td>
    </tr>

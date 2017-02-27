@@ -4,7 +4,7 @@
 <style>
 
 body {
-	background-color: #9fb7b7;
+	background-color: #ebebe0;
 }
 
 .categoryTable{
@@ -21,6 +21,17 @@ body {
     font-size: 12px;
     border-collapse: collapse;  
     border: 1px solid gray !important; 
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.tagTableGray tr{
+   background-color:#ebebe0;
+}
+  
+  
+.tagTableWhite tr{
+   background-color:#ffffff;
 }
   
 .categoryTable td{ 
