@@ -16,108 +16,64 @@
  */
 package com.team3637.model;
 
-public class Tag implements Comparable{
-    private int id;
-    private String tag, type, counter, expression;
-    private boolean eval, inTable;
+public class Tag {
+	private int id;
+	private String tag, type;
+	private String category, grouping, inputType;
 
-    public Tag() {}
+	public Tag() {
+	}
 
-    public Tag(int id, String tag, String type, String counter, String expression, boolean eval, boolean inTable) {
-        this.id = id;
-        this.tag = tag;
-        this.type = type;
-        this.counter = counter;
-        this.expression = expression;
-        this.eval = eval;
-        this.inTable = inTable;
-    }
+	public int getId() {
+		return id;
+	}
 
-    public Tag(String tag, String type, String counter, String expression) {
-        this.tag = tag;
-        this.type = type;
-        this.counter = counter;
-        this.expression = expression;
-    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    public Tag(String tag, String type) {
-        this.tag = tag;
-        this.type = type;
-    }
+	public String getTag() {
+		return tag;
+	}
 
-    public int getId() {
-        return id;
-    }
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
 
-    public void setId(int id) {
-        this.id = id;
-    }
+	public String getType() {
+		return type;
+	}
 
-    public String getTag() {
-        return tag;
-    }
+	public void setType(String type) {
+		this.type = type;
+	}
 
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
+	@Override
+	public String toString() {
+		return tag;
+	}
 
-    public String getType() {
-        return type;
-    }
+	public String getCategory() {
+		return category;
+	}
 
-    public void setType(String type) {
-        this.type = type;
-    }
+	public void setCategory(String category) {
+		this.category = category;
+	}
 
-    public String getCounter() {
-        return counter;
-    }
+	public String getGrouping() {
+		return grouping;
+	}
 
-    public void setCounter(String counter) {
-        this.counter = counter;
-    }
+	public void setGrouping(String grouping) {
+		this.grouping = grouping;
+	}
 
-    public boolean requiesEval() {
-        return eval;
-    }
+	public String getInputType() {
+		return inputType;
+	}
 
-    public void setRequiesEval(boolean eval) {
-        this.eval = eval;
-    }
-
-    public boolean isEval() {
-        return eval;
-    }
-
-    public void setEval(boolean eval) {
-        this.eval = eval;
-    }
-
-    public boolean isInTable() {
-        return inTable;
-    }
-
-    public void setInTable(boolean inTable) {
-        this.inTable = inTable;
-    }
-
-    public String getExpression() {
-        return expression;
-    }
-
-    public void setExpression(String expression) {
-        this.expression = expression;
-    }
-
-    @Override
-    public String toString() {
-        return tag;
-    }
-
-    @Override
-    public int compareTo(Object o) {
-        if(o.toString().equals(tag))
-            return 0;
-        return -1;
-    }
+	public void setInputType(String inputType) {
+		this.inputType = inputType;
+	}
 }

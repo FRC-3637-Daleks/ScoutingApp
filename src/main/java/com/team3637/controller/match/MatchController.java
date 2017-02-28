@@ -42,7 +42,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 import com.team3637.model.Match;
-import com.team3637.model.Tag;
 import com.team3637.model.Team;
 import com.team3637.model.TeamMatchResult;
 import com.team3637.model.TeamMatchTag;
@@ -153,49 +152,6 @@ public class MatchController {
 		return "tags";
 	}
 
-	@RequestMapping(value = "/tags", method = RequestMethod.POST)
-	public String tags(@RequestParam("matchTags") String matchTagsString,
-			@RequestParam("teamTags") String teamTagsString) {
-		List<String> matchTags = new ArrayList<>(new LinkedHashSet<>(Arrays.asList(matchTagsString.split(", "))));
-		List<String> teamTags = new ArrayList<>(new LinkedHashSet<>(Arrays.asList(teamTagsString.split(", "))));
-		List<String> currentMatchTags = matchService.getTags();
-		List<String> currentTeamTags = teamService.getTags();
-		boolean dne;
-		for (String matchTag : matchTags) {
-			if (!tagService.checkForTag(new Tag(matchTag, "matches"))) {
-				tagService.create(new Tag(matchTag, "matches"));
-			}
-		}
-		for (String currentMatchTag : currentMatchTags) {
-			dne = true;
-			for (String matchTag : matchTags) {
-				if (currentMatchTag.equals(matchTag)) {
-					dne = false;
-				}
-			}
-			if (dne) {
-				tagService.delete(currentMatchTag);
-			}
-		}
-		for (String teamTag : teamTags) {
-			if (!tagService.checkForTag(new Tag(teamTag, "teams"))) {
-				tagService.create(new Tag(teamTag, "teams"));
-			}
-		}
-		for (String currentTeamTag : currentTeamTags) {
-			dne = true;
-			for (String teamTag : teamTags) {
-				if (currentTeamTag.equals(teamTag)) {
-					dne = false;
-				}
-			}
-			if (dne) {
-				tagService.delete(currentTeamTag);
-			}
-		}
-		return "redirect:" + context.getContextPath() + "/m/tags";
-	}
-
 	@RequestMapping(value = "/tags/mergeMatch", method = RequestMethod.GET)
 	public String mergeMatchTags(Model model) {
 		List<String> matchTags = matchService.getTags();
@@ -205,7 +161,8 @@ public class MatchController {
 
 	@RequestMapping(value = "/tags/mergeMatch", method = RequestMethod.POST)
 	public String mergeMatchTags(@RequestParam("oldTag") String oldTag, @RequestParam("newTag") String newTag) {
-		tagService.mergeTags(new Tag(oldTag, "matches"), new Tag(newTag, "matches"));
+		// tagService.mergeTags(new Tag(oldTag, "matches"), new Tag(newTag,
+		// "matches"));
 		return "redirect:" + context.getContextPath() + "/m/tags";
 	}
 
@@ -218,7 +175,8 @@ public class MatchController {
 
 	@RequestMapping(value = "/tags/mergeTeam", method = RequestMethod.POST)
 	public String mergeTeamTags(@RequestParam("oldTag") String oldTag, @RequestParam("newTag") String newTag) {
-		tagService.mergeTags(new Tag(oldTag, "teams"), new Tag(newTag, "teams"));
+		// tagService.mergeTags(new Tag(oldTag, "teams"), new Tag(newTag,
+		// "teams"));
 		return "redirect:" + context.getContextPath() + "/m/tags";
 	}
 
@@ -244,6 +202,15 @@ public class MatchController {
 	@ResponseBody
 	public String getTeamTags() {
 		return new Gson().toJson(teamService.getTags());
+	}
+
+	@RequestMapping(value = "/manageTags", method = RequestMethod.GET)
+	public String manageTags(Model model) {
+
+		model.addAttribute("teamTags", tagService.getTeamTags());
+		model.addAttribute("matchTags", tagService.getMatchTags());
+		return "manageTags";
+
 	}
 
 	@RequestMapping(value = "/matchEntry", method = RequestMethod.GET)

@@ -16,49 +16,54 @@
  */
 package com.team3637.service;
 
+import java.util.List;
+
+import javax.sql.DataSource;
+
 import com.team3637.model.Match;
 import com.team3637.model.Tag;
 import com.team3637.model.Team;
 
-import javax.sql.DataSource;
-import java.util.List;
-
 public interface TagService extends Service {
-    void setDataSource(DataSource dataSource);
+	void setDataSource(DataSource dataSource);
 
-    void create(Tag tag);
+	Tag getTag(Integer id);
 
-    Tag getTag(Integer id);
+	Tag getTagByName(String name);
 
-    Tag getTagByName(String name);
+	List<Tag> getTags();
 
-    List<Tag> getTags();
+	List<Team> search(String[] matchTags, String[] teamTags);
 
-    List<Team> search(String[] matchTags, String[] teamTags);
+	List<Team> search(Double minScore, Double maxScore, String[] matchTags, String[] teamTags);
 
-    List<Team> search(Double minScore, Double maxScore, String[] matchTags, String[] teamTags);
+	List<Match> searchMatches(String... params);
 
-    List<Match> searchMatches(String... params);
+	List<Match> searchMatches(Double minScore, Double maxScore, String... params);
 
-    List<Match> searchMatches(Double minScore, Double maxScore, String... params);
+	List<Team> searchTeams(String... params);
 
-    List<Team> searchTeams(String... params);
+	List<Team> searchTeams(Double minScore, Double maxScore, String... params);
 
-    List<Team> searchTeams(Double minScore, Double maxScore, String... params);
+	List<String> getMatchTagStringsForTeam(Integer teamNum);
 
-    List<String> getMatchTagStringsForTeam(Integer teamNum);
+	List<String> getMatchUniqueTagStringsForTeam(Integer teamNum);
 
-    List<String> getMatchUniqueTagStringsForTeam(Integer teamNum);
+	void deleteTagById(Integer id);
 
-    void update(Tag tag);
+	void deleteTag(String name);
 
-    void deleteById(Integer id);
+	boolean checkTagForId(Integer id);
 
-    void delete(String name);
+	boolean checkForTag(Tag tag);
 
-    boolean checkForId(Integer id);
+	void mergeTags(Tag oldTag, Tag newTag);
 
-    boolean checkForTag(Tag tag);
+	void updateTag(Tag tag);
 
-    void mergeTags(Tag oldTag, Tag newTag);
+	void createTag(Tag tag);
+
+	List<Tag> getTeamTags();
+
+	List<Tag> getMatchTags();
 }

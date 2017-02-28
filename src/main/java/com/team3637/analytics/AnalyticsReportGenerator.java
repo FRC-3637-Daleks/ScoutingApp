@@ -23,29 +23,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-
 import com.team3637.model.AnalyticsReport;
 import com.team3637.model.Match;
 import com.team3637.model.Tag;
 import com.team3637.model.Team;
 
-public class AnalyticsReportGenerator
-{
+public class AnalyticsReportGenerator {
 	private Map<String, Integer> counters;
 
-	public AnalyticsReportGenerator()
-	{
+	public AnalyticsReportGenerator() {
 		counters = new HashMap<>();
 	}
 
 	public AnalyticsReport generateAnalyticsReport(Team team, List<Tag> tags, List<Match> matches, List<Tag> tableTags)
-			throws IOException
-	{
+			throws IOException {
 		AnalyticsReport report = new AnalyticsReport();
-		processTags(tags);
+		// processTags(tags);
 		report.setTeam(team);
 		report.setCodedDesignation(generateCodedDesignation(team.getTeam(), team.getAvgScore()).replaceAll("<", "&lt")
 				.replaceAll(">", "&gt"));
@@ -56,8 +49,7 @@ public class AnalyticsReportGenerator
 		return report;
 	}
 
-	private String generateCodedDesignation(int teamNum, double avgScore)
-	{
+	private String generateCodedDesignation(int teamNum, double avgScore) {
 		String designation, temp, temp2, temp3;
 		int tempNum;
 
@@ -433,8 +425,7 @@ public class AnalyticsReportGenerator
 		return designation.trim() + " }";
 	}
 
-	private String generateEngDesignation(int teamNum, double avgScore, int numMatches)
-	{
+	private String generateEngDesignation(int teamNum, double avgScore, int numMatches) {
 		String engdesignation, temp, temp2;
 		int tempNum;
 
@@ -753,31 +744,23 @@ public class AnalyticsReportGenerator
 		return engdesignation.trim();
 	}
 
-	private String[] generateTableHeaders(List<Match> matches)
-	{
+	private String[] generateTableHeaders(List<Match> matches) {
 		String[] columns = new String[matches.size() + 1];
 		columns[0] = "Tag";
-		for (int i = 0; i < matches.size(); i++)
-		{
+		for (int i = 0; i < matches.size(); i++) {
 			columns[i + 1] = matches.get(i).getMatchNum().toString();
 		}
 		return columns;
 	}
 
-	private String[][] generateTableData(List<Match> matches, List<Tag> tableTags)
-	{
+	private String[][] generateTableData(List<Match> matches, List<Tag> tableTags) {
 		String[][] tableData = new String[tableTags.size()][matches.size() + 1];
-		for (int i = 0; i < tableTags.size(); i++)
-		{
+		for (int i = 0; i < tableTags.size(); i++) {
 			tableData[i][0] = tableTags.get(i).getTag();
-			for (int j = 0; j < matches.size(); j++)
-			{
-				if (matches.get(j).getTags().contains(tableTags.get(i).getTag()))
-				{
+			for (int j = 0; j < matches.size(); j++) {
+				if (matches.get(j).getTags().contains(tableTags.get(i).getTag())) {
 					tableData[i][j + 1] = "&#x2713";
-				}
-				else
-				{
+				} else {
 					tableData[i][j + 1] = "";
 				}
 			}
@@ -785,65 +768,15 @@ public class AnalyticsReportGenerator
 		return tableData;
 	}
 
-	private void processTags(List<Tag> tags)
-	{
-		// Added an array contains function because Java's script engine doesn't contain ones
-		String containsFunction = "function contains(arr, obj) {\n" + "   for (var i = 0; i < arr.length; i++) {\n"
-				+ "       if (arr[i] == obj) {\n" + "           return true;\n" + "       }\n" + "   }\n"
-				+ "   return false;\n" + "}\n";
-		counters.clear();
-		// Create new ScriptEngine that will process the javascript expression
-		ScriptEngine engine = new ScriptEngineManager().getEngineByName("javascript");
-		for (Tag tag : tags)
-		{
-			if (tag != null && tag.getExpression() != null && !tag.getExpression().equals("")
-					&& tag.getCounter() != null && !tag.getCounter().equals(""))
-			{
-				if (!counters.containsKey(tag.getCounter()))
-					counters.put(tag.getCounter(), 0);
-				if (tag.requiesEval())
-				{
-					// Set the javascript variable arr equal to the an array of strings of each tag
-					String[] stingTags = new String[tags.size()];
-					for (int i = 0; i < tags.size(); i++)
-						if (tags.get(i) != null)
-							stingTags[i] = tags.get(i).toString();
-					// Set the javascript variable x equal to the value of highGoal
-					engine.put("x", counters.get(tag.getCounter()));
-					engine.put("arr", stingTags);
-					// Evaluated to javascript expression
-					try
-					{
-						engine.eval(containsFunction + tag.getExpression());
-					}
-					catch (ScriptException e)
-					{
-						System.err.println("Tag error: " + tag.getTag());
-					}
-					// Convert the java Object x into an int set highGoal equal to that value
-					counters.put(tag.getCounter(), convertToTint(engine.get("x")));
-				}
-				else
-				{
-					counters.put(tag.getCounter(),
-							convertToTint(counters.get(tag.getCounter())) + Integer.parseInt(tag.getExpression()));
-				}
-			}
-		}
-	}
-
-	private static int convertToTint(Object x)
-	{
+	private static int convertToTint(Object x) {
 		if (x == null)
 			return -1;
 		return (x.getClass() == Double.class) ? (int) Math.round((Double) x) : (int) x;
 	}
 
-	public String toString()
-	{
+	public String toString() {
 		String string = "";
-		for (Map.Entry<String, Integer> entry : counters.entrySet())
-		{
+		for (Map.Entry<String, Integer> entry : counters.entrySet()) {
 			string += entry.getKey() + " : " + entry.getValue();
 		}
 		return string;

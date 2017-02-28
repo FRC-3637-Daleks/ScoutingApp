@@ -16,23 +16,23 @@
  */
 package com.team3637.mapper;
 
-import com.team3637.model.Tag;
-import org.springframework.jdbc.core.RowMapper;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.springframework.jdbc.core.RowMapper;
+
+import com.team3637.model.Tag;
+
 public class TagMapper implements RowMapper<Tag> {
-    @Override
-    public Tag mapRow(ResultSet resultSet, int i) throws SQLException {
-        Tag tag = new Tag();
-        tag.setId(resultSet.getInt("id"));
-        tag.setTag(resultSet.getString("tag"));
-        tag.setType(resultSet.getString("type"));
-        tag.setCounter(resultSet.getString("counter"));
-        tag.setInTable(resultSet.getBoolean("inTable"));
-        tag.setRequiesEval(resultSet.getBoolean("eval"));
-        tag.setExpression(resultSet.getString("expression"));
-        return tag;
-    }
+	@Override
+	public Tag mapRow(ResultSet resultSet, int i) throws SQLException {
+		Tag tag = new Tag();
+		tag.setId(resultSet.getInt("id"));
+		tag.setTag(resultSet.getString("tag"));
+		tag.setType(resultSet.getString("type"));
+		tag.setCategory(resultSet.getString("category"));
+		tag.setGrouping(resultSet.getString("grouping"));
+		tag.setInputType(resultSet.getString("input_type"));
+		return tag;
+	}
 }
