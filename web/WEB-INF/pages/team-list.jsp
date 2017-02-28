@@ -97,8 +97,22 @@
                 });
             }
     );
+    
+    function isInt(value) {
+    	  return !isNaN(value) && 
+    	         parseInt(Number(value)) == value && 
+    	         !isNaN(parseInt(value, 10));
+    	}    
+    
     function addTeam() {
-        window.location = '${pageContext.request.contextPath}/t/add/' + $('input[name=teamNum]').val();
+    	var teamNum = $('input[name=teamNum]').val();
+    	if (teamNum  != null && teamNum != "")
+    		if (isInt(teamNum))
+               window.location = '${pageContext.request.contextPath}/t/add/' + teamNum;
+            else
+            	alert("Team number must be unique.")
+         else     
+        	 alert("Please enter a new team number and try again.")
     }
 </script>
 </body>
