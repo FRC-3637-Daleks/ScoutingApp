@@ -111,10 +111,8 @@ public class MatchController {
 		if (match.getTags().size() > 50 || match.getTags().size() < 1)
 			return new ResponseEntity<>("400 - Bad Request", HttpStatus.BAD_REQUEST);
 
-		Team team = new Team();
-		team.setTeam(match.getTeam());
-		if (!teamService.checkForTeam(team.getTeam()))
-			teamService.create(team);
+		if (!teamService.checkForTeam(match.getTeam()))
+			teamService.create(match.getTeam());
 		if (matchService.checkForMatch(match.getMatchNum(), match.getTeam()))
 			matchService.update(match);
 		else
@@ -160,9 +158,11 @@ public class MatchController {
 	}
 
 	@RequestMapping(value = "/tags/mergeMatch", method = RequestMethod.POST)
+
 	public String mergeMatchTags(@RequestParam("oldTag") String oldTag, @RequestParam("newTag") String newTag) {
 		// tagService.mergeTags(new Tag(oldTag, "matches"), new Tag(newTag,
 		// "matches"));
+
 		return "redirect:" + context.getContextPath() + "/m/tags";
 	}
 
@@ -174,9 +174,11 @@ public class MatchController {
 	}
 
 	@RequestMapping(value = "/tags/mergeTeam", method = RequestMethod.POST)
+
 	public String mergeTeamTags(@RequestParam("oldTag") String oldTag, @RequestParam("newTag") String newTag) {
 		// tagService.mergeTags(new Tag(oldTag, "teams"), new Tag(newTag,
 		// "teams"));
+
 		return "redirect:" + context.getContextPath() + "/m/tags";
 	}
 

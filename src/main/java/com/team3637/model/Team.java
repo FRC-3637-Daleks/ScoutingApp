@@ -16,7 +16,6 @@
  */
 package com.team3637.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Team
@@ -30,16 +29,17 @@ public class Team
 	private Integer ties;
 	private Integer losses;
 	private List<MatchStatistics> matchStatistics;
-	private List<String> tags = new ArrayList<String>();
+	private List<TeamTag> teamTags;
+	private Integer rankingpoints;
 
-	public List<String> getTags()
+	public Integer getRankingpoints()
 	{
-		return tags;
+		return rankingpoints;
 	}
 
-	public void setTags(List<String> tags)
+	public void setRankingpoints(Integer rankingpoints)
 	{
-		this.tags = tags;
+		this.rankingpoints = rankingpoints;
 	}
 
 	public Integer getId()
@@ -136,5 +136,15 @@ public class Team
 	public void setTies(Integer ties)
 	{
 		this.ties = ties;
+	}
+
+	public List<TeamTag> getTeamTags()
+	{
+		return teamTags;
+	}
+
+	public void setTeamTags(List<TeamTag> teamTags)
+	{
+		this.teamTags = teamTags;
 	}
 }

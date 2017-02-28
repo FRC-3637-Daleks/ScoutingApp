@@ -2,6 +2,11 @@
 <html>
 <head>
 <style>
+
+body {
+	background-color: #ebebe0;
+}
+
 .categoryTable{
     border-spacing: 0px;  
 }
@@ -16,6 +21,17 @@
     font-size: 12px;
     border-collapse: collapse;  
     border: 1px solid gray !important; 
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.tagTableGray tr{
+   background-color:#ebebe0;
+}
+  
+  
+.tagTableWhite tr{
+   background-color:#ffffff;
 }
   
 .categoryTable td{ 
@@ -33,7 +49,7 @@
 } 
 
 .sectionHeader {
-    background-color:#53EA0C;
+    background-color:#00A22E;
     font-weight:bold; 
     text-align:center;
     padding-right:15px;
@@ -47,10 +63,12 @@
 }
 
 .teamHeader th{
-    background-color:#005EFF; 
+    background-color:#8F0000; 
     font-weight:bold;
     font-size:17px;
-    padding-left:25px;  
+    margin-left: 10px;
+    margin-right: 10px;
+    padding-left:3px;  
     padding-right:25px;
     border-collapse:collapse;
     color:white;     
@@ -78,7 +96,7 @@
 .categoryTitle {
     text-align: 
     center; height: 20px; 
-    background-color:#FFD500; 
+    background-color:#CFA600; 
     font-size:13px;  
     font-weight:bold;
     padding-right:15px;
@@ -120,9 +138,10 @@ function toggle(target) {
   <tr>
     <th><p style="color:white; width:100px;">Team: ${team.team}</p></th>
     <th><p style="color:white; width:140px;">Matches Played: ${team.matches}</p></th>
-    <th><p style="color:white; width:150px;">Avg.Score: ${team.avgScore}</p></th>
+    <th><p style="color:white; width:130px;">Avg. Score: ${team.avgScore}</p></th>
     <th><p style="color:white; width:130px;">Our Score: ${team.ourScore!}</p></th>
-    <th><p style="color:white; width:180px;">W/L/T Ratio: ${team.wins}/${team.losses}/${team.ties}</p></th>
+    <th><p style="color:white; width:120px;">W/L/T: ${team.wins}/${team.losses}/${team.ties}</p></th>
+    <th><p style="color:white; width:150px;">Ranking Points: ${team.rankingpoints}</p></th>
   </tr>
 </table>
 </div>

@@ -5,33 +5,40 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MatchTeams {
+public class MatchTeams
+{
 	private Integer match;
 	private List<Team> teams = new ArrayList<Team>();
 
-	private Map<Integer, String> allianceMap = new HashMap<Integer, String>();
+	private Map<String, String> allianceMap = new HashMap<String, String>();
 
-	public Map<Integer, String> getAllianceMap() {
+	public Map<String, String> getAllianceMap()
+	{
 		return allianceMap;
 	}
 
-	public void setAllianceMap(Map<Integer, String> allianceMap) {
+	public void setAllianceMap(Map<String, String> allianceMap)
+	{
 		this.allianceMap = allianceMap;
 	}
 
-	public Integer getMatch() {
+	public Integer getMatch()
+	{
 		return match;
 	}
 
-	public void setMatch(Integer match) {
+	public void setMatch(Integer match)
+	{
 		this.match = match;
 	}
 
-	public List<Team> getTeams() {
+	public List<Team> getTeams()
+	{
 		return teams;
 	}
 
-	public void setTeams(List<Team> teams) {
+	public void setTeams(List<Team> teams)
+	{
 		this.teams = teams;
 	}
 }

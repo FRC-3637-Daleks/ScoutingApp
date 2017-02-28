@@ -277,7 +277,10 @@ public class MatchServiceMySQLImpl implements MatchService {
 				+ "				  (SELECT sum(occurences * t.point_value) "
 				+ "                FROM scoutingtags.matchtags mt "
 			    + "				        inner join scoutingtags.tags t on mt.tag = t.tag "
-                + "                where mt.team = m.team) as ourscore "
+                + "                where mt.team = m.team) as ourscore, "
+			    + "               (SELECT sum(ranking_points) "
+                + "                FROM scoutingtags.match m3 "
+			    + "                where m3.team = m.team) as rankingpoints "
 				+ "FROM scoutingtags.match m "
 				+ "WHERE ? is null or team = ? "
 				+ "GROUP BY team";
@@ -293,6 +296,7 @@ public class MatchServiceMySQLImpl implements MatchService {
 				team.setTies(resultSet.getInt("ties"));
 				team.setLosses(resultSet.getInt("losses"));
 				team.setOurScore(resultSet.getDouble("ourscore"));
+				team.setRankingpoints(resultSet.getInt("rankingpoints"));
 				return team;
 			}
 		}, teamNum, teamNum);
@@ -372,22 +376,22 @@ public class MatchServiceMySQLImpl implements MatchService {
 				matchTeams.setMatch(resultSet.getInt("matchNum"));
 				Integer team = resultSet.getInt("b1");
 				matchTeams.getTeams().add(findTeam(teams, team));
-				matchTeams.getAllianceMap().put(team, "Blue");
+				matchTeams.getAllianceMap().put(team.toString(), "Blue");
 				team = resultSet.getInt("b2");
 				matchTeams.getTeams().add(findTeam(teams, team));
-				matchTeams.getAllianceMap().put(team, "Blue");
+				matchTeams.getAllianceMap().put(team.toString(), "Blue");
 				team = resultSet.getInt("b3");
 				matchTeams.getTeams().add(findTeam(teams, team));
-				matchTeams.getAllianceMap().put(team, "Blue");
+				matchTeams.getAllianceMap().put(team.toString(), "Blue");
 				team = resultSet.getInt("r1");
 				matchTeams.getTeams().add(findTeam(teams, team));
-				matchTeams.getAllianceMap().put(team, "Red");
+				matchTeams.getAllianceMap().put(team.toString(), "Red");
 				team = resultSet.getInt("r2");
 				matchTeams.getTeams().add(findTeam(teams, team));
-				matchTeams.getAllianceMap().put(team, "Red");
+				matchTeams.getAllianceMap().put(team.toString(), "Red");
 				team = resultSet.getInt("r3");
 				matchTeams.getTeams().add(findTeam(teams, team));
-				matchTeams.getAllianceMap().put(team, "Red");
+				matchTeams.getAllianceMap().put(team.toString(), "Red");
 				return matchTeams;
 			}
 		}, match, match);
@@ -450,6 +454,7 @@ public class MatchServiceMySQLImpl implements MatchService {
 	}
 
 	@Override
+
 	public void saveMatchRankingPoints(Integer team, Integer match, String rankingPoints) {
 		String sql = "UPDATE scoutingtags.match SET ranking_points = ? WHERE team=? AND matchNum=?";
 		int rowsUpdated = jdbcTemplateObject.update(sql, rankingPoints, team, match);
@@ -476,6 +481,7 @@ public class MatchServiceMySQLImpl implements MatchService {
 				+ "FROM scoutingtags.match m " + "WHERE  team = ? and matchNum = ?";
 		// @formatter:on
 		return jdbcTemplateObject.queryForObject(sql, new RowMapper<TeamMatchResult>() {
+
 			@Override
 			public TeamMatchResult mapRow(ResultSet resultSet, int rowNum) throws SQLException {
 				TeamMatchResult teamMatchResult = new TeamMatchResult();
