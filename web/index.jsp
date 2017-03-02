@@ -39,7 +39,7 @@
                 <li><a href="${pageContext.request.contextPath}/t/">Teams</a></li>
                 <li><a href="${pageContext.request.contextPath}/m/manageTags">Tags</a></li>
                 <li><a href="${pageContext.request.contextPath}/io/">IO</a></li>
-                <li><a href="${pageContext.request.contextPath}/analytics/">Analytics</a></li>
+                <li><a href="${pageContext.request.contextPath}/analytics/teamAnalyticsByMatch">Analytics</a></li>
             </ul>
         </div>
     </div>

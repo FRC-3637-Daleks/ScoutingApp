@@ -65,7 +65,7 @@ body {
 .teamHeader th{
     background-color:#8F0000; 
     font-weight:bold;
-    font-size:17px;
+    font-size:15px;
     margin-left: 10px;
     margin-right: 10px;
     padding-left:3px;  
@@ -108,6 +108,13 @@ body {
      text-align: center
 }
 </style>
+<link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="../css/bootstrap-tokenfield.css" rel="stylesheet"/>
+<link href="../css/jquery-ui.css" rel="stylesheet"/>
+<link href="../css/bootstrap-slider.css" rel="stylesheet"/> 
+<link href="../css/chosen.css" rel="stylesheet"/>
+<link href="../css/main.css" rel="stylesheet"/>
+<script src="../js/jquery.min.js"></script>
 <script>
 function show(target) {
     document.getElementById(target).style.display = 'block';
@@ -126,7 +133,27 @@ function toggle(target) {
 }
 </script>
 </head>
-<body>
+<body style="background-color: #ebebe0">
+<#if !export??>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand page-scroll" href="../">Team 3637 Scouting App</a> 
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+			<ul class="nav navbar-nav"> 
+                <li><a href="../analytics/teamAnalyticsByMatch">By Match</a></li>
+            </ul> 
+            <ul class="nav navbar-nav"> 
+                <li><a href="../analytics/exportTeamAnalytics">Export</a></li>
+            </ul> 
+            <ul class="nav navbar-nav"> 
+                <li><a href="../">Back</a></li>
+            </ul> 
+        </div>
+    </div>
+</nav>
+</#if>
 <#assign teamNum = -1>
 <#list teams as team>
 <#if teamNum == -1 || teamNum != team.team>

@@ -25,6 +25,7 @@ import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -141,6 +142,39 @@ public class AnalyticsController {
 		List<MatchTeams> matchTeamsList = matchService.getMatchTeams(match, teams);
 		model.addAttribute("matchTeamsList", matchTeamsList);
 		return "matchAnalytics";
+
+	}
+
+	@RequestMapping(value = "/exportTeamAnalyticsByMatch", method = RequestMethod.GET)
+	public String exportTeamAnalyticsByMatch(@RequestParam(value = "match", required = false) Integer match,
+			Model model, HttpServletResponse response) {
+		List<Team> teams = matchService.getTeamMatchSummaryInfo(null);
+		for (Team team : teams) {
+			List<MatchStatistics> matchStatistics = matchService.getTeamMatchStatistics(team.getTeam());
+			team.setMatchStatistics(matchStatistics);
+		}
+		List<MatchTeams> matchTeamsList = matchService.getMatchTeams(match, teams);
+		model.addAttribute("matchTeamsList", matchTeamsList);
+		model.addAttribute("export", true);
+		response.setContentType("application/octet-stream");
+		response.setHeader("Content-Disposition", "attachment;filename=teamAnalyticsByMatch.html");
+		return "matchAnalytics";
+
+	}
+
+	@RequestMapping(value = "/exportTeamAnalytics", method = RequestMethod.GET)
+	public String exportTeamAnalytics(@RequestParam(value = "team", required = false) Integer teamNum, Model model,
+			HttpServletResponse response) {
+		List<Team> teams = matchService.getTeamMatchSummaryInfo(teamNum);
+		model.addAttribute("teams", teams);
+		for (Team team : teams) {
+			List<MatchStatistics> matchStatistics = matchService.getTeamMatchStatistics(team.getTeam());
+			team.setMatchStatistics(matchStatistics);
+		}
+		model.addAttribute("export", true);
+		response.setContentType("application/octet-stream");
+		response.setHeader("Content-Disposition", "attachment;filename=teamAnalyticsByMatch.html");
+		return "teamAnalytics";
 
 	}
 }
