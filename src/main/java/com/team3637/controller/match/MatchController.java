@@ -150,6 +150,20 @@ public class MatchController {
 		return "tags";
 	}
 
+	@RequestMapping(value = "/deleteTag", method = RequestMethod.GET)
+	public void deleteTag(@RequestParam("id") Integer id, HttpServletResponse response) {
+		matchService.deleteTag(id);
+		response.setStatus(200);
+	}
+
+	@RequestMapping(value = "/saveTag", method = RequestMethod.GET)
+	public void deleteTag(@RequestParam("id") Integer id, @RequestParam("tag") String tag,
+			@RequestParam("category") Integer category, @RequestParam("grouping") Integer grouping,
+			@RequestParam("inputType") Integer inputType, HttpServletResponse response) {
+		matchService.saveTag(id, tag, category, grouping, inputType);
+		response.setStatus(200);
+	}
+
 	@RequestMapping(value = "/tags/mergeMatch", method = RequestMethod.GET)
 	public String mergeMatchTags(Model model) {
 		List<String> matchTags = matchService.getTags();
@@ -198,6 +212,12 @@ public class MatchController {
 	@ResponseBody
 	public String getMatchTags() {
 		return new Gson().toJson(matchService.getTags());
+	}
+
+	@RequestMapping("/tagGroupings")
+	@ResponseBody
+	public String getTagGroupings() {
+		return new Gson().toJson(matchService.getTagGroupings());
 	}
 
 	@RequestMapping("/teamTags")

@@ -146,7 +146,11 @@ function editTag(tagId) {
 function saveTag(tagId) {
      if (confirm("Are you sure you want to save this tag ("+      $( "#tag-edit-input-" + tagId )[0].value + ")?" ))
      { 
-         $( "#tag-" + tagId )[0].innnerHTML = 
+         var tag = $( "#tag-edit-input-" + tagId )[0].value; 
+         var grouping = $( "#grouping-edit-input-" + tagId )[0].value;
+         var category = $( "#category-edit-input-" + tagId )[0].value;
+         var inputType = $( "#inputType-edit-input-" + tagId )[0].value;
+         $.get("../m/saveTag?id="+tagId+"&tag="+tag+"&grouping="+grouping+"&category="+category+"&inputType="+inputType);
          cancelEditTag(tagId); 
      }
      else
@@ -198,8 +202,8 @@ function cancelEditTag(tagId) {
   <tr>
   <td><img id="editIcon-${matchTag.id}" src="../images/pencil.png" style="width:24px;height:24px;" onClick="editTag(${matchTag.id});"><img id="saveIcon-${matchTag.id}" src="../images/save.png" style="width:24px;height:24px;display:none;" onClick="saveTag(${matchTag.id});"></td>
   <td><div id="tag-${matchTag.id}">${matchTag.tag}</div><div id="tag-edit-${matchTag.id}" style="display:none;"><input  id="tag-edit-input-${matchTag.id}"  type="text" value="${matchTag.tag}"></input></div></td>
-  <td><div id="grouping-${matchTag.id}">${matchTag.grouping}</div><div id="grouping-edit-${matchTag.id}" style="display:none;"><input  id="grouping-edit-input-${matchTag.id}"  type="text"></input></div></td>
-  <td><div id="category-${matchTag.id}">${matchTag.category}</div><div id="category-edit-${matchTag.id}" style="display:none;"><input  id="category-edit-input-${matchTag.id}"  type="text"></input></div></td>
+  <td><div id="grouping-${matchTag.id}">${matchTag.grouping}</div><div id="grouping-edit-${matchTag.id}" style="display:none;"><input  id="grouping-edit-input-${matchTag.id}"  type="text" value="${matchTag.grouping}"></input></div></td>
+  <td><div id="category-${matchTag.id}">${matchTag.category}</div><div id="category-edit-${matchTag.id}" style="display:none;"><input  id="category-edit-input-${matchTag.id}"  type="text" value="${matchTag.category}"></input></div></td>
   <td><div id="inputType-${matchTag.id}">${matchTag.inputType}</div><div id="inputType-edit-${matchTag.id}" style="display:none;"><select  id="inputType-edit-input-${matchTag.id}"></select></div></td> 
   <td><img src="../images/delete.png" style="width:24px;height:24px;" onClick="deleteTag(${matchTag.id});"></td>
   </tr> 

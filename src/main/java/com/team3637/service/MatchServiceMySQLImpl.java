@@ -507,4 +507,29 @@ public class MatchServiceMySQLImpl implements MatchService {
 		}, team, match);
 
 	}
+
+	@Override
+	public void deleteTag(Integer id) {
+		String sql = "DELETE FROM scoutingtags.tags WHERE id=?";
+		jdbcTemplateObject.update(sql, id);
+
+	}
+
+	@Override
+	public List<String> getTagGroupings() {
+		String SQL = "SELECT grouping FROM scoutingtags.taggrouping ORDER BY sequence";
+		return jdbcTemplateObject.queryForList(SQL, String.class);
+
+	}
+
+	@Override
+	public void saveTag(Integer id, String tag, Integer category, Integer grouping, Integer inputType) {
+		String sql = "UPDATE scoutingtags.tags SET tag=?, category=?, grouping=?, inputType=? WHERE id=?";
+		int rowsUpdated = jdbcTemplateObject.update(sql, tag, category, grouping, inputType, id);
+		if (rowsUpdated < 1) {
+			String sqlInsert = "INSERT INTO scoutingtags.tags (tag, category, grouping, inputType, id) VALUES (?,?,?,?,?)";
+			jdbcTemplateObject.update(sqlInsert, tag, category, grouping, inputType, id);
+		}
+
+	}
 }

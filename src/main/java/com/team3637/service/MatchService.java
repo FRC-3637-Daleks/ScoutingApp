@@ -76,4 +76,10 @@ public interface MatchService extends Service {
 
 	void saveMatchPenalty(Integer team, Integer match, String penalty);
 
+	void deleteTag(Integer id);
+
+	List<String> getTagGroupings();
+
+	void saveTag(Integer id, String tag, Integer category, Integer grouping, Integer inputType);
+
 }
