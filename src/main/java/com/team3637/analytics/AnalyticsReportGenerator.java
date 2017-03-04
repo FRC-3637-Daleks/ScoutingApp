@@ -28,15 +28,18 @@ import com.team3637.model.Match;
 import com.team3637.model.Tag;
 import com.team3637.model.Team;
 
-public class AnalyticsReportGenerator {
+public class AnalyticsReportGenerator
+{
 	private Map<String, Integer> counters;
 
-	public AnalyticsReportGenerator() {
+	public AnalyticsReportGenerator()
+	{
 		counters = new HashMap<>();
 	}
 
 	public AnalyticsReport generateAnalyticsReport(Team team, List<Tag> tags, List<Match> matches, List<Tag> tableTags)
-			throws IOException {
+			throws IOException
+	{
 		AnalyticsReport report = new AnalyticsReport();
 		// processTags(tags);
 		report.setTeam(team);
@@ -45,11 +48,11 @@ public class AnalyticsReportGenerator {
 		report.setEnglishDesignation(generateEngDesignation(team.getTeam(), team.getAvgScore(), team.getMatches())
 				.replaceAll("\n", "<br/>\n"));
 		report.setTableHeaders(generateTableHeaders(matches));
-		report.setTableData(generateTableData(matches, tableTags));
 		return report;
 	}
 
-	private String generateCodedDesignation(int teamNum, double avgScore) {
+	private String generateCodedDesignation(int teamNum, double avgScore)
+	{
 		String designation, temp, temp2, temp3;
 		int tempNum;
 
@@ -425,7 +428,8 @@ public class AnalyticsReportGenerator {
 		return designation.trim() + " }";
 	}
 
-	private String generateEngDesignation(int teamNum, double avgScore, int numMatches) {
+	private String generateEngDesignation(int teamNum, double avgScore, int numMatches)
+	{
 		String engdesignation, temp, temp2;
 		int tempNum;
 
@@ -744,39 +748,29 @@ public class AnalyticsReportGenerator {
 		return engdesignation.trim();
 	}
 
-	private String[] generateTableHeaders(List<Match> matches) {
+	private String[] generateTableHeaders(List<Match> matches)
+	{
 		String[] columns = new String[matches.size() + 1];
 		columns[0] = "Tag";
-		for (int i = 0; i < matches.size(); i++) {
+		for (int i = 0; i < matches.size(); i++)
+		{
 			columns[i + 1] = matches.get(i).getMatchNum().toString();
 		}
 		return columns;
 	}
 
-	private String[][] generateTableData(List<Match> matches, List<Tag> tableTags) {
-		String[][] tableData = new String[tableTags.size()][matches.size() + 1];
-		for (int i = 0; i < tableTags.size(); i++) {
-			tableData[i][0] = tableTags.get(i).getTag();
-			for (int j = 0; j < matches.size(); j++) {
-				if (matches.get(j).getTags().contains(tableTags.get(i).getTag())) {
-					tableData[i][j + 1] = "&#x2713";
-				} else {
-					tableData[i][j + 1] = "";
-				}
-			}
-		}
-		return tableData;
-	}
-
-	private static int convertToTint(Object x) {
+	private static int convertToTint(Object x)
+	{
 		if (x == null)
 			return -1;
 		return (x.getClass() == Double.class) ? (int) Math.round((Double) x) : (int) x;
 	}
 
-	public String toString() {
+	public String toString()
+	{
 		String string = "";
-		for (Map.Entry<String, Integer> entry : counters.entrySet()) {
+		for (Map.Entry<String, Integer> entry : counters.entrySet())
+		{
 			string += entry.getKey() + " : " + entry.getValue();
 		}
 		return string;
