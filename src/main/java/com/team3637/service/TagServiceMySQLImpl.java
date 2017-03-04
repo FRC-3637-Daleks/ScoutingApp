@@ -443,12 +443,12 @@ public class TagServiceMySQLImpl implements TagService {
 	}
 
 	@Override
-	public void saveTag(Integer id, String tag, Integer category, Integer grouping, Integer inputType) {
-		String sql = "UPDATE scoutingtags.tags SET tag=?, category=?, grouping=?, inputType=? WHERE id=?";
-		int rowsUpdated = jdbcTemplateObject.update(sql, tag, category, grouping, inputType, id);
+	public void saveTag(Integer id, String tag, String type, String category, String grouping, String inputType) {
+		String sql = "UPDATE scoutingtags.tags SET tag=?, type=?, category=?, grouping=?, input_type=? WHERE id=?";
+		int rowsUpdated = jdbcTemplateObject.update(sql, tag, type, category, grouping, inputType, id);
 		if (rowsUpdated < 1) {
-			String sqlInsert = "INSERT INTO scoutingtags.tags (tag, category, grouping, inputType, id) VALUES (?,?,?,?,?)";
-			jdbcTemplateObject.update(sqlInsert, tag, category, grouping, inputType, id);
+			String sqlInsert = "INSERT INTO scoutingtags.tags (tag, type, category, grouping, input_type) VALUES (?,?,?,?,?)";
+			jdbcTemplateObject.update(sqlInsert, tag, type, category, grouping, inputType);
 		}
 	}
 }
