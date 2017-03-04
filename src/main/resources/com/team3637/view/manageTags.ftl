@@ -193,9 +193,9 @@ function saveTag(tagId) {
               cache: false,
               success: function (result) {
                    $( "#tag-" + tagId )[0].value = tag;
-                   $( "#grouping-" + tagId )[0].val(grouping);
-                   $( "#category-" + tagId )[0].val(category);
-                   $( "#inputType-" + tagId )[0].val(inputType);                                                         
+                   $( "#grouping-" + tagId )[0].value = grouping;
+                   $( "#category-" + tagId )[0].value = category;
+                   $( "#inputType-" + tagId )[0].value = inputType;                                                         
                    cancelEditTag(tagId);  
               },
               error: function () { 
@@ -229,6 +229,12 @@ function cancelEditTag(tagId) {
             <a class="navbar-brand page-scroll" href="../">Team 3637 Scouting App</a> 
         </div>
         <div id="navbar" class="collapse navbar-collapse"> 
+        	<ul class="nav navbar-nav"> 
+                <li><a href="../" onclick="createNewMatchTag();">New Match Tag</a></li>
+           	</ul> 
+           	<ul class="nav navbar-nav"> 
+                <li><a href="../" onclick="createNewTeamTag();">New Team Tag</a></li>
+           	</ul> 
             <ul class="nav navbar-nav"> 
                 <li><a href="../">Back</a></li>
             </ul> 

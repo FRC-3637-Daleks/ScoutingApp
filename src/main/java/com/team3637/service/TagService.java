@@ -71,7 +71,7 @@ public interface TagService extends Service {
 
 	List<String> getMatchTagGroupings();
 
-	void saveTag(Integer id, String tag, Integer category, Integer grouping, Integer inputType);
+	void saveTag(Integer id, String tag, String category, String grouping, String inputType);
 
 	void updateInsertTag(Tag tag);
 }
