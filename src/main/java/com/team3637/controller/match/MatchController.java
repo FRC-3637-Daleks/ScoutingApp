@@ -159,9 +159,10 @@ public class MatchController {
 	// http://127.0.0.1:8080/ScoutingApp/m/saveTag?id=160&tag=auto%20high%20goal%20score&grouping=Auton&category=Fuel&inputType=checkbox&_=1488638870328
 	@RequestMapping(value = "/saveTag", method = RequestMethod.GET)
 	public void deleteTag(@RequestParam("id") Integer id, @RequestParam("tag") String tag,
-			@RequestParam("category") String category, @RequestParam("grouping") String grouping,
-			@RequestParam("inputType") String inputType, HttpServletResponse response) {
-		tagService.saveTag(id, tag, category, grouping, inputType);
+			@RequestParam("type") String type, @RequestParam("category") String category,
+			@RequestParam("grouping") String grouping, @RequestParam("inputType") String inputType,
+			HttpServletResponse response) {
+		tagService.saveTag(id, tag, type, category, grouping, inputType);
 		response.setStatus(200);
 	}
 
