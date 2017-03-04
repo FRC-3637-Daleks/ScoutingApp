@@ -113,19 +113,49 @@ function toggle(target) {
  
 function deleteTag(tagId) {
       if (confirm("Are you sure you want to delete this tag ("+      $( "#tag-" + tagId )[0].innerHTML + ")?" ))
-           $.get("../m/deleteTag?id="+tagId);
+           $.ajax({
+              url: "../m/deleteTag?id="+tagId,
+              type: 'GET',
+              cache: false,
+              success: function (result) {
+                   $('#row-'+tagId).remove();
+              },
+              error: function () { 
+                   alert( "Error occurred deleting tag." );
+              }
+          });
 } 
-
+ 
 function isInt(value) {
   return !isNaN(value) && 
          parseInt(Number(value)) == value && 
          !isNaN(parseInt(value, 10));
-}  
+}   
 
 var inputTypeOptions = ["checkbox", "incremental"]; 
+
+var matchTagGroupingOptions;
+var teamTagGroupOptions;
+getMatchTagGroupingOptions();
+
+function getMatchTagGroupingOptions() {
+   $.ajax({
+            url: "../m/matchTagGroupings",
+            type: 'GET',
+            cache: false,
+            success: function (result) {
+                if (result) {
+                    matchTagGroupingOptions = result;
+                }
+            },
+            error: function () { 
+                 alert( "Error getting team tag groupings." );
+            }
+        });
+}
  
 function editTag(tagId) {
-      $( "#editIcon-" + tagId )[0].style.display =  'none'; 
+      $( "#editIcon-" + tagId )[0].style.display =  'none';  
       $( "#tag-" + tagId )[0].style.display =  'none';  
       $( "#category-" + tagId )[0].style.display =  'none'; 
       $( "#grouping-" + tagId )[0].style.display =  'none';  
@@ -134,13 +164,20 @@ function editTag(tagId) {
       $( "#tag-edit-" + tagId )[0].style.display =  'block'; 
       $( "#category-edit-" + tagId )[0].style.display =  'block'; 
       $( "#grouping-edit-" + tagId )[0].style.display =  'block';   
-       $( "#inputType-edit-" + tagId )[0].style.display =  'block';      
+      $( "#inputType-edit-" + tagId )[0].style.display =  'block';      
       var inputTypeSelect = $( "#inputType-edit-input-" + tagId )[0];
       $(inputTypeSelect).empty();
       $(inputTypeOptions).each(function(i, v){
           $(inputTypeSelect).append($("<option>", { value: v, html: v }));
-      });
-     $(inputTypeSelect).val($( "#inputType-" + tagId )[0].innerHTML);
+      }); 
+      $(inputTypeSelect).val($( "#inputType-" + tagId )[0].innerHTML);
+      var groupingSelect = $( "#grouping-edit-input-" + tagId )[0];
+      $(groupingSelect).empty();
+      $(matchTagGroupingOptions).each(function(i, v){
+          $(groupingSelect).append($("<option>", { value: v, html: v }));
+      });      
+     $(groupingSelect).val($( "#grouping-" + tagId )[0].innerHTML);      
+
 } 
 
 function saveTag(tagId) {
@@ -150,8 +187,21 @@ function saveTag(tagId) {
          var grouping = $( "#grouping-edit-input-" + tagId )[0].value;
          var category = $( "#category-edit-input-" + tagId )[0].value;
          var inputType = $( "#inputType-edit-input-" + tagId )[0].value;
-         $.get("../m/saveTag?id="+tagId+"&tag="+tag+"&grouping="+grouping+"&category="+category+"&inputType="+inputType);
-         cancelEditTag(tagId); 
+         $.ajax({
+              url: "../m/saveTag?id="+tagId+"&tag="+tag+"&grouping="+grouping+"&category="+category+"&inputType="+inputType,
+              type: 'GET',
+              cache: false,
+              success: function (result) {
+                   $( "#tag-" + tagId )[0].value = tag;
+                   $( "#grouping-" + tagId )[0].val(grouping);
+                   $( "#category-" + tagId )[0].val(category);
+                   $( "#inputType-" + tagId )[0].val(inputType);                                                         
+                   cancelEditTag(tagId);  
+              },
+              error: function () { 
+                   alert( "Error occurred saving tag." );
+              }
+          });
      }
      else
         cancelEditTag(tagId);
@@ -199,10 +249,10 @@ function cancelEditTag(tagId) {
     <th  class="icon"></th>       
   </tr> 
   <#list matchTags as matchTag> 
-  <tr>
+  <tr id="row-${matchTag.id}">
   <td><img id="editIcon-${matchTag.id}" src="../images/pencil.png" style="width:24px;height:24px;" onClick="editTag(${matchTag.id});"><img id="saveIcon-${matchTag.id}" src="../images/save.png" style="width:24px;height:24px;display:none;" onClick="saveTag(${matchTag.id});"></td>
   <td><div id="tag-${matchTag.id}">${matchTag.tag}</div><div id="tag-edit-${matchTag.id}" style="display:none;"><input  id="tag-edit-input-${matchTag.id}"  type="text" value="${matchTag.tag}"></input></div></td>
-  <td><div id="grouping-${matchTag.id}">${matchTag.grouping}</div><div id="grouping-edit-${matchTag.id}" style="display:none;"><input  id="grouping-edit-input-${matchTag.id}"  type="text" value="${matchTag.grouping}"></input></div></td>
+  <td><div id="grouping-${matchTag.id}">${matchTag.grouping}</div><div id="grouping-edit-${matchTag.id}" style="display:none;"><select  id="grouping-edit-input-${matchTag.id}"></select></div></td>
   <td><div id="category-${matchTag.id}">${matchTag.category}</div><div id="category-edit-${matchTag.id}" style="display:none;"><input  id="category-edit-input-${matchTag.id}"  type="text" value="${matchTag.category}"></input></div></td>
   <td><div id="inputType-${matchTag.id}">${matchTag.inputType}</div><div id="inputType-edit-${matchTag.id}" style="display:none;"><select  id="inputType-edit-input-${matchTag.id}"></select></div></td> 
   <td><img src="../images/delete.png" style="width:24px;height:24px;" onClick="deleteTag(${matchTag.id});"></td>
@@ -226,12 +276,12 @@ function cancelEditTag(tagId) {
     <th  class="icon"></th>         
   </tr> 
   <#list teamTags as teamTag>
-  <tr>
-  <td><img src="../images/pencil.png" style="width:24px;height:24px;"></td>
-  <td>${teamTag.tag}</td>
-  <td>${teamTag.grouping}</td>
-  <td>${teamTag.category}</td> 
-  <td>${teamTag.inputType}</td>
+  <tr id="row-${teamTag.id}">
+  <td><img id="editIcon-${teamTag.id}" src="../images/pencil.png" style="width:24px;height:24px;" onClick="editTag(${teamTag.id});"><img id="saveIcon-${teamTag.id}" src="../images/save.png" style="width:24px;height:24px;display:none;" onClick="saveTag(${teamTag.id});"></td>
+  <td><div id="tag-${teamTag.id}">${teamTag.tag}</div><div id="tag-edit-${teamTag.id}" style="display:none;"><input  id="tag-edit-input-${teamTag.id}"  type="text" value="${teamTag.tag}"></input></div></td>
+  <td><div id="grouping-${teamTag.id}">${teamTag.grouping}</div><div id="grouping-edit-${teamTag.id}" style="display:none;"><input  id="grouping-edit-input-${teamTag.id}"  type="text" value="${teamTag.grouping}"></input></div></td>
+  <td><div id="category-${teamTag.id}">${teamTag.category}</div><div id="category-edit-${teamTag.id}" style="display:none;"><input  id="category-edit-input-${teamTag.id}"  type="text" value="${teamTag.category}"></input></div></td>
+  <td><div id="inputType-${teamTag.id}">${teamTag.inputType}</div><div id="inputType-edit-${teamTag.id}" style="display:none;"><select  id="inputType-edit-input-${teamTag.id}"></select></div></td> 
   <td><img src="../images/delete.png" style="width:24px;height:24px;" onClick="deleteTag(${teamTag.id});"></td>
   </tr>
   </#list> 

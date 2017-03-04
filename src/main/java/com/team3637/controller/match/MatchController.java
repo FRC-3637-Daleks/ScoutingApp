@@ -28,6 +28,16 @@ import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+import com.team3637.model.Match;
+import com.team3637.model.Team;
+import com.team3637.model.TeamMatchResult;
+import com.team3637.model.TeamMatchTag;
+import com.team3637.service.MatchService;
+import com.team3637.service.TagService;
+import com.team3637.service.TeamService;
+import com.team3637.wrapper.MatchWrapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -40,18 +50,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.Gson;
-import com.team3637.model.Match;
-import com.team3637.model.Team;
-import com.team3637.model.TeamMatchResult;
-import com.team3637.model.TeamMatchTag;
-import com.team3637.service.MatchService;
-import com.team3637.service.TagService;
-import com.team3637.service.TeamService;
-import com.team3637.wrapper.MatchWrapper;
-
 @Controller
-public class MatchController {
+public class MatchController
+{
 
 	@Autowired
 	private MatchService matchService;
@@ -63,13 +64,15 @@ public class MatchController {
 	private ServletContext context;
 
 	@RequestMapping("/")
-	public String index() {
+	public String index()
+	{
 		return "redirect:" + context.getContextPath() + "/";
 	}
 
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
 	public String newMatch(@RequestParam("teamNum") Integer teamNum, @RequestParam("matchNum") Integer matchNum,
-			Model model) {
+			Model model)
+	{
 
 		Match match = matchService.getForMatchAndTeam(matchNum, teamNum);
 		Team team = teamService.getTeamByNumber(teamNum);
@@ -93,7 +96,8 @@ public class MatchController {
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<?> submitNewMatch(@ModelAttribute("match") Match match,
-			@RequestParam("matchTags") String matchTags) {
+			@RequestParam("matchTags") String matchTags)
+	{
 		if (match.getScore() == null)
 			return new ResponseEntity<>("400 - Bad Request", HttpStatus.BAD_REQUEST);
 		if (!matchTags.equals(""))
@@ -102,8 +106,10 @@ public class MatchController {
 		List<String> matchTagsList = matchService.getTags();
 		if (match.getTags().size() > matchTagsList.size())
 			return new ResponseEntity<>("400 - More tags in request than in tag list", HttpStatus.BAD_REQUEST);
-		for (int i = 0; i < match.getTags().size(); i++) {
-			if (!matchTagsList.contains(match.getTags().get(i))) {
+		for (int i = 0; i < match.getTags().size(); i++)
+		{
+			if (!matchTagsList.contains(match.getTags().get(i)))
+			{
 				match.getTags().remove(match.getTags().get(i));
 			}
 		}
@@ -123,17 +129,22 @@ public class MatchController {
 	}
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
-	public String listMatches(Model model) {
+	public String listMatches(Model model)
+	{
 		List<Match> matches = matchService.getMatches();
 		model.addAttribute("matchWrapper", new MatchWrapper(matches, new boolean[matches.size()]));
 		return "match-list";
 	}
 
 	@RequestMapping(value = "/list", method = RequestMethod.POST)
-	public String listMatches(@ModelAttribute("matchWrapper") MatchWrapper wrapper) {
-		if (wrapper.getMatches() != null && wrapper.getMatches().size() > 0) {
-			for (int i = 0; i < wrapper.getMatches().size(); i++) {
-				if (wrapper.getDeleted()[i]) {
+	public String listMatches(@ModelAttribute("matchWrapper") MatchWrapper wrapper)
+	{
+		if (wrapper.getMatches() != null && wrapper.getMatches().size() > 0)
+		{
+			for (int i = 0; i < wrapper.getMatches().size(); i++)
+			{
+				if (wrapper.getDeleted()[i])
+				{
 					matchService.delete(wrapper.getMatches().get(i));
 				}
 			}
@@ -142,7 +153,8 @@ public class MatchController {
 	}
 
 	@RequestMapping(value = "/tags", method = RequestMethod.GET)
-	public String tags(Model model) {
+	public String tags(Model model)
+	{
 		List<String> matchTags = matchService.getTags();
 		List<String> teamTags = teamService.getTags();
 		model.addAttribute("matchTags", matchTags);
@@ -151,21 +163,24 @@ public class MatchController {
 	}
 
 	@RequestMapping(value = "/deleteTag", method = RequestMethod.GET)
-	public void deleteTag(@RequestParam("id") Integer id, HttpServletResponse response) {
-		matchService.deleteTag(id);
+	public void deleteTag(@RequestParam("id") Integer id, HttpServletResponse response)
+	{
+		tagService.deleteTag(id);
 		response.setStatus(200);
 	}
 
 	@RequestMapping(value = "/saveTag", method = RequestMethod.GET)
 	public void deleteTag(@RequestParam("id") Integer id, @RequestParam("tag") String tag,
 			@RequestParam("category") Integer category, @RequestParam("grouping") Integer grouping,
-			@RequestParam("inputType") Integer inputType, HttpServletResponse response) {
-		matchService.saveTag(id, tag, category, grouping, inputType);
+			@RequestParam("inputType") Integer inputType, HttpServletResponse response)
+	{
+		tagService.saveTag(id, tag, category, grouping, inputType);
 		response.setStatus(200);
 	}
 
 	@RequestMapping(value = "/tags/mergeMatch", method = RequestMethod.GET)
-	public String mergeMatchTags(Model model) {
+	public String mergeMatchTags(Model model)
+	{
 		List<String> matchTags = matchService.getTags();
 		model.addAttribute("matchTags", matchTags);
 		return "merge-match-tags";
@@ -173,7 +188,8 @@ public class MatchController {
 
 	@RequestMapping(value = "/tags/mergeMatch", method = RequestMethod.POST)
 
-	public String mergeMatchTags(@RequestParam("oldTag") String oldTag, @RequestParam("newTag") String newTag) {
+	public String mergeMatchTags(@RequestParam("oldTag") String oldTag, @RequestParam("newTag") String newTag)
+	{
 		// tagService.mergeTags(new Tag(oldTag, "matches"), new Tag(newTag,
 		// "matches"));
 
@@ -181,7 +197,8 @@ public class MatchController {
 	}
 
 	@RequestMapping(value = "/tags/mergeTeam", method = RequestMethod.GET)
-	public String mergeTeamTags(Model model) {
+	public String mergeTeamTags(Model model)
+	{
 		List<String> teamTags = teamService.getTags();
 		model.addAttribute("teamTags", teamTags);
 		return "merge-team-tags";
@@ -189,7 +206,8 @@ public class MatchController {
 
 	@RequestMapping(value = "/tags/mergeTeam", method = RequestMethod.POST)
 
-	public String mergeTeamTags(@RequestParam("oldTag") String oldTag, @RequestParam("newTag") String newTag) {
+	public String mergeTeamTags(@RequestParam("oldTag") String oldTag, @RequestParam("newTag") String newTag)
+	{
 		// tagService.mergeTags(new Tag(oldTag, "teams"), new Tag(newTag,
 		// "teams"));
 
@@ -198,7 +216,8 @@ public class MatchController {
 
 	@RequestMapping("/export/csv")
 	@ResponseBody
-	public String exportCSV() throws IOException {
+	public String exportCSV() throws IOException
+	{
 		String file = "matches.csv";
 		File exportDirectory = new File(context.getRealPath("/") + "/export");
 		if (!exportDirectory.exists())
@@ -210,24 +229,37 @@ public class MatchController {
 
 	@RequestMapping("/matchTags")
 	@ResponseBody
-	public String getMatchTags() {
+	public String getMatchTags()
+	{
 		return new Gson().toJson(matchService.getTags());
 	}
 
-	@RequestMapping("/tagGroupings")
+	@RequestMapping("/teamTagGroupings")
 	@ResponseBody
-	public String getTagGroupings() {
-		return new Gson().toJson(matchService.getTagGroupings());
+	public List<String> getTeamTagGroupings(HttpServletResponse response)
+	{
+		response.setContentType("application/json");
+		return tagService.getTeamTagGroupings();
+	}
+
+	@RequestMapping("/matchTagGroupings")
+	@ResponseBody
+	public List<String> getMatchTagGroupings(HttpServletResponse response)
+	{
+		response.setContentType("application/json");
+		return tagService.getMatchTagGroupings();
 	}
 
 	@RequestMapping("/teamTags")
 	@ResponseBody
-	public String getTeamTags() {
+	public String getTeamTags()
+	{
 		return new Gson().toJson(teamService.getTags());
 	}
 
 	@RequestMapping(value = "/manageTags", method = RequestMethod.GET)
-	public String manageTags(Model model) {
+	public String manageTags(Model model)
+	{
 
 		model.addAttribute("teamTags", tagService.getTeamTags());
 		model.addAttribute("matchTags", tagService.getMatchTags());
@@ -236,7 +268,8 @@ public class MatchController {
 	}
 
 	@RequestMapping(value = "/matchEntry", method = RequestMethod.GET)
-	public String matchEntry(@RequestParam("team") Integer team, @RequestParam("match") Integer match, Model model) {
+	public String matchEntry(@RequestParam("team") Integer team, @RequestParam("match") Integer match, Model model)
+	{
 		TeamMatchResult teamMatchResult = matchService.getTeamMatchResult(team, match);
 		List<TeamMatchTag> matchTags = matchService.getTeamMatchTags(team, match);
 
@@ -247,42 +280,48 @@ public class MatchController {
 
 	@RequestMapping(value = "/incrementTag", method = RequestMethod.GET)
 	public void incrementTag(@RequestParam("team") Integer team, @RequestParam("match") Integer match,
-			@RequestParam("tag") String tag, HttpServletResponse response) {
+			@RequestParam("tag") String tag, HttpServletResponse response)
+	{
 		matchService.incrementTag(team, match, tag);
 		response.setStatus(200);
 	}
 
 	@RequestMapping(value = "/decrementTag", method = RequestMethod.GET)
 	public void decrementTag(@RequestParam("team") Integer team, @RequestParam("match") Integer match,
-			@RequestParam("tag") String tag, HttpServletResponse response) {
+			@RequestParam("tag") String tag, HttpServletResponse response)
+	{
 		matchService.decrementTag(team, match, tag);
 		response.setStatus(200);
 	}
 
 	@RequestMapping(value = "/saveMatchResult", method = RequestMethod.GET)
 	public void saveMatpResult(@RequestParam("team") Integer team, @RequestParam("match") Integer match,
-			@RequestParam("result") String result, HttpServletResponse response) {
+			@RequestParam("result") String result, HttpServletResponse response)
+	{
 		matchService.saveMatchResult(team, match, result);
 		response.setStatus(200);
 	}
 
 	@RequestMapping(value = "/saveMatchScore", method = RequestMethod.GET)
 	public void saveMatchScore(@RequestParam("team") Integer team, @RequestParam("match") Integer match,
-			@RequestParam("score") String score, HttpServletResponse response) {
+			@RequestParam("score") String score, HttpServletResponse response)
+	{
 		matchService.saveMatchScore(team, match, score);
 		response.setStatus(200);
 	}
 
 	@RequestMapping(value = "/saveMatchRankingPoints", method = RequestMethod.GET)
 	public void saveMatchRankingPoints(@RequestParam("team") Integer team, @RequestParam("match") Integer match,
-			@RequestParam("rankingPoints") String rankingPoints, HttpServletResponse response) {
+			@RequestParam("rankingPoints") String rankingPoints, HttpServletResponse response)
+	{
 		matchService.saveMatchRankingPoints(team, match, rankingPoints);
 		response.setStatus(200);
 	}
 
 	@RequestMapping(value = "/saveMatchPenalty", method = RequestMethod.GET)
 	public void saveMatchPenalty(@RequestParam("team") Integer team, @RequestParam("match") Integer match,
-			@RequestParam("penalty") String penalty, HttpServletResponse response) {
+			@RequestParam("penalty") String penalty, HttpServletResponse response)
+	{
 		matchService.saveMatchPenalty(team, match, penalty);
 		response.setStatus(200);
 	}

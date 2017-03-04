@@ -26,6 +26,15 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import com.team3637.mapper.IntegerMapper;
+import com.team3637.mapper.MatchMapper;
+import com.team3637.mapper.TagMapper;
+import com.team3637.mapper.TagStringMapper;
+import com.team3637.mapper.TeamMapper;
+import com.team3637.model.Match;
+import com.team3637.model.Tag;
+import com.team3637.model.Team;
+
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -36,73 +45,76 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
-import com.team3637.mapper.IntegerMapper;
-import com.team3637.mapper.MatchMapper;
-import com.team3637.mapper.TagMapper;
-import com.team3637.mapper.TagStringMapper;
-import com.team3637.mapper.TeamMapper;
-import com.team3637.model.Match;
-import com.team3637.model.Tag;
-import com.team3637.model.Team;
-
-public class TagServiceMySQLImpl implements TagService {
+public class TagServiceMySQLImpl implements TagService
+{
 
 	private JdbcTemplate jdbcTemplateObject;
 	private SimpleJdbcCall mergeTags;
 	private SimpleJdbcCall deleteTag;
 
 	@Override
-	public void setDataSource(DataSource dataSource) {
+	public void setDataSource(DataSource dataSource)
+	{
 		this.jdbcTemplateObject = new JdbcTemplate(dataSource);
 		this.mergeTags = new SimpleJdbcCall(dataSource).withProcedureName("mergeTags");
 		this.deleteTag = new SimpleJdbcCall(dataSource).withProcedureName("deleteTag");
 	}
 
 	@Override
-	public void createTag(Tag tag) {
+	public void createTag(Tag tag)
+	{
 		String SQL = "INSERT INTO tags (tag, category, grouping, type, input_type) VALUES (?, ?, ?, ?, ?);";
 		jdbcTemplateObject.update(SQL, tag.getTag(), tag.getCategory(), tag.getGrouping(), tag.getType(),
 				tag.getInputType());
 	}
 
 	@Override
-	public Tag getTag(Integer id) {
+	public Tag getTag(Integer id)
+	{
 		String SQL = "SELECT id, tag, category, grouping, type, input_type FROM scoutingtags.tagsWHERE id = ?";
 		return jdbcTemplateObject.queryForObject(SQL, new TagMapper(), id);
 	}
 
 	@Override
-	public Tag getTagByName(String name) {
+	public Tag getTagByName(String name)
+	{
 		String SQL = "SELECT * FROM tags WHERE tag = ?";
 		Tag tag = null;
-		try {
+		try
+		{
 			tag = jdbcTemplateObject.queryForObject(SQL, new TagMapper(), name);
-		} catch (IncorrectResultSizeDataAccessException e) {
+		}
+		catch (IncorrectResultSizeDataAccessException e)
+		{
 			System.err.println("Could not find tag: " + name);
 		}
 		return tag;
 	}
 
 	@Override
-	public List<Tag> getMatchTags() {
+	public List<Tag> getMatchTags()
+	{
 		String SQL = "SELECT id, tag, category, grouping, type, input_type FROM scoutingtags.tags WHERE type='matches' ORDER BY type, grouping, category";
 		return jdbcTemplateObject.query(SQL, new TagMapper());
 	}
 
 	@Override
-	public List<Tag> getTeamTags() {
+	public List<Tag> getTeamTags()
+	{
 		String SQL = "SELECT id, tag, category, grouping, type, input_type FROM scoutingtags.tags WHERE type='teams' ORDER BY type, grouping, category";
 		return jdbcTemplateObject.query(SQL, new TagMapper());
 	}
 
 	@Override
-	public List<Tag> getTags() {
+	public List<Tag> getTags()
+	{
 		String SQL = "SELECT id, tag, category, grouping, type, input_type FROM scoutingtags.tags ORDER BY type, grouping, category";
 		return jdbcTemplateObject.query(SQL, new TagMapper());
 	}
 
 	@Override
-	public List<Team> search(String[] matchTags, String[] teamTags) {
+	public List<Team> search(String[] matchTags, String[] teamTags)
+	{
 		int matchRows = jdbcTemplateObject.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE "
 				+ "TABLE_SCHEMA = 'scoutingtags' AND table_name = 'matches'", Integer.class) - 4;
 		int teamRows = jdbcTemplateObject.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE "
@@ -110,12 +122,16 @@ public class TagServiceMySQLImpl implements TagService {
 		String SQL = "SELECT DISTINCT matches.team FROM matches JOIN teams ON matches.team=teams.team ";
 		if (matchTags.length != 0 || teamTags.length != 0)
 			SQL += "WHERE ";
-		if (matchTags.length != 0) {
-			for (int i = 0; i < matchTags.length; i++) {
+		if (matchTags.length != 0)
+		{
+			for (int i = 0; i < matchTags.length; i++)
+			{
 				SQL += "(";
-				for (int j = 0; j < matchRows; j++) {
+				for (int j = 0; j < matchRows; j++)
+				{
 					SQL += "matches.tag" + j + "=" + "'" + matchTags[i] + "'";
-					if (j != matchRows - 1) {
+					if (j != matchRows - 1)
+					{
 						SQL += " OR ";
 					}
 				}
@@ -126,12 +142,16 @@ public class TagServiceMySQLImpl implements TagService {
 		}
 		if (matchTags.length != 0 && teamTags.length != 0)
 			SQL += " AND ";
-		if (teamTags.length != 0) {
-			for (int i = 0; i < teamTags.length; i++) {
+		if (teamTags.length != 0)
+		{
+			for (int i = 0; i < teamTags.length; i++)
+			{
 				SQL += "(";
-				for (int j = 0; j < teamRows; j++) {
+				for (int j = 0; j < teamRows; j++)
+				{
 					SQL += "teams.tag" + j + "=" + "'" + teamTags[i] + "'";
-					if (j != teamRows - 1) {
+					if (j != teamRows - 1)
+					{
 						SQL += " OR ";
 					}
 				}
@@ -141,33 +161,43 @@ public class TagServiceMySQLImpl implements TagService {
 			}
 		}
 		List<Integer> teams = jdbcTemplateObject.query(SQL, new IntegerMapper());
-		if (teams.size() != 0) {
+		if (teams.size() != 0)
+		{
 			SQL = "SELECT * FROM teams WHERE ";
-			for (int i = 0; i < teams.size(); i++) {
+			for (int i = 0; i < teams.size(); i++)
+			{
 				SQL += "team = " + teams.get(i);
-				if (i == teams.size() - 1) {
+				if (i == teams.size() - 1)
+				{
 					SQL += " OR ";
 				}
 			}
 			return jdbcTemplateObject.query(SQL, new TeamMapper());
-		} else {
+		}
+		else
+		{
 			return new ArrayList<>();
 		}
 	}
 
 	@Override
-	public List<Team> search(Double minScore, Double maxScore, String[] matchTags, String[] teamTags) {
+	public List<Team> search(Double minScore, Double maxScore, String[] matchTags, String[] teamTags)
+	{
 		int matchRows = jdbcTemplateObject.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE "
 				+ "TABLE_SCHEMA = 'scoutingtags' AND table_name = 'matches'", Integer.class) - 4;
 		int teamRows = jdbcTemplateObject.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE "
 				+ "TABLE_SCHEMA = 'scoutingtags' AND table_name = 'teams'", Integer.class) - 4;
 		String SQL = "SELECT DISTINCT matches.team FROM matches JOIN teams ON matches.team=teams.team WHERE ";
-		if (matchTags.length != 0) {
-			for (int i = 0; i < matchTags.length; i++) {
+		if (matchTags.length != 0)
+		{
+			for (int i = 0; i < matchTags.length; i++)
+			{
 				SQL += "(";
-				for (int j = 0; j < matchRows; j++) {
+				for (int j = 0; j < matchRows; j++)
+				{
 					SQL += "matches.tag" + j + "=" + "'" + matchTags[i] + "'";
-					if (j != matchRows - 1) {
+					if (j != matchRows - 1)
+					{
 						SQL += " OR ";
 					}
 				}
@@ -177,12 +207,16 @@ public class TagServiceMySQLImpl implements TagService {
 			}
 			SQL += " AND ";
 		}
-		if (teamTags.length != 0) {
-			for (int i = 0; i < teamTags.length; i++) {
+		if (teamTags.length != 0)
+		{
+			for (int i = 0; i < teamTags.length; i++)
+			{
 				SQL += "(";
-				for (int j = 0; j < teamRows; j++) {
+				for (int j = 0; j < teamRows; j++)
+				{
 					SQL += "teams.tag" + j + "=" + "'" + teamTags[i] + "'";
-					if (j != teamRows - 1) {
+					if (j != teamRows - 1)
+					{
 						SQL += " OR ";
 					}
 				}
@@ -194,30 +228,39 @@ public class TagServiceMySQLImpl implements TagService {
 		}
 		SQL += " (avgscore >= " + minScore + ") AND (avgscore <= " + maxScore + ")";
 		List<Integer> teams = jdbcTemplateObject.query(SQL, new IntegerMapper());
-		if (teams.size() != 0) {
+		if (teams.size() != 0)
+		{
 			SQL = "SELECT * FROM teams WHERE ";
-			for (int i = 0; i < teams.size(); i++) {
+			for (int i = 0; i < teams.size(); i++)
+			{
 				SQL += "team = " + teams.get(i) + " ";
-				if (i != teams.size() - 1) {
+				if (i != teams.size() - 1)
+				{
 					SQL += " OR ";
 				}
 			}
 			return jdbcTemplateObject.query(SQL, new TeamMapper());
-		} else {
+		}
+		else
+		{
 			return new ArrayList<>();
 		}
 	}
 
 	@Override
-	public List<Match> searchMatches(String... params) {
+	public List<Match> searchMatches(String... params)
+	{
 		int rows = jdbcTemplateObject.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE "
 				+ "TABLE_SCHEMA = 'scoutingtags' AND table_name = 'matches'", Integer.class) - 4;
 		String SQL = "SELECT * FROM matches WHERE ";
-		for (int i = 0; i < params.length; i++) {
+		for (int i = 0; i < params.length; i++)
+		{
 			SQL += "(";
-			for (int j = 0; j < rows; j++) {
+			for (int j = 0; j < rows; j++)
+			{
 				SQL += "tag" + j + "=" + "'" + params[i] + "'";
-				if (j != rows - 1) {
+				if (j != rows - 1)
+				{
 					SQL += " OR ";
 				}
 			}
@@ -229,15 +272,19 @@ public class TagServiceMySQLImpl implements TagService {
 	}
 
 	@Override
-	public List<Match> searchMatches(Double minScore, Double maxScore, String... params) {
+	public List<Match> searchMatches(Double minScore, Double maxScore, String... params)
+	{
 		int rows = jdbcTemplateObject.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE "
 				+ "TABLE_SCHEMA = 'scoutingtags' AND table_name = 'matches'", Integer.class) - 4;
 		String SQL = "SELECT * FROM matches WHERE ";
-		for (int i = 0; i < params.length; i++) {
+		for (int i = 0; i < params.length; i++)
+		{
 			SQL += "(";
-			for (int j = 0; j < rows; j++) {
+			for (int j = 0; j < rows; j++)
+			{
 				SQL += "tag" + j + "=" + "'" + params[i] + "'";
-				if (j != rows - 1) {
+				if (j != rows - 1)
+				{
 					SQL += " OR ";
 				}
 			}
@@ -250,15 +297,19 @@ public class TagServiceMySQLImpl implements TagService {
 	}
 
 	@Override
-	public List<Team> searchTeams(String... params) {
+	public List<Team> searchTeams(String... params)
+	{
 		int rows = jdbcTemplateObject.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE "
 				+ "TABLE_SCHEMA = 'scoutingtags' AND table_name = 'teams'", Integer.class) - 4;
 		String SQL = "SELECT * FROM teams WHERE ";
-		for (int i = 0; i < params.length; i++) {
+		for (int i = 0; i < params.length; i++)
+		{
 			SQL += "(";
-			for (int j = 0; j < rows; j++) {
+			for (int j = 0; j < rows; j++)
+			{
 				SQL += "tag" + j + "=" + "'" + params[i] + "'";
-				if (j != rows - 1) {
+				if (j != rows - 1)
+				{
 					SQL += " OR ";
 				}
 			}
@@ -270,15 +321,19 @@ public class TagServiceMySQLImpl implements TagService {
 	}
 
 	@Override
-	public List<Team> searchTeams(Double minScore, Double maxScore, String... params) {
+	public List<Team> searchTeams(Double minScore, Double maxScore, String... params)
+	{
 		int rows = jdbcTemplateObject.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE "
 				+ "TABLE_SCHEMA = 'scoutingtags' AND table_name = 'teams'", Integer.class) - 4;
 		String SQL = "SELECT * FROM teams WHERE ";
-		for (int i = 0; i < params.length; i++) {
+		for (int i = 0; i < params.length; i++)
+		{
 			SQL += "(";
-			for (int j = 0; j < rows; j++) {
+			for (int j = 0; j < rows; j++)
+			{
 				SQL += "tag" + j + "=" + "'" + params[i] + "'";
-				if (j != rows - 1) {
+				if (j != rows - 1)
+				{
 					SQL += " OR ";
 				}
 			}
@@ -291,11 +346,13 @@ public class TagServiceMySQLImpl implements TagService {
 	}
 
 	@Override
-	public List<String> getMatchTagStringsForTeam(Integer teamNum) {
+	public List<String> getMatchTagStringsForTeam(Integer teamNum)
+	{
 		int matchCols = jdbcTemplateObject.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE "
 				+ "TABLE_SCHEMA = 'scoutingtags' AND table_name = 'matches'", Integer.class) - 4;
 		String SQL = "";
-		for (int i = 0; i < matchCols; i++) {
+		for (int i = 0; i < matchCols; i++)
+		{
 			SQL += " SELECT `tag" + i + "` FROM matches WHERE `team`=" + teamNum + " AND `tag" + i
 					+ "` IS NOT NULL UNION ALL";
 		}
@@ -304,11 +361,13 @@ public class TagServiceMySQLImpl implements TagService {
 	}
 
 	@Override
-	public List<String> getMatchUniqueTagStringsForTeam(Integer teamNum) {
+	public List<String> getMatchUniqueTagStringsForTeam(Integer teamNum)
+	{
 		int matchCols = jdbcTemplateObject.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE "
 				+ "TABLE_SCHEMA = 'scoutingtags' AND table_name = 'matches'", Integer.class) - 4;
 		String SQL = "";
-		for (int i = 0; i < matchCols; i++) {
+		for (int i = 0; i < matchCols; i++)
+		{
 			SQL += " SELECT DISTINCT `tag" + i + "` FROM matches WHERE `team`=" + teamNum + " AND `tag" + i
 					+ "` IS NOT NULL UNION ALL";
 		}
@@ -317,20 +376,23 @@ public class TagServiceMySQLImpl implements TagService {
 	}
 
 	@Override
-	public void updateTag(Tag tag) {
+	public void updateTag(Tag tag)
+	{
 		String SQL = "UPDATE tags SET tag=?, type=?, category=?, grouping=?, input_type=?, WHERE id=?;";
 		jdbcTemplateObject.update(SQL, tag.getTag(), tag.getType(), tag.getCategory(), tag.getGrouping(),
 				tag.getInputType());
 	}
 
 	@Override
-	public void deleteTagById(Integer id) {
+	public void deleteTagById(Integer id)
+	{
 		String tag = jdbcTemplateObject.queryForObject("SELECT tag FROM tags WHERE id = ?", String.class, id);
 		deleteTag(tag);
 	}
 
 	@Override
-	public void deleteTag(String name) {
+	public void deleteTag(String name)
+	{
 		SqlParameterSource args = new MapSqlParameterSource().addValue("tagName", name);
 		deleteTag.execute(args);
 		String SQL = "DELETE FROM tags WHERE tag = ?";
@@ -338,21 +400,24 @@ public class TagServiceMySQLImpl implements TagService {
 	}
 
 	@Override
-	public boolean checkTagForId(Integer id) {
+	public boolean checkTagForId(Integer id)
+	{
 		String SQL = "SELECT count(*) FROM tags WHERE id = ?";
 		Integer count = jdbcTemplateObject.queryForObject(SQL, Integer.class, id);
 		return count != null && count > 0;
 	}
 
 	@Override
-	public boolean checkForTag(Tag tag) {
+	public boolean checkForTag(Tag tag)
+	{
 		String SQL = "SELECT count(*) FROM tags WHERE tag = ? AND type = ?";
 		Integer count = jdbcTemplateObject.queryForObject(SQL, Integer.class, tag.getTag(), tag.getType());
 		return count != null && count > 0;
 	}
 
 	@Override
-	public void mergeTags(Tag oldTag, Tag newTag) {
+	public void mergeTags(Tag oldTag, Tag newTag)
+	{
 		if (!oldTag.getType().equals(newTag.getType()))
 			return;
 		SqlParameterSource args = new MapSqlParameterSource().addValue("tableName", oldTag.getType())
@@ -362,46 +427,62 @@ public class TagServiceMySQLImpl implements TagService {
 	}
 
 	@Override
-	public void exportCSV(String outputFile) {
+	public void exportCSV(String outputFile)
+	{
 		List<Tag> data = getTags();
 		FileWriter fileWriter = null;
 		CSVPrinter csvFilePrinter = null;
-		try {
+		try
+		{
 			fileWriter = new FileWriter(outputFile);
 			csvFilePrinter = new CSVPrinter(fileWriter, CSVFormat.DEFAULT.withRecordSeparator("\n"));
-			for (Tag tag : data) {
+			for (Tag tag : data)
+			{
 				List<Object> line = new ArrayList<>();
-				for (Field field : Tag.class.getDeclaredFields()) {
+				for (Field field : Tag.class.getDeclaredFields())
+				{
 					field.setAccessible(true);
 					Object value = field.get(tag);
 					line.add(value);
 				}
 				csvFilePrinter.printRecord(line);
 			}
-		} catch (IOException | IllegalAccessException e) {
+		}
+		catch (IOException | IllegalAccessException e)
+		{
 			e.printStackTrace();
-		} finally {
-			try {
-				if (fileWriter != null) {
+		}
+		finally
+		{
+			try
+			{
+				if (fileWriter != null)
+				{
 					fileWriter.flush();
 					fileWriter.close();
 				}
-				if (csvFilePrinter != null) {
+				if (csvFilePrinter != null)
+				{
 					csvFilePrinter.close();
 				}
-			} catch (IOException e) {
+			}
+			catch (IOException e)
+			{
 				e.printStackTrace();
 			}
 		}
 	}
 
 	@Override
-	public void importCSV(String inputFile) {
-		try {
+	public void importCSV(String inputFile)
+	{
+		try
+		{
 			String csvData = new String(Files.readAllBytes(FileSystems.getDefault().getPath(inputFile)));
 			csvData = csvData.replaceAll("\\r", "");
 			CSVParser parser = CSVParser.parse(csvData, CSVFormat.DEFAULT.withRecordSeparator("\n"));
-			for (CSVRecord record : parser) {
+			for (CSVRecord record : parser)
+			{
 				Tag tag = new Tag();
 				tag.setId(Integer.parseInt(record.get(0)));
 				tag.setTag(record.get(1));
@@ -411,8 +492,46 @@ public class TagServiceMySQLImpl implements TagService {
 				else
 					createTag(tag);
 			}
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void deleteTag(Integer id)
+	{
+		String sql = "DELETE FROM scoutingtags.tags WHERE id=?";
+		jdbcTemplateObject.update(sql, id);
+
+	}
+
+	@Override
+	public List<String> getTeamTagGroupings()
+	{
+		String SQL = "SELECT grouping FROM scoutingtags.taggrouping where type = 'teams' ORDER BY sequence";
+		return jdbcTemplateObject.queryForList(SQL, String.class);
+
+	}
+
+	@Override
+	public List<String> getMatchTagGroupings()
+	{
+		String SQL = "SELECT grouping FROM scoutingtags.taggrouping where type = 'matches' ORDER BY sequence";
+		return jdbcTemplateObject.queryForList(SQL, String.class);
+
+	}
+
+	@Override
+	public void saveTag(Integer id, String tag, Integer category, Integer grouping, Integer inputType)
+	{
+		String sql = "UPDATE scoutingtags.tags SET tag=?, category=?, grouping=?, inputType=? WHERE id=?";
+		int rowsUpdated = jdbcTemplateObject.update(sql, tag, category, grouping, inputType, id);
+		if (rowsUpdated < 1)
+		{
+			String sqlInsert = "INSERT INTO scoutingtags.tags (tag, category, grouping, inputType, id) VALUES (?,?,?,?,?)";
+			jdbcTemplateObject.update(sqlInsert, tag, category, grouping, inputType, id);
 		}
 	}
 }
