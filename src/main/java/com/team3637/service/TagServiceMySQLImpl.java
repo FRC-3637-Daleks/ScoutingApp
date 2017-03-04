@@ -318,9 +318,9 @@ public class TagServiceMySQLImpl implements TagService {
 
 	@Override
 	public void updateInsertTag(Tag tag) {
-		String SQL = "UPDATE scoutingtags.tags SET tag=?, type=?, category=?, grouping=?, input_type=?, WHERE id=?;";
+		String SQL = "UPDATE scoutingtags.tags SET tag=?, type=?, category=?, grouping=?, input_type=? WHERE id=?";
 		int updatedRows = jdbcTemplateObject.update(SQL, tag.getTag(), tag.getType(), tag.getCategory(),
-				tag.getGrouping(), tag.getInputType());
+				tag.getGrouping(), tag.getInputType(), tag.getId());
 		if (updatedRows < 1) {
 			String insertSQL = "insert into scoutingtags.tags (id, tag, type, category, grouping, input_type) values (?, ?, ?, ?, ?, ?)";
 			jdbcTemplateObject.update(insertSQL, tag.getId(), tag.getTag(), tag.getType(), tag.getCategory(),
