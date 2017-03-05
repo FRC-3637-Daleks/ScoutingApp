@@ -118,7 +118,7 @@ function deleteTag(tagId) {
                $('#row-'+tagId).remove();
            else    
                $.ajax({
-                  url: "../m/deleteTag?id="+tagId,
+                  url: "../m/deleteTag?id="+tagId,  
                   type: 'GET',
                   cache: false,
                   success: function (result) {
@@ -197,7 +197,7 @@ function editTag(tagId, type) {
       $(inputTypeSelect).val($( "#inputType-" + tagId )[0].innerHTML);
       var groupingSelect = $( "#grouping-edit-input-" + tagId )[0];
       $(groupingSelect).empty();
-      if (type == 'match')
+      if (type == 'matches')
          $(matchTagGroupingOptions).each(function(i, v){
              $(groupingSelect).append($("<option>", { value: v, html: v }));
          });
@@ -225,10 +225,13 @@ function saveTag(tagId, type) {
                    var newTagId = result;
                    if (tagId < 0)
                    {
-                       $( "#editIcon-" + tagId ).attr("onclick", "editTag('"+newTagId+"','match');");    
+                       $( "#row-" + tagId ).attr("id", "row-"+newTagId);    
+                       $( "#editIcon-" + tagId ).attr("onclick", "editTag('"+newTagId+"','"+type+"');");       
                        $( "#editIcon-" + tagId ).attr("id", "editIcon-"+newTagId);    
-                       $( "#saveIcon-" + tagId ).attr("onclick", "saveTag('"+newTagId+"','matches');");                           
-                       $( "#saveIcon-" + tagId ).attr("id", "saveIcon-"+newTagId);                             
+                       $( "#saveIcon-" + tagId ).attr("onclick", "saveTag('"+newTagId+"','"+type+"');");                           
+                       $( "#saveIcon-" + tagId ).attr("id", "saveIcon-"+newTagId);             
+                       $( "#deleteIcon-" + tagId ).attr("onclick", "deleteTag('"+newTagId+"');");                            
+                       $( "#deleteIcon-" + tagId ).attr("id", "deleteIcon-"+newTagId);          
                        $( "#tag-" + tagId ).attr("id", "tag-"+newTagId);  
                        $( "#grouping-" + tagId ).attr("id", "grouping-"+newTagId);  
                        $( "#category-" + tagId ).attr("id", "category-"+newTagId);   
@@ -280,31 +283,31 @@ function cancelEditTag(tagId) {
 function createNewMatchTag() {
    var tagId = newTagId -1;
    var newRow = '<tr id="row-'+tagId+'">' +
-  '<td><img id="editIcon-'+tagId+'" src="../images/pencil.png" style="width:24px;height:24px;" onClick="editTag(\''+tagId+'\',\'match\');"><img id="saveIcon-'+tagId+'" src="../images/save.png" style="width:24px;height:24px;display:none;" onClick="saveTag(\''+tagId+'\',\'matches\');"></td>' +
+  '<td><img id="editIcon-'+tagId+'" src="../images/pencil.png" style="width:24px;height:24px;" onClick="editTag(\''+tagId+'\',\'matches\');"><img id="saveIcon-'+tagId+'" src="../images/save.png" style="width:24px;height:24px;display:none;" onClick="saveTag(\''+tagId+'\',\'matches\');"></td>' +
   '<td><div id="tag-'+tagId+'"></div><div id="tag-edit-'+tagId+'" style="display:none;"><input  id="tag-edit-input-'+tagId+'"  type="text"></input></div></td>' +
   '<td><div id="grouping-'+tagId+'"></div><div id="grouping-edit-'+tagId+'" style="display:none;"><select  id="grouping-edit-input-'+tagId+'"></select></div></td>' +
   '<td><div id="category-'+tagId+'"></div><div id="category-edit-'+tagId+'" style="display:none;"><input  id="category-edit-input-'+tagId+'"  type="text"></input></div></td>' +
   '<td><div id="inputType-'+tagId+'"></div><div id="inputType-edit-'+tagId+'" style="display:none;"><select  id="inputType-edit-input-'+tagId+'"></select></div></td>' +
   '<td><div id="pointValue-'+tagId+'"></div><div id="pointValue-edit-'+tagId+'" style="display:none;"><input  id="pointValue-edit-input-'+tagId+'"  type="text"></input></div></td>' +    
-  '<td><img src="../images/delete.png" style="width:24px;height:24px;" onClick="deleteTag(\''+tagId+'\');"></td>' +
+  '<td><img id="deleteIcon-'+tagId+'" src="../images/delete.png" style="width:24px;height:24px;" onClick="deleteTag(\''+tagId+'\');"></td>' +
   '</tr> '
    $('#matchTags tr:first').after(newRow);
-   editTag(tagId,'match');
+   editTag(tagId,'matches');
 }
    
-function createNewTeamTag() { 
+function createNewTeamTag() {   
    var tagId = newTagId -1;
    var newRow = '<tr id="row-'+tagId+'">' +
-  '<td><img id="editIcon-'+tagId+'" src="../images/pencil.png" style="width:24px;height:24px;" onClick="editTag(\''+tagId+'\',\'team\');"><img id="saveIcon-'+tagId+'" src="../images/save.png" style="width:24px;height:24px;display:none;" onClick="saveTag(\''+tagId+'\',\'teams\');"></td>' +
+  '<td><img id="editIcon-'+tagId+'" src="../images/pencil.png" style="width:24px;height:24px;" onClick="editTag(\''+tagId+'\',\'teams\');"><img id="saveIcon-'+tagId+'" src="../images/save.png" style="width:24px;height:24px;display:none;" onClick="saveTag(\''+tagId+'\',\'teams\');"></td>' +
   '<td><div id="tag-'+tagId+'"></div><div id="tag-edit-'+tagId+'" style="display:none;"><input  id="tag-edit-input-'+tagId+'"  type="text"></input></div></td>' +
   '<td><div id="grouping-'+tagId+'"></div><div id="grouping-edit-'+tagId+'" style="display:none;"><select  id="grouping-edit-input-'+tagId+'"></select></div></td>' +
   '<td><div id="category-'+tagId+'"></div><div id="category-edit-'+tagId+'" style="display:none;"><input  id="category-edit-input-'+tagId+'"  type="text"></input></div></td>' +
   '<td><div id="inputType-'+tagId+'"></div><div id="inputType-edit-'+tagId+'" style="display:none;"><select  id="inputType-edit-input-'+tagId+'"></select></div></td>' +
   '<td><div id="pointValue-'+tagId+'"></div><div id="pointValue-edit-'+tagId+'" style="display:none;"><input  id="pointValue-edit-input-'+tagId+'"  type="text"></input></div></td>' +  
-  '<td><img src="../images/delete.png" style="width:24px;height:24px;" onClick="deleteTag(\''+tagId+'\');"></td>' +
+  '<td><img id="deleteIcon-'+tagId+'"  src="../images/delete.png" style="width:24px;height:24px;" onClick="deleteTag(\''+tagId+'\');"></td>' +
   '</tr> '
    $('#teamTags tr:first').after(newRow);
-   editTag(tagId,'team');
+   editTag(tagId,'teams');
 }
 
 </script>
@@ -344,13 +347,13 @@ function createNewTeamTag() {
   </tr> 
   <#list matchTags as matchTag> 
   <tr id="row-${matchTag.id}">
-  <td><img id="editIcon-${matchTag.id}" src="../images/pencil.png" style="width:24px;height:24px;" onClick="editTag(${matchTag.id},'match');"><img id="saveIcon-${matchTag.id}" src="../images/save.png" style="width:24px;height:24px;display:none;" onClick="saveTag(${matchTag.id},'matches');"></td>
+  <td><img id="editIcon-${matchTag.id}" src="../images/pencil.png" style="width:24px;height:24px;" onClick="editTag(${matchTag.id},'matches');"><img id="saveIcon-${matchTag.id}" src="../images/save.png" style="width:24px;height:24px;display:none;" onClick="saveTag(${matchTag.id},'matches');"></td>
   <td><div id="tag-${matchTag.id}">${matchTag.tag}</div><div id="tag-edit-${matchTag.id}" style="display:none;"><input  id="tag-edit-input-${matchTag.id}"  type="text" value="${matchTag.tag}"></input></div></td>
   <td><div id="grouping-${matchTag.id}">${matchTag.grouping}</div><div id="grouping-edit-${matchTag.id}" style="display:none;"><select  id="grouping-edit-input-${matchTag.id}"></select></div></td>
   <td><div id="category-${matchTag.id}">${matchTag.category}</div><div id="category-edit-${matchTag.id}" style="display:none;"><input  id="category-edit-input-${matchTag.id}"  type="text" value="${matchTag.category}"></input></div></td>
   <td><div id="inputType-${matchTag.id}">${matchTag.inputType}</div><div id="inputType-edit-${matchTag.id}" style="display:none;"><select  id="inputType-edit-input-${matchTag.id}"></select></div></td> 
   <td><div id="pointValue-${matchTag.id}">${matchTag.pointValue?string["0.#"]}</div><div id="pointValue-edit-${matchTag.id}" style="display:none;"><input  id="pointValue-edit-input-${matchTag.id}"  type="text" value="${matchTag.pointValue?string["0.#"]}"></input></div></td>  
-  <td><img src="../images/delete.png" style="width:24px;height:24px;" onClick="deleteTag(${matchTag.id});"></td>
+  <td><img id="deleteIcon-${matchTag.id}" src="../images/delete.png" style="width:24px;height:24px;" onClick="deleteTag(${matchTag.id});"></td>
   </tr> 
   </#list>
 </table>
@@ -373,13 +376,13 @@ function createNewTeamTag() {
   </tr> 
   <#list teamTags as teamTag>
   <tr id="row-${teamTag.id}">
-  <td><img id="editIcon-${teamTag.id}" src="../images/pencil.png" style="width:24px;height:24px;" onClick="editTag(${teamTag.id}, 'team');"><img id="saveIcon-${teamTag.id}" src="../images/save.png" style="width:24px;height:24px;display:none;" onClick="saveTag(${teamTag.id},'teams');"></td>
+  <td><img id="editIcon-${teamTag.id}" src="../images/pencil.png" style="width:24px;height:24px;" onClick="editTag(${teamTag.id}, 'teams');"><img id="saveIcon-${teamTag.id}" src="../images/save.png" style="width:24px;height:24px;display:none;" onClick="saveTag(${teamTag.id},'teams');"></td>
   <td><div id="tag-${teamTag.id}">${teamTag.tag}</div><div id="tag-edit-${teamTag.id}" style="display:none;"><input  id="tag-edit-input-${teamTag.id}"  type="text" value="${teamTag.tag}"></input></div></td>
   <td><div id="grouping-${teamTag.id}">${teamTag.grouping}</div><div id="grouping-edit-${teamTag.id}" style="display:none;"><input  id="grouping-edit-input-${teamTag.id}"  type="text" value="${teamTag.grouping}"></input></div></td>
   <td><div id="category-${teamTag.id}">${teamTag.category}</div><div id="category-edit-${teamTag.id}" style="display:none;"><input  id="category-edit-input-${teamTag.id}"  type="text" value="${teamTag.category}"></input></div></td>
   <td><div id="inputType-${teamTag.id}">${teamTag.inputType}</div><div id="inputType-edit-${teamTag.id}" style="display:none;"><select  id="inputType-edit-input-${teamTag.id}"></select></div></td>
   <td><div id="pointValue-${teamTag.id}">${teamTag.pointValue?string["0.#"]}</div><div id="pointValue-edit-${teamTag.id}" style="display:none;"><input  id="pointValue-edit-input-${teamTag.id}"  type="text" value="${teamTag.pointValue?string["0.#"]}"></input></div></td>
-  <td><img src="../images/delete.png" style="width:24px;height:24px;" onClick="deleteTag(${teamTag.id});"></td>
+  <td><img id="deleteIcon-${teamTag.id}" src="../images/delete.png" style="width:24px;height:24px;" onClick="deleteTag(${teamTag.id});"></td>
   </tr>
   </#list> 
 </table>
