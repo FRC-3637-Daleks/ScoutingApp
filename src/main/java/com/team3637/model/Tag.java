@@ -16,64 +16,90 @@
  */
 package com.team3637.model;
 
-public class Tag {
+public class Tag
+{
 	private int id;
 	private String tag, type;
 	private String category, grouping, inputType;
+	private Float pointValue;
 
-	public Tag() {
+	public Tag()
+	{
 	}
 
-	public int getId() {
+	public int getId()
+	{
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(int id)
+	{
 		this.id = id;
 	}
 
-	public String getTag() {
+	public String getTag()
+	{
 		return tag;
 	}
 
-	public void setTag(String tag) {
+	public void setTag(String tag)
+	{
 		this.tag = tag;
 	}
 
-	public String getType() {
+	public String getType()
+	{
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(String type)
+	{
 		this.type = type;
 	}
 
 	@Override
-	public String toString() {
+	public String toString()
+	{
 		return tag;
 	}
 
-	public String getCategory() {
+	public String getCategory()
+	{
 		return category;
 	}
 
-	public void setCategory(String category) {
+	public void setCategory(String category)
+	{
 		this.category = category;
 	}
 
-	public String getGrouping() {
+	public String getGrouping()
+	{
 		return grouping;
 	}
 
-	public void setGrouping(String grouping) {
+	public void setGrouping(String grouping)
+	{
 		this.grouping = grouping;
 	}
 
-	public String getInputType() {
+	public String getInputType()
+	{
 		return inputType;
 	}
 
-	public void setInputType(String inputType) {
+	public void setInputType(String inputType)
+	{
 		this.inputType = inputType;
+	}
+
+	public Float getPointValue()
+	{
+		return pointValue;
+	}
+
+	public void setPointValue(Float pointValue)
+	{
+		this.pointValue = pointValue;
 	}
 }

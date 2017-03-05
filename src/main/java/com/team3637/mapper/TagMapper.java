@@ -19,13 +19,15 @@ package com.team3637.mapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.springframework.jdbc.core.RowMapper;
-
 import com.team3637.model.Tag;
 
-public class TagMapper implements RowMapper<Tag> {
+import org.springframework.jdbc.core.RowMapper;
+
+public class TagMapper implements RowMapper<Tag>
+{
 	@Override
-	public Tag mapRow(ResultSet resultSet, int i) throws SQLException {
+	public Tag mapRow(ResultSet resultSet, int i) throws SQLException
+	{
 		Tag tag = new Tag();
 		tag.setId(resultSet.getInt("id"));
 		tag.setTag(resultSet.getString("tag"));
@@ -33,6 +35,7 @@ public class TagMapper implements RowMapper<Tag> {
 		tag.setCategory(resultSet.getString("category"));
 		tag.setGrouping(resultSet.getString("grouping"));
 		tag.setInputType(resultSet.getString("input_type"));
+		tag.setPointValue(resultSet.getFloat("point_value"));
 		return tag;
 	}
 }

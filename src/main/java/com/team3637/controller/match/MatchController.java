@@ -128,15 +128,14 @@ public class MatchController
 		response.setStatus(200);
 	}
 
-	// http://127.0.0.1:8080/ScoutingApp/m/saveTag?id=160&tag=auto%20high%20goal%20score&grouping=Auton&category=Fuel&inputType=checkbox&_=1488638870328
 	@RequestMapping(value = "/saveTag", method = RequestMethod.GET)
-	public void deleteTag(@RequestParam("id") Integer id, @RequestParam("tag") String tag,
+	@ResponseBody
+	public Integer saveTag(@RequestParam("id") Integer id, @RequestParam("tag") String tag,
 			@RequestParam("type") String type, @RequestParam("category") String category,
 			@RequestParam("grouping") String grouping, @RequestParam("inputType") String inputType,
-			HttpServletResponse response)
+			@RequestParam("pointValue") Float pointValue, HttpServletResponse response)
 	{
-		tagService.saveTag(id, tag, type, category, grouping, inputType);
-		response.setStatus(200);
+		return tagService.saveTag(id, tag, type, category, grouping, inputType, pointValue);
 	}
 
 	@RequestMapping(value = "/tags/mergeMatch", method = RequestMethod.GET)
@@ -256,7 +255,7 @@ public class MatchController
 	}
 
 	@RequestMapping(value = "/saveMatchResult", method = RequestMethod.GET)
-	public void saveMatpResult(@RequestParam("team") Integer team, @RequestParam("match") Integer match,
+	public void saveMapResult(@RequestParam("team") Integer team, @RequestParam("match") Integer match,
 			@RequestParam("result") String result, HttpServletResponse response)
 	{
 		matchService.saveMatchResult(team, match, result);

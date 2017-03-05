@@ -24,7 +24,8 @@ import com.team3637.model.Match;
 import com.team3637.model.Tag;
 import com.team3637.model.Team;
 
-public interface TagService extends Service {
+public interface TagService extends Service
+{
 	void setDataSource(DataSource dataSource);
 
 	Tag getTag(Integer id);
@@ -71,7 +72,8 @@ public interface TagService extends Service {
 
 	List<String> getMatchTagGroupings();
 
-	void saveTag(Integer id, String tag, String type, String category, String grouping, String inputType);
-
 	void updateInsertTag(Tag tag);
+
+	Integer saveTag(Integer id, String tag, String type, String category, String grouping, String inputType,
+			Float pointValue);
 }
