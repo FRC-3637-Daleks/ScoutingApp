@@ -331,7 +331,7 @@ public class TeamServiceMySQLImpl implements TeamService
 	}
 
 	@Override
-	public void importCSV(String inputFile)
+	public void importCSV(String inputFile, Boolean delete)
 	{
 		// TODO Auto-generated method stub
 

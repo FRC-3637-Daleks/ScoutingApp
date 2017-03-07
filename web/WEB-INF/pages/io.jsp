@@ -54,6 +54,13 @@
             <input type="file" name="file" id="tags"/>
             <input class="btn btn-default" type="submit" value="Upload">
         </form>
+        <form action="${pageContext.request.contextPath}/io/tags.csv" method="post" class="form-inline"
+              enctype="multipart/form-data">
+            <label for="tags">Delete and Import Tags</label>
+            <input type="file" name="file" id="tags"/>
+            <input type="hidden" name="delete" value="true"/>
+            <input class="btn btn-default" type="submit" value="Upload">
+        </form>        
     </div>
     <div class="container text-left">
         <a class="btn btn-default" href="${pageContext.request.contextPath}/io/schedule.csv" download>Export

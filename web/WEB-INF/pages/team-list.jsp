@@ -39,9 +39,6 @@
             <a class="navbar-brand page-scroll" href="${pageContext.request.contextPath}/">Team 3637 Scouting App</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="${pageContext.request.contextPath}/t/search/">Search</a></li>
-            </ul>
             <div class="navbar-form navbar-right navbar-input-group form-group">
                 <input type="text" class="form-control" placeholder="Team #" name="teamNum">
                 <button type="submit" class="btn btn-info" onclick="addTeam();">Add Team</button>

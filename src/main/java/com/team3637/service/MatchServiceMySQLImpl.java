@@ -28,16 +28,6 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.CSVRecord;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.SimpleJdbcCall;
-
 import com.team3637.mapper.MatchMapper;
 import com.team3637.mapper.TagStringMapper;
 import com.team3637.model.Match;
@@ -47,7 +37,19 @@ import com.team3637.model.Team;
 import com.team3637.model.TeamMatchResult;
 import com.team3637.model.TeamMatchTag;
 
-public class MatchServiceMySQLImpl implements MatchService {
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVRecord;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcCall;
+
+public class MatchServiceMySQLImpl implements MatchService
+{
 
 	private JdbcTemplate jdbcTemplateObject;
 	private SimpleJdbcCall addCols;
@@ -55,7 +57,8 @@ public class MatchServiceMySQLImpl implements MatchService {
 	private SimpleJdbcCall mergeTags;
 
 	@Override
-	public void setDataSource(DataSource dataSource) {
+	public void setDataSource(DataSource dataSource)
+	{
 		this.jdbcTemplateObject = new JdbcTemplate(dataSource);
 		this.addCols = new SimpleJdbcCall(dataSource).withProcedureName("addCols");
 		this.addTag = new SimpleJdbcCall(dataSource).withProcedureName("addTag");
@@ -63,38 +66,44 @@ public class MatchServiceMySQLImpl implements MatchService {
 	}
 
 	@Override
-	public Match getMatch(Integer id) {
+	public Match getMatch(Integer id)
+	{
 		String SQL = "SELECT * FROM matches WHERE id = ?";
 		return jdbcTemplateObject.queryForObject(SQL, new MatchMapper(), id);
 	}
 
 	@Override
-	public List<Match> getMatches() {
+	public List<Match> getMatches()
+	{
 		String SQL = "SELECT * FROM scoutingtags.match ORDER BY team ASC ";
 		return jdbcTemplateObject.query(SQL, new MatchMapper());
 	}
 
 	@Override
-	public List<Match> getForTeam(Integer teamNum) {
+	public List<Match> getForTeam(Integer teamNum)
+	{
 		String SQL = "SELECT * FROM matches WHERE team = ?";
 		return jdbcTemplateObject.query(SQL, new MatchMapper(), teamNum);
 	}
 
 	@Override
-	public List<Match> getForMatch(Integer matchNum) {
+	public List<Match> getForMatch(Integer matchNum)
+	{
 		String SQL = "SELECT * FROM matches WHERE matchNum = ?";
 		return jdbcTemplateObject.query(SQL, new MatchMapper(), matchNum);
 	}
 
 	@Override
-	public Match getForMatchAndTeam(Integer matchNum, Integer teamNum) {
+	public Match getForMatchAndTeam(Integer matchNum, Integer teamNum)
+	{
 		String SQL = "SELECT * FROM matches WHERE matchNum = ? AND team = ?";
 		List<Match> results = jdbcTemplateObject.query(SQL, new MatchMapper(), matchNum, teamNum);
 		return (results.size() > 0) ? results.get(0) : null;
 	}
 
 	@Override
-	public void delete(Match match) {
+	public void delete(Match match)
+	{
 		String SQL = "DELETE FROM matches WHERE id = ?";
 		jdbcTemplateObject.update(SQL, match.getId());
 		SQL = "UPDATE teams SET `avgscore` = IF(`matches` > 1, (`avgscore` * `matches` - ?) / (`matches` - 1), 0) WHERE `team` = ?";
@@ -104,73 +113,93 @@ public class MatchServiceMySQLImpl implements MatchService {
 	}
 
 	@Override
-	public boolean checkForId(Integer id) {
+	public boolean checkForId(Integer id)
+	{
 		String SQL = "SELECT count(*) FROM matches WHERE id = ?";
 		Integer count = jdbcTemplateObject.queryForObject(SQL, Integer.class, id);
 		return count != null && count > 0;
 	}
 
 	@Override
-	public boolean checkForMatch(Integer matchNum, Integer team) {
+	public boolean checkForMatch(Integer matchNum, Integer team)
+	{
 		String SQL = "SELECT count(*) FROM matches WHERE matchNum = ? AND team = ?";
 		Integer count = jdbcTemplateObject.queryForObject(SQL, Integer.class, matchNum, team);
 		return count != null && count > 0;
 	}
 
 	@Override
-	public List<String> getTags() {
+	public List<String> getTags()
+	{
 		String SQL = "SELECT tag FROM tags WHERE type = 'matches' ORDER BY tag";
 		return jdbcTemplateObject.query(SQL, new TagStringMapper());
 	}
 
 	@Override
-	public void mergeTags(String oldTag, String newTag) {
+	public void mergeTags(String oldTag, String newTag)
+	{
 		SqlParameterSource args = new MapSqlParameterSource().addValue("tableName", "matches").addValue("noTagCols", 4)
 				.addValue("oldTag", oldTag).addValue("newTag", newTag);
 		mergeTags.execute(args);
 	}
 
 	@Override
-	public void exportCSV(String outputFile) {
+	public void exportCSV(String outputFile)
+	{
 		List<Match> data = getMatches();
 		FileWriter fileWriter = null;
 		CSVPrinter csvFilePrinter = null;
-		try {
+		try
+		{
 			fileWriter = new FileWriter(outputFile);
 			csvFilePrinter = new CSVPrinter(fileWriter, CSVFormat.DEFAULT.withRecordSeparator("\n"));
-			for (Match match : data) {
+			for (Match match : data)
+			{
 				List<Object> line = new ArrayList<>();
-				for (Field field : Match.class.getDeclaredFields()) {
+				for (Field field : Match.class.getDeclaredFields())
+				{
 					field.setAccessible(true);
 					Object value = field.get(match);
 					line.add(value);
 				}
 				csvFilePrinter.printRecord(line);
 			}
-		} catch (IOException | IllegalAccessException e) {
+		}
+		catch (IOException | IllegalAccessException e)
+		{
 			e.printStackTrace();
-		} finally {
-			try {
-				if (fileWriter != null) {
+		}
+		finally
+		{
+			try
+			{
+				if (fileWriter != null)
+				{
 					fileWriter.flush();
 					fileWriter.close();
 				}
-				if (csvFilePrinter != null) {
+				if (csvFilePrinter != null)
+				{
 					csvFilePrinter.close();
 				}
-			} catch (IOException e) {
+			}
+			catch (IOException e)
+			{
 				e.printStackTrace();
 			}
 		}
 	}
 
 	@Override
-	public void importCSV(String inputFile) {
-		try {
+	public void importCSV(String inputFile, Boolean delete)
+	{
+		try
+		{
 			String csvData = new String(Files.readAllBytes(FileSystems.getDefault().getPath(inputFile)));
 			csvData = csvData.replaceAll("\\r", "");
 			CSVParser parser = CSVParser.parse(csvData, CSVFormat.DEFAULT.withRecordSeparator("\n"));
-			for (CSVRecord record : parser) {
+			for (CSVRecord record : parser)
+			{
 				Match match = new Match();
 				match.setId(Integer.parseInt(record.get(0)));
 				match.setMatchNum(Integer.parseInt(record.get(1)));
@@ -184,18 +213,22 @@ public class MatchServiceMySQLImpl implements MatchService {
 				// match.setModifiedTimestamp(record.get(9));
 				updateInsertMatch(match);
 			}
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 	}
 
 	@Override
-	public void updateInsertMatch(Match match) {
+	public void updateInsertMatch(Match match)
+	{
 		String SQL = "UPDATE scoutingtags.match SET score=?, win=?, loss=?, tie=?, ranking_points=?, penalty=?, modified_timestamp=? WHERE team=? and matchNum=?";
 		int updatedRows = jdbcTemplateObject.update(SQL, match.getScore(), match.getWin(), match.getLoss(),
 				match.getTie(), match.getRankingPoints(), match.getPenalty(), match.getModifiedTimestamp(),
 				match.getTeam(), match.getMatchNum());
-		if (updatedRows < 1) {
+		if (updatedRows < 1)
+		{
 			String insertSQL = "insert into scoutingtags.tags (team, matchNum, score, win, loss, tie, ranking_points, penalty, modified_timestamp) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			jdbcTemplateObject.update(insertSQL, match.getTeam(), match.getMatchNum(), match.getScore(), match.getWin(),
 					match.getLoss(), match.getTie(), match.getRankingPoints(), match.getPenalty(),
@@ -204,7 +237,8 @@ public class MatchServiceMySQLImpl implements MatchService {
 	}
 
 	@Override
-	public List<Team> getTeamMatchSummaryInfo(Integer teamNum) {
+	public List<Team> getTeamMatchSummaryInfo(Integer teamNum)
+	{
 		//@formatter:off
 		String sql = 
 				    "SELECT team, sum(score)/count(*) as avgscore, count(*) as matches,"
@@ -222,9 +256,11 @@ public class MatchServiceMySQLImpl implements MatchService {
 				+ "WHERE ? is null or team = ? "
 				+ "GROUP BY team";
 		//@formatter:on		
-		return jdbcTemplateObject.query(sql, new RowMapper<Team>() {
+		return jdbcTemplateObject.query(sql, new RowMapper<Team>()
+		{
 			@Override
-			public Team mapRow(ResultSet resultSet, int rowNum) throws SQLException {
+			public Team mapRow(ResultSet resultSet, int rowNum) throws SQLException
+			{
 				Team team = new Team();
 				team.setTeam(resultSet.getInt("team"));
 				team.setMatches(resultSet.getInt("matches"));
@@ -240,7 +276,8 @@ public class MatchServiceMySQLImpl implements MatchService {
 	}
 
 	@Override
-	public List<MatchStatistics> getTeamMatchStatistics(Integer teamNum) {
+	public List<MatchStatistics> getTeamMatchStatistics(Integer teamNum)
+	{
 		//@formatter:off
 		String sql = 
 				  "SELECT team, t.grouping, category, m.tag, tg.sequence, sum(occurences) as occurences "
@@ -258,9 +295,11 @@ public class MatchServiceMySQLImpl implements MatchService {
 				+ "GROUP BY team, t.grouping, sequence, category, m.tag "
 				+ "ORDER BY team, sequence, category, tag";
         //@formatter:on		
-		return jdbcTemplateObject.query(sql, new RowMapper<MatchStatistics>() {
+		return jdbcTemplateObject.query(sql, new RowMapper<MatchStatistics>()
+		{
 			@Override
-			public MatchStatistics mapRow(ResultSet resultSet, int rowNum) throws SQLException {
+			public MatchStatistics mapRow(ResultSet resultSet, int rowNum) throws SQLException
+			{
 				MatchStatistics matchStatistics = new MatchStatistics();
 				matchStatistics.setTeam(resultSet.getInt("team"));
 				matchStatistics.setGrouping(resultSet.getString("grouping"));
@@ -273,7 +312,8 @@ public class MatchServiceMySQLImpl implements MatchService {
 	}
 
 	@Override
-	public List<TeamMatchTag> getTeamMatchTags(Integer teamNum, Integer matchNum) {
+	public List<TeamMatchTag> getTeamMatchTags(Integer teamNum, Integer matchNum)
+	{
 		//@formatter:off
 		String sql = 
 				   "SELECT grouping, category, t.tag, occurences, input_type " 
@@ -282,9 +322,11 @@ public class MatchServiceMySQLImpl implements MatchService {
 				+ " WHERE t.type = 'matches' " 
 				+ "ORDER BY grouping, category, t.tag;";
 		//@formatter:on
-		return jdbcTemplateObject.query(sql, new RowMapper<TeamMatchTag>() {
+		return jdbcTemplateObject.query(sql, new RowMapper<TeamMatchTag>()
+		{
 			@Override
-			public TeamMatchTag mapRow(ResultSet resultSet, int rowNum) throws SQLException {
+			public TeamMatchTag mapRow(ResultSet resultSet, int rowNum) throws SQLException
+			{
 				TeamMatchTag teamMatchTag = new TeamMatchTag();
 				teamMatchTag.setGrouping(resultSet.getString("grouping"));
 				teamMatchTag.setCategory(resultSet.getString("category"));
@@ -297,7 +339,8 @@ public class MatchServiceMySQLImpl implements MatchService {
 	}
 
 	@Override
-	public List<MatchTeams> getMatchTeams(Integer match, final List<Team> teams) {
+	public List<MatchTeams> getMatchTeams(Integer match, final List<Team> teams)
+	{
 		//@formatter:off
 		String sql = 
 			   "SELECT matchNum, b1, b2, b3, r1, r2, r3 "
@@ -415,33 +458,56 @@ public class MatchServiceMySQLImpl implements MatchService {
 	public TeamMatchResult getTeamMatchResult(Integer team, Integer match) {
 		// @formatter:off
 		String sql = "SELECT team, matchNum, score, win, tie, loss, ranking_points, penalty "
-				+ "FROM scoutingtags.match m " + "WHERE  team = ? and matchNum = ?";
+				           + "FROM scoutingtags.match m " 
+				           + "WHERE  team = ? and matchNum = ?";
 		// @formatter:on
-		return jdbcTemplateObject.queryForObject(sql, new RowMapper<TeamMatchResult>() {
+		TeamMatchResult teamMatchResult;
+		try
+		{
+			teamMatchResult = jdbcTemplateObject.queryForObject(sql, new RowMapper<TeamMatchResult>()
+			{
 
-			@Override
-			public TeamMatchResult mapRow(ResultSet resultSet, int rowNum) throws SQLException {
-				TeamMatchResult teamMatchResult = new TeamMatchResult();
-				teamMatchResult.setTeam(resultSet.getInt("team"));
-				teamMatchResult.setMatch(resultSet.getInt("matchNum"));
-				Integer score = resultSet.getInt("score");
-				if (!resultSet.wasNull())
-					teamMatchResult.setScore(score);
-				Integer rankingPoints = resultSet.getInt("ranking_points");
-				if (!resultSet.wasNull())
-					teamMatchResult.setRankingPoints(rankingPoints);
-				Integer penalty = resultSet.getInt("penalty");
-				if (!resultSet.wasNull())
-					teamMatchResult.setPenalty(penalty);
-				Integer result = resultSet.getInt("win");
-				teamMatchResult.setWin(!resultSet.wasNull() && result > 0);
-				result = resultSet.getInt("tie");
-				teamMatchResult.setTie(!resultSet.wasNull() && result > 0);
-				result = resultSet.getInt("loss");
-				teamMatchResult.setLoss(!resultSet.wasNull() && result > 0);
-				return teamMatchResult;
-			}
-		}, team, match);
-
+				@Override
+				public TeamMatchResult mapRow(ResultSet resultSet, int rowNum) throws SQLException
+				{
+					TeamMatchResult teamMatchResult = new TeamMatchResult();
+					teamMatchResult.setTeam(resultSet.getInt("team"));
+					teamMatchResult.setMatch(resultSet.getInt("matchNum"));
+					Integer score = resultSet.getInt("score");
+					if (!resultSet.wasNull())
+						teamMatchResult.setScore(score);
+					Integer rankingPoints = resultSet.getInt("ranking_points");
+					if (!resultSet.wasNull())
+						teamMatchResult.setRankingPoints(rankingPoints);
+					Integer penalty = resultSet.getInt("penalty");
+					if (!resultSet.wasNull())
+						teamMatchResult.setPenalty(penalty);
+					Integer result = resultSet.getInt("win");
+					teamMatchResult.setWin(!resultSet.wasNull() && result > 0);
+					result = resultSet.getInt("tie");
+					teamMatchResult.setTie(!resultSet.wasNull() && result > 0);
+					result = resultSet.getInt("loss");
+					teamMatchResult.setLoss(!resultSet.wasNull() && result > 0);
+					return teamMatchResult;
+				}
+			}, team, match);
+		}
+		catch (EmptyResultDataAccessException e)
+		{
+			// @formatter:off
+			String insertSQL = "insert into  scoutingtags.match (team, matchNum, win, tie, loss, ranking_points, penalty, score) values (?, ?, 0, 0, 0, 0, 0, 0)";
+			// @formatter:on
+			jdbcTemplateObject.update(insertSQL, team, match);
+			teamMatchResult = new TeamMatchResult();
+			teamMatchResult.setTeam(team);
+			teamMatchResult.setMatch(match);
+			teamMatchResult.setScore(0);
+			teamMatchResult.setPenalty(0);
+			teamMatchResult.setRankingPoints(0);
+			teamMatchResult.setWin(false);
+			teamMatchResult.setTie(false);
+			teamMatchResult.setLoss(false);
+		}
+		return teamMatchResult;
 	}
 }

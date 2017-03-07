@@ -108,7 +108,7 @@ public class TagServiceMySQLImpl implements TagService
 	@Override
 	public List<Tag> getTags()
 	{
-		String SQL = "SELECT id, tag, category, grouping, type, input_type FROM scoutingtags.tags ORDER BY type, grouping, category";
+		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value FROM scoutingtags.tags ORDER BY type, grouping, category";
 		return jdbcTemplateObject.query(SQL, new TagMapper());
 	}
 
@@ -480,12 +480,14 @@ public class TagServiceMySQLImpl implements TagService
 	}
 
 	@Override
-	public void importCSV(String inputFile)
+	public void importCSV(String inputFile, Boolean delete)
 	{
 		try
 		{
 			String csvData = new String(Files.readAllBytes(FileSystems.getDefault().getPath(inputFile)));
 			csvData = csvData.replaceAll("\\r", "");
+			if (delete)
+				deleteAllTags();
 			CSVParser parser = CSVParser.parse(csvData, CSVFormat.DEFAULT.withRecordSeparator("\n"));
 			for (CSVRecord record : parser)
 			{
@@ -504,6 +506,12 @@ public class TagServiceMySQLImpl implements TagService
 		{
 			e.printStackTrace();
 		}
+	}
+
+	private void deleteAllTags()
+	{
+		String sql = "DELETE FROM scoutingtags.tags";
+		jdbcTemplateObject.update(sql);
 	}
 
 	@Override
