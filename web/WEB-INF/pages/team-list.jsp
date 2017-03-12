@@ -14,97 +14,107 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="com.team3637.model.Team" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <html>
 <head>
-    <%@ include file="/includes.jsp" %>
-    <link href="${pageContext.request.contextPath}/css/schedule.css" rel="stylesheet"/>
-    <link href="${pageContext.request.contextPath}/css/matchList.css" rel="stylesheet"/>
-    <script src="${pageContext.request.contextPath}/js/editor.js"></script>
+<%@ include file="/includes.jsp"%>
+<link href="${pageContext.request.contextPath}/css/schedule.css"
+	rel="stylesheet" />
+<link href="${pageContext.request.contextPath}/css/matchList.css"
+	rel="stylesheet" />
+<script src="${pageContext.request.contextPath}/js/editor.js"></script>
 </head>
 <body>
-<nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand page-scroll" href="${pageContext.request.contextPath}/">Team 3637 Scouting App</a>
-        </div>
-    </div>
-</nav>
-<div class="container main">
-    <form:form method="post" action="${pageContext.request.contextPath}/t/view/" modelAttribute="teamWrapper">
-        <table id="team-list" class="table table-striped table-bordered">
-            <thead>
-            <tr>
-                <th>Team # <span class="glyphicon glyphicon-sort"></span></th>
-                <th>Matches Played <span class="glyphicon glyphicon-sort"></span></th>
-                <th>Average Score <span class="glyphicon glyphicon-sort"></span></th>
-                <th>Our Score <span class="glyphicon glyphicon-sort"></span></th>
-                <th>Ranking Points <span class="glyphicon glyphicon-sort"></span></th>    
-                <th>W/L/T</th>        
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <c:forEach var="team" items="${teamWrapper.teams}" varStatus="status">
-                <tr>
-                    <form:hidden path="teams[${status.index}].id" value="${team.id}"/>
-                    <td class="block">${team.team}</td>
-                    <td class="block">${team.matches}</td>
-                    <td class="block"><fmt:formatNumber type="number" maxFractionDigits="1" value="${team.avgScore}"/></td>
-                    <td class="block"><fmt:formatNumber type="number" maxFractionDigits="1" value="${team.ourScore}"/></td>
-                    <td class="block">${team.rankingpoints}</td>
-                    <td class="block">${team.wins}/${team.ties}/${team.losses}</td>                                          
-                    <td class="block">
-                        <a class="btn btn-info"
-                           href="${pageContext.request.contextPath}/t/teamScouting?team=${team.team}">Scout</a>
-                    </td>
-                </tr>
-            </c:forEach>
-            </tbody>
-        </table>
-    </form:form>
-</div>
-<script>
-    $(document).ready(function () {
-                $("#team-list").tablesorter({
-                    headers: {
-                        3: {
-                            sorter: false
-                        }
-                    },
-                    sortList: [
-                        [0, 0, 0]
-                    ]
-                });
-            }
-    );
-    
-    function isInt(value) {
-    	  return !isNaN(value) && 
-    	         parseInt(Number(value)) == value && 
-    	         !isNaN(parseInt(value, 10));
-    	}    
-    
-    function addTeam() {
-    	var teamNum = $('input[name=teamNum]').val();
-    	if (teamNum  != null && teamNum != "")
-    		if (isInt(teamNum))
-               window.location = '${pageContext.request.contextPath}/t/add/' + teamNum;
-            else
-            	alert("Team number must be unique.")
-         else     
-        	 alert("Please enter a new team number and try again.")
-    }
-</script>
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed"
+					data-toggle="collapse" data-target="#navbar">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand page-scroll"
+					href="${pageContext.request.contextPath}/">Team 3637 Scouting
+					App</a>
+			</div>
+		</div>
+	</nav>
+	<div class="container main">
+		<form:form method="post"
+			action="${pageContext.request.contextPath}/t/view/"
+			modelAttribute="teamWrapper">
+			<table id="team-list" class="table table-striped table-bordered">
+				<thead>
+					<tr>
+						<th>Team # <span class="glyphicon glyphicon-sort"></span></th>
+						<th>Actions</th>
+						<th>Matches Played <span class="glyphicon glyphicon-sort"></span></th>
+						<th>Average Score <span class="glyphicon glyphicon-sort"></span></th>
+						<th>Our Score <span class="glyphicon glyphicon-sort"></span></th>
+						<th>Ranking Points <span class="glyphicon glyphicon-sort"></span></th>
+						<th>W/L/T</th>
+					</tr>
+				</thead>
+				<tbody>
+					<c:forEach var="team" items="${teamWrapper.teams}"
+						varStatus="status">
+						<c:set var = "btnStyle" value = "btn btn-info" />
+						<c:if test = "${team.tagsEntered > 0}" >
+							<c:set var = "btnStyle" value = "btn btn-success" />
+						</c:if>
+						<tr>
+							<form:hidden path="teams[${status.index}].id" value="${team.id}" />
+							<td class="block">${team.team}</td>
+							<td class="block"><a class="${btnStyle}"
+								href="${pageContext.request.contextPath}/t/teamScouting?team=${team.team}">Scout</a>
+							</td>
+							<td class="block">${team.matches}</td>
+							<td class="block"><fmt:formatNumber type="number"
+									maxFractionDigits="1" value="${team.avgScore}" /></td>
+							<td class="block"><fmt:formatNumber type="number"
+									maxFractionDigits="1" value="${team.ourScore}" /></td>
+							<td class="block">${team.rankingpoints}</td>
+							<td class="block">${team.wins}/${team.ties}/${team.losses}</td>
+						</tr>
+					</c:forEach>
+				</tbody>
+			</table>
+		</form:form>
+	</div>
+	<script>
+		$(document).ready(function() {
+			$("#team-list").tablesorter({
+				headers : {
+					3 : {
+						sorter : false
+					}
+				},
+				sortList : [ [ 0, 0, 0 ] ]
+			});
+		});
+
+		function isInt(value) {
+			return !isNaN(value) && parseInt(Number(value)) == value
+					&& !isNaN(parseInt(value, 10));
+		}
+
+		function addTeam() {
+			var teamNum = $('input[name=teamNum]').val();
+			if (teamNum != null && teamNum != "")
+				if (isInt(teamNum))
+					window.location = '${pageContext.request.contextPath}/t/add/'
+							+ teamNum;
+				else
+					alert("Team number must be unique.")
+			else
+				alert("Please enter a new team number and try again.")
+		}
+	</script>
 </body>
 </html>
