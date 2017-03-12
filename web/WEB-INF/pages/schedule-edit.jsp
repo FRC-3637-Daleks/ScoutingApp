@@ -23,6 +23,33 @@
     <%@ include file="/includes.jsp" %>
     <link href="${pageContext.request.contextPath}/css/schedule.css" rel="stylesheet"/>
     <script src="${pageContext.request.contextPath}/js/editor.js"></script>
+    <script>
+       function save()
+       {
+    	   $( "#editForm" ).submit();
+       }
+       
+       function deleteLast()
+       {
+    	   $("#deleted"+(num-1)).val("true");
+           $( "#editForm" ).submit();
+       }
+       
+       function add()
+       {
+    	   $.ajax({
+               url: "../s/edit/add",
+               type: 'GET',
+               cache: false,
+               success: function (result) {
+                   location.reload();
+               },
+               error: function () { 
+                    alert( "Error adding new match." );
+               }
+           });
+       }       
+    </script>
 </head>
 <body>
 <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -36,23 +63,26 @@
             </button>
             <a class="navbar-brand page-scroll" href="${pageContext.request.contextPath}/">Team 3637 Scouting App</a>
         </div>
-        <div id="navbar" class="collapse navbar-collapse">
+        <div id="navbar" class="collapse navbar-collapse">             
+             <ul class="nav navbar-nav">
+                <li><a href="#" onclick="add();">Add</a></li>
+            </ul>
+            <ul class="nav navbar-nav">
+                <li><a href="#" onclick="deleteLast();">Delete</a></li>
+            </ul>
+             <ul class="nav navbar-nav">
+                <li><a href="#" onclick="save();">Save</a></li>
+            </ul>
             <ul class="nav navbar-nav">
                 <li><a href="${pageContext.request.contextPath}/s/">Back</a></li>
             </ul>
-            <form class="navbar-form navbar-right" action="${pageContext.request.contextPath}/s/edit/t/">
-                <div class="form-group" role="search">
-                    <input type="text" class="form-control" placeholder="Search" name="teamNum">
-                </div>
-                <button type="submit" class="btn btn-info">Search</button>
-            </form>
         </div>
     </div>
 </nav>
 <div class="container main">
     <c:choose>
         <c:when test="${true}">
-            <form:form method="post" action="${pageContext.request.contextPath}/s/edit" modelAttribute="scheduleWrapper">
+            <form:form method="post" id="editForm" action="${pageContext.request.contextPath}/s/edit" modelAttribute="scheduleWrapper">
                 <table class="table table-striped table-bordered">
                     <thead>
                     <tr>
@@ -63,29 +93,22 @@
                         <th>Red Team 1</th>
                         <th>Red Team 2</th>
                         <th>Red Team 3</th>
-                        <th>Delete</th>
                     </tr>
                     </thead>
                     <tbody>
                     <c:forEach var="match" items="${scheduleWrapper.schedule}" varStatus="status">
                         <tr>
                             <form:hidden path="schedule[${status.index}].id" value="${match.id}"/>
-                            <td><form:input path="schedule[${status.index}].matchNum" cssClass="form-control"/></td>
+                            <form:hidden path="deleted[${status.index}]"  value="${false}"/>
+                            <td>${match.matchNum}<form:hidden path="schedule[${status.index}].matchNum" cssClass="form-control"/></td>
                             <td><form:input path="schedule[${status.index}].b1" cssClass="form-control"/></td>
                             <td><form:input path="schedule[${status.index}].b2" cssClass="form-control"/></td>
                             <td><form:input path="schedule[${status.index}].b3" cssClass="form-control"/></td>
                             <td><form:input path="schedule[${status.index}].r1" cssClass="form-control"/></td>
                             <td><form:input path="schedule[${status.index}].r2" cssClass="form-control"/></td>
                             <td><form:input path="schedule[${status.index}].r3" cssClass="form-control"/></td>
-                            <td>
-                                <input type="button" class="btn btn-danger delete" value="Delete"/>
-                                <form:hidden path="deleted[${status.index}]" value="${false}"/>
-                            </td>
                         </tr>
                     </c:forEach>
-                    <tr>
-                        <td colspan="7"><input type="submit" value="Save" class="btn btn-success"/></td>
-                    </tr>
                     </tbody>
                 </table>
                 <script>var num = ${scheduleWrapper.schedule.size()};</script>

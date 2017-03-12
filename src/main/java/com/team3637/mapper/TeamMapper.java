@@ -29,7 +29,6 @@ public class TeamMapper implements RowMapper<Team>
 	public Team mapRow(ResultSet resultSet, int rowNum) throws SQLException
 	{
 		Team team = new Team();
-		team.setId(resultSet.getInt("id"));
 		team.setTeam(resultSet.getInt("team"));
 		team.setMatches(resultSet.getInt("matches"));
 		team.setAvgScore(resultSet.getDouble("avgscore"));

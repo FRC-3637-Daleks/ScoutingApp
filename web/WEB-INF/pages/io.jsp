@@ -36,72 +36,94 @@
     </div>
 </nav>
 <div class="main container">
-    <div class="container text-left">
-        <a class="btn btn-default" href="${pageContext.request.contextPath}/io/bundle.zip" download>Export Bundle</a>
-        <form action="${pageContext.request.contextPath}/io/bundle.zip" method="post" class="form-inline"
+  <table  class="table table-striped table-bordered">
+  <tr>
+    <th>Type</th>
+    <th>Export</th>
+    <th>Import</th>
+  </tr>
+    <tr>
+        <th>
+            Match Scouting Data
+        </th>
+        <td>
+        <a class="btn btn-default" href="${pageContext.request.contextPath}/io/matchData.zip" download>Export
+          Match Scouting  Data</a>
+        </td>
+        <td>          
+        <form action="${pageContext.request.contextPath}/io/matchData.zip" method="post" class="form-inline"
               enctype="multipart/form-data">
-            <label for="bundle">Import Bundle</label>
-            <input type="file" name="file" id="bundle"/>
-            <input class="btn btn-default" type="submit" value="Upload">
+            <input type="file" class="filestyle" data-buttonText="Find file"  name="file" id="matchData" >         
+            <input class="btn btn-default" type="submit" value="Import Match Scouting Data">
         </form>
-    </div>
-    <div class="container text-left">
-        <a class="btn btn-default" href="${pageContext.request.contextPath}/io/tags.csv" download>Export
-            Tags</a>
-        <form action="${pageContext.request.contextPath}/io/tags.csv" method="post" class="form-inline"
-              enctype="multipart/form-data">
-            <label for="tags">Import Tags</label>
-            <input type="file" name="file" id="tags"/>
-            <input class="btn btn-default" type="submit" value="Upload">
-        </form>
-        <form action="${pageContext.request.contextPath}/io/tags.csv" method="post" class="form-inline"
-              enctype="multipart/form-data">
-            <label for="tags">Delete and Import Tags</label>
-            <input type="file" name="file" id="tags"/>
-            <input type="hidden" name="delete" value="true"/>
-            <input class="btn btn-default" type="submit" value="Upload">
-        </form>        
-    </div>
-    <div class="container text-left">
-        <a class="btn btn-default" href="${pageContext.request.contextPath}/io/schedule.csv" download>Export
-            Schedule</a>
-        <form action="${pageContext.request.contextPath}/io/schedule.csv" method="post" class="form-inline"
-              enctype="multipart/form-data">
-            <label for="schedule">Import Schedule</label>
-            <input type="file" name="file" id="schedule"/>
-            <input class="btn btn-default" type="submit" value="Upload">
-        </form>
-    </div>
-    <div class="container text-left">
-        <a class="btn btn-default" href="${pageContext.request.contextPath}/io/matches.csv" download>Export
-            Matches</a>
-        <form action="${pageContext.request.contextPath}/io/matches.csv" method="post" class="form-inline"
-              enctype="multipart/form-data">
-            <label for="matches">Import Matches</label>
-            <input type="file" name="file" id="matches"/>
-            <input class="btn btn-default" type="submit" value="Upload">
-        </form>
-    </div>
-    <div class="container text-left">
+        </td>
+    </tr>  
+    <tr>
+        <th>
+            Team Scouting Data
+        </th>
+        <td>
         <a class="btn btn-default" href="${pageContext.request.contextPath}/io/teamTags.csv" download>Export
-            Team Tags</a>
+            Team Scouting Data</a>
+        </td>
+        <td>            
         <form action="${pageContext.request.contextPath}/io/teamTags.csv" method="post" class="form-inline"
               enctype="multipart/form-data">
-            <label for="teams">Import Team Tags</label>
-            <input type="file" name="file" id="teamTags"/>
-            <input class="btn btn-default" type="submit" value="Upload">
+            <input type="file" class="filestyle" data-buttonText="Find file" name="file"  id="teamTags" >                       
+            <input class="btn btn-default" type="submit" value="Import Team Scouting Data">
         </form>
-    </div>
-    <div class="container text-left">
-        <a class="btn btn-default" href="${pageContext.request.contextPath}/io/matchTags.csv" download>Export
-            Match Tags</a>
-        <form action="${pageContext.request.contextPath}/io/matchTags.csv" method="post" class="form-inline"
+     </td>
+    </tr>  
+    <tr>    
+        <th>
+            Schedule
+        </th>
+        <td>
+        <a class="btn btn-default" href="${pageContext.request.contextPath}/io/schedule.csv" download>Export
+            Schedule</a>
+        </td>
+        <td>            
+        <form action="${pageContext.request.contextPath}/io/schedule.csv" method="post" class="form-inline"
               enctype="multipart/form-data">
-            <label for="teams">Import Match Tags</label>
-            <input type="file" name="file" id="matchTags"/>
-            <input class="btn btn-default" type="submit" value="Upload">
+            <input type="file" class="filestyle" data-buttonText="Find file" name="file" id="schedule" >          
+            <input class="btn btn-default" type="submit" value="Import Schedule Data">
         </form>
-    </div>
+     </td>
+    </tr>  
+    <tr>
+        <th>
+            Tags
+        </th>
+        <td>
+        <a class="btn btn-default" href="${pageContext.request.contextPath}/io/tags.csv" download>Export
+            Tags</a>
+        </td>
+        <td>
+        <form action="${pageContext.request.contextPath}/io/tags.csv" method="post" class="form-inline"
+              enctype="multipart/form-data">
+             <input type="file" class="filestyle" data-buttonText="Find file"  name="file"  id="tags" >        
+             <input class="btn btn-default" type="submit" value="Import Tags">
+             <input type="checkbox" name="delete" value="false" id="tagDelete"/>
+             <label style="font-weight:normal" for="tagDelete">Delete tags before import</label>
+        </form>
+        </td>
+    </tr>  
+    <tr>
+        <th>
+            Bundle
+        </th>
+        <td>
+           <a class="btn btn-default" href="${pageContext.request.contextPath}/io/bundle.zip" download>Export Bundle</a>
+        </td>
+        <td>
+        <form action="${pageContext.request.contextPath}/io/bundle.zip" method="post" class="form-inline"
+              enctype="multipart/form-data">
+            <input type="file" class="filestyle" data-buttonText="Find file" name="file"   id="bundle" >        
+            <input class="btn btn-default" type="submit" value="Import Bundle">
+        </form>
+        </td>
+    </tr>
+   </table>
 </div>
 </body>
 </html>

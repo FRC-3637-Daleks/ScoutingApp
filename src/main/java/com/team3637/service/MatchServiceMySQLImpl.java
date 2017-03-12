@@ -23,7 +23,10 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -44,32 +47,16 @@ import org.apache.commons.csv.CSVRecord;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
 public class MatchServiceMySQLImpl implements MatchService
 {
 
 	private JdbcTemplate jdbcTemplateObject;
-	private SimpleJdbcCall addCols;
-	private SimpleJdbcCall addTag;
-	private SimpleJdbcCall mergeTags;
 
 	@Override
 	public void setDataSource(DataSource dataSource)
 	{
 		this.jdbcTemplateObject = new JdbcTemplate(dataSource);
-		this.addCols = new SimpleJdbcCall(dataSource).withProcedureName("addCols");
-		this.addTag = new SimpleJdbcCall(dataSource).withProcedureName("addTag");
-		this.mergeTags = new SimpleJdbcCall(dataSource).withProcedureName("mergeTags");
-	}
-
-	@Override
-	public Match getMatch(Integer id)
-	{
-		String SQL = "SELECT * FROM matches WHERE id = ?";
-		return jdbcTemplateObject.queryForObject(SQL, new MatchMapper(), id);
 	}
 
 	@Override
@@ -80,67 +67,10 @@ public class MatchServiceMySQLImpl implements MatchService
 	}
 
 	@Override
-	public List<Match> getForTeam(Integer teamNum)
-	{
-		String SQL = "SELECT * FROM matches WHERE team = ?";
-		return jdbcTemplateObject.query(SQL, new MatchMapper(), teamNum);
-	}
-
-	@Override
-	public List<Match> getForMatch(Integer matchNum)
-	{
-		String SQL = "SELECT * FROM matches WHERE matchNum = ?";
-		return jdbcTemplateObject.query(SQL, new MatchMapper(), matchNum);
-	}
-
-	@Override
-	public Match getForMatchAndTeam(Integer matchNum, Integer teamNum)
-	{
-		String SQL = "SELECT * FROM matches WHERE matchNum = ? AND team = ?";
-		List<Match> results = jdbcTemplateObject.query(SQL, new MatchMapper(), matchNum, teamNum);
-		return (results.size() > 0) ? results.get(0) : null;
-	}
-
-	@Override
-	public void delete(Match match)
-	{
-		String SQL = "DELETE FROM matches WHERE id = ?";
-		jdbcTemplateObject.update(SQL, match.getId());
-		SQL = "UPDATE teams SET `avgscore` = IF(`matches` > 1, (`avgscore` * `matches` - ?) / (`matches` - 1), 0) WHERE `team` = ?";
-		jdbcTemplateObject.update(SQL, match.getScore(), match.getTeam());
-		SQL = "UPDATE teams SET `matches` = `matches` - 1 WHERE `team` = ?";
-		jdbcTemplateObject.update(SQL, match.getTeam());
-	}
-
-	@Override
-	public boolean checkForId(Integer id)
-	{
-		String SQL = "SELECT count(*) FROM matches WHERE id = ?";
-		Integer count = jdbcTemplateObject.queryForObject(SQL, Integer.class, id);
-		return count != null && count > 0;
-	}
-
-	@Override
-	public boolean checkForMatch(Integer matchNum, Integer team)
-	{
-		String SQL = "SELECT count(*) FROM matches WHERE matchNum = ? AND team = ?";
-		Integer count = jdbcTemplateObject.queryForObject(SQL, Integer.class, matchNum, team);
-		return count != null && count > 0;
-	}
-
-	@Override
 	public List<String> getTags()
 	{
 		String SQL = "SELECT tag FROM tags WHERE type = 'matches' ORDER BY tag";
 		return jdbcTemplateObject.query(SQL, new TagStringMapper());
-	}
-
-	@Override
-	public void mergeTags(String oldTag, String newTag)
-	{
-		SqlParameterSource args = new MapSqlParameterSource().addValue("tableName", "matches").addValue("noTagCols", 4)
-				.addValue("oldTag", oldTag).addValue("newTag", newTag);
-		mergeTags.execute(args);
 	}
 
 	@Override
@@ -195,9 +125,12 @@ public class MatchServiceMySQLImpl implements MatchService
 	{
 		try
 		{
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
 			String csvData = new String(Files.readAllBytes(FileSystems.getDefault().getPath(inputFile)));
 			csvData = csvData.replaceAll("\\r", "");
-			CSVParser parser = CSVParser.parse(csvData, CSVFormat.DEFAULT.withRecordSeparator("\n"));
+			if (delete)
+				deleteAllMatches();
+			CSVParser parser = CSVParser.parse(csvData, CSVFormat.DEFAULT.withRecordSeparator(""));
 			for (CSVRecord record : parser)
 			{
 				Match match = new Match();
@@ -210,29 +143,49 @@ public class MatchServiceMySQLImpl implements MatchService
 				match.setTie(Integer.parseInt(record.get(6)));
 				match.setRankingPoints(Integer.parseInt(record.get(7)));
 				match.setPenalty(Integer.parseInt(record.get(8)));
-				// match.setModifiedTimestamp(record.get(9));
+				match.setModifiedTimestamp(sdf.parse(record.get(9)));
 				updateInsertMatch(match);
 			}
 		}
-		catch (IOException e)
+		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
 	}
 
-	@Override
-	public void updateInsertMatch(Match match)
+	private void deleteAllMatches()
 	{
-		String SQL = "UPDATE scoutingtags.match SET score=?, win=?, loss=?, tie=?, ranking_points=?, penalty=?, modified_timestamp=? WHERE team=? and matchNum=?";
-		int updatedRows = jdbcTemplateObject.update(SQL, match.getScore(), match.getWin(), match.getLoss(),
-				match.getTie(), match.getRankingPoints(), match.getPenalty(), match.getModifiedTimestamp(),
-				match.getTeam(), match.getMatchNum());
-		if (updatedRows < 1)
+		String sql = "delete from scoutingtags.match";
+		jdbcTemplateObject.update(sql);
+	}
+
+	private void updateInsertMatch(Match match)
+	{
+
+		String selectSQL = "select modified_timestamp from scoutingtags.match where team = ? and matchNum = ?";
+		Date currentModifiedDate = null;
+		try
 		{
-			String insertSQL = "insert into scoutingtags.tags (team, matchNum, score, win, loss, tie, ranking_points, penalty, modified_timestamp) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			currentModifiedDate = jdbcTemplateObject.queryForObject(selectSQL, Timestamp.class, match.getTeam(),
+					match.getMatchNum());
+		}
+		catch (EmptyResultDataAccessException e)
+		{
+			// NOOP
+		}
+		if (currentModifiedDate == null)
+		{
+			String insertSQL = "insert into scoutingtags.match (team, matchNum, score, win, loss, tie, ranking_points, penalty, modified_timestamp) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			jdbcTemplateObject.update(insertSQL, match.getTeam(), match.getMatchNum(), match.getScore(), match.getWin(),
-					match.getLoss(), match.getTie(), match.getRankingPoints(), match.getPenalty(),
+					match.getLoss(), match.getTie(), match.getPenalty(), match.getRankingPoints(),
 					match.getModifiedTimestamp());
+		}
+		else if (currentModifiedDate.getTime() < match.getModifiedTimestamp().getTime())
+		{
+			String updateSQL = "update scoutingtags.match set score=?, win=?, loss=?, tie=?, ranking_points=?, penalty=?, modified_timestamp=? where team=? and matchNum=?";
+			jdbcTemplateObject.update(updateSQL, match.getScore(), match.getWin(), match.getLoss(), match.getTie(),
+					match.getRankingPoints(), match.getPenalty(), match.getModifiedTimestamp(), match.getTeam(),
+					match.getMatchNum());
 		}
 	}
 
@@ -241,20 +194,38 @@ public class MatchServiceMySQLImpl implements MatchService
 	{
 		//@formatter:off
 		String sql = 
-				    "SELECT team, sum(score)/count(*) as avgscore, count(*) as matches,"
+				    "SELECT t.team, sum(score)/count(m.team) as avgscore, count(m.team) as matches,"
 				+ "               (SELECT count(*) FROM scoutingtags.match m2 WHERE m2.team = m.team and m.win = 1) as wins,"
 				+ "               (SELECT count(*) FROM scoutingtags.match m2 WHERE m2.team = m.team and m.tie = 1) as ties, "				    		
 				+ "               (SELECT count(*) FROM scoutingtags.match m2  WHERE m2.team = m.team and m.loss = 1) as losses, "
-				+ "				  (SELECT sum(occurences * t.point_value) "
+				+ "				  (SELECT sum(occurrences * t.point_value) "
 				+ "                FROM scoutingtags.matchtags mt "
 			    + "				        inner join scoutingtags.tags t on mt.tag = t.tag "
                 + "                where mt.team = m.team) as ourscore, "
 			    + "               (SELECT sum(ranking_points) "
                 + "                FROM scoutingtags.match m3 "
 			    + "                where m3.team = m.team) as rankingpoints "
-				+ "FROM scoutingtags.match m "
-				+ "WHERE ? is null or team = ? "
-				+ "GROUP BY team";
+				+ "FROM (select distinct team from" 
+				+ "                   (select distinct b1 as team" 
+				+ "                      from scoutingtags.schedule" 
+				+ "                    union" 
+				+ "                    select distinct b2 as team" 
+				+ "                     from scoutingtags.schedule" 
+				+ "                    union" 
+				+ "                   select distinct b3 as team" 
+				+ "                    from scoutingtags.schedule" 
+				+ "                   union" 
+				+ "                   select distinct r1 as team" 
+				+ "                    from scoutingtags.schedule" 
+				+ "                   union" 
+				+ "                   select distinct r2 as team" 
+				+ "                    from scoutingtags.schedule" 
+				+ "                   union" 
+				+ "                   select distinct r3 as team" 
+				+ "                    from scoutingtags.schedule) a) t" 
+				+ "                    left outer join scoutingtags.match m on m.team = t.team "
+				+ "WHERE ? is null or t.team = ? "
+				+ "GROUP BY t.team";
 		//@formatter:on		
 		return jdbcTemplateObject.query(sql, new RowMapper<Team>()
 		{
@@ -280,14 +251,14 @@ public class MatchServiceMySQLImpl implements MatchService
 	{
 		//@formatter:off
 		String sql = 
-				  "SELECT team, t.grouping, category, m.tag, tg.sequence, sum(occurences) as occurences "
+				  "SELECT team, t.grouping, category, m.tag, tg.sequence, sum(occurrences) as occurrences "
 				+ " FROM scoutingtags.matchtags m " 
 			    + "      inner join scoutingtags.tags t on m.tag = t.tag "
 			    + "      inner join scoutingtags.taggrouping tg on tg.grouping = t.grouping "
 				+ "WHERE (? is null or team = ?) "
 			    + "GROUP BY team, t.grouping,sequence, category, m.tag "
 			    + "union "
-				+ "SELECT team, t.grouping, category, m.tag, tg.sequence, sum(occurences) as occurences "
+				+ "SELECT team, t.grouping, category, m.tag, tg.sequence, sum(occurrences) as occurrences "
 				+ " FROM scoutingtags.teamtags m " 
 			    + "      inner join scoutingtags.tags t on m.tag = t.tag "
 			    + "      inner join scoutingtags.taggrouping tg on tg.grouping = t.grouping "
@@ -304,7 +275,7 @@ public class MatchServiceMySQLImpl implements MatchService
 				matchStatistics.setTeam(resultSet.getInt("team"));
 				matchStatistics.setGrouping(resultSet.getString("grouping"));
 				matchStatistics.setCategory(resultSet.getString("category"));
-				matchStatistics.setTotalOccurences(resultSet.getInt("occurences"));
+				matchStatistics.setTotalOccurrences(resultSet.getInt("occurrences"));
 				matchStatistics.setTag(resultSet.getString("tag"));
 				return matchStatistics;
 			}
@@ -316,7 +287,7 @@ public class MatchServiceMySQLImpl implements MatchService
 	{
 		//@formatter:off
 		String sql = 
-				   "SELECT grouping, category, t.tag, occurences, input_type " 
+				   "SELECT grouping, category, t.tag, occurrences, input_type " 
 		        + "FROM scoutingtags.tags t "
 				+ "             LEFT OUTER JOIN scoutingtags.matchtags m on m.tag = t.tag and team = ? AND matchNum = ? "
 				+ " WHERE t.type = 'matches' " 
@@ -330,7 +301,7 @@ public class MatchServiceMySQLImpl implements MatchService
 				TeamMatchTag teamMatchTag = new TeamMatchTag();
 				teamMatchTag.setGrouping(resultSet.getString("grouping"));
 				teamMatchTag.setCategory(resultSet.getString("category"));
-				teamMatchTag.setOccurences(resultSet.getInt("occurences"));
+				teamMatchTag.setOccurrences(resultSet.getInt("occurrences"));
 				teamMatchTag.setTag(resultSet.getString("tag"));
 				teamMatchTag.setInputType(resultSet.getString("input_type"));
 				return teamMatchTag;
@@ -390,17 +361,17 @@ public class MatchServiceMySQLImpl implements MatchService
 
 	@Override
 	public void incrementTag(Integer team, Integer match, String tag) {
-		String sql = "UPDATE scoutingtags.matchtags SET occurences=occurences+1 WHERE team=? AND matchNum=? AND tag=?";
+		String sql = "UPDATE scoutingtags.matchtags SET occurrences=occurrences+1 WHERE team=? AND matchNum=? AND tag=?";
 		int rowsUpdated = jdbcTemplateObject.update(sql, team, match, tag);
 		if (rowsUpdated < 1) {
-			String sqlInsert = "INSERT INTO scoutingtags.matchtags (team, matchNum, tag, occurences) VALUES (?,?,?,?)";
+			String sqlInsert = "INSERT INTO scoutingtags.matchtags (team, matchNum, tag, occurrences) VALUES (?,?,?,?)";
 			jdbcTemplateObject.update(sqlInsert, team, match, tag, 1);
 		}
 	}
 
 	@Override
 	public void decrementTag(Integer team, Integer match, String tag) {
-		String sql = "UPDATE scoutingtags.matchtags SET occurences=occurences-1 WHERE team=? AND matchNum=? AND tag=?";
+		String sql = "UPDATE scoutingtags.matchtags SET occurrences=occurrences-1 WHERE team=? AND matchNum=? AND tag=?";
 		jdbcTemplateObject.update(sql, team, match, tag);
 	}
 

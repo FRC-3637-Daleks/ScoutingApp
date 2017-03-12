@@ -66,44 +66,12 @@ public class ScheduleServiceMySQLImpl implements ScheduleService
 		jdbcTemplateObject.execute(script);
 	}
 
-	@Override
 	public void create(Schedule schedule)
 	{
-		Field[] fields = Schedule.class.getDeclaredFields();
-		String fieldsSting = "", valuesSting = "", SQL;
-		List<Object> values = new ArrayList<>();
-		try
-		{
-			for (int i = 1; i < fields.length; i++)
-			{
-				fields[i].setAccessible(true);
-				values.add(fields[i].get(schedule));
-				if (i == fields.length - 1)
-				{
-					fieldsSting += fields[i].getName();
-					valuesSting += "?";
-				}
-				else
-				{
-					fieldsSting += fields[i].getName() + ", ";
-					valuesSting += "?, ";
-				}
-			}
-		}
-		catch (IllegalAccessException e)
-		{
-			e.printStackTrace();
-		}
-		SQL = "INSERT INTO schedule (" + fieldsSting + ") VALUES (" + valuesSting + ");";
+		String SQL = "INSERT INTO schedule (matchNum, b1, b2, b3, r1, r2, r3) VALUES (?, ?, ?, ?, ?, ?, ?);";
+		jdbcTemplateObject.update(SQL, schedule.getMatchNum(), schedule.getB1(), schedule.getB2(), schedule.getB3(),
+				schedule.getR1(), schedule.getR2(), schedule.getR3());
 
-		jdbcTemplateObject.update(SQL, values.toArray());
-	}
-
-	@Override
-	public Schedule getMathById(Integer id)
-	{
-		String SQL = "SELECT * FROM schedule WHERE id = ?";
-		return jdbcTemplateObject.queryForObject(SQL, new Object[] { id }, new ScheduleMapper());
 	}
 
 	@Override
@@ -130,33 +98,14 @@ public class ScheduleServiceMySQLImpl implements ScheduleService
 	}
 
 	@Override
-	public void update(Schedule schedule)
+	public int update(Schedule schedule)
 	{
-		Field[] fields = Schedule.class.getDeclaredFields();
-		String valuesSting = "", SQL;
-		List<Object> values = new ArrayList<>();
-		try
-		{
-			for (int i = 1; i < fields.length; i++)
-			{
-				fields[i].setAccessible(true);
-				values.add(fields[i].get(schedule));
-				if (i == fields.length - 1)
-				{
-					valuesSting += fields[i].getName() + "=?";
-				}
-				else
-				{
-					valuesSting += fields[i].getName() + "=?, ";
-				}
-			}
-		}
-		catch (IllegalAccessException e)
-		{
-			e.printStackTrace();
-		}
-		SQL = "UPDATE schedule SET " + valuesSting + " WHERE id=" + schedule.getId() + ";";
-		jdbcTemplateObject.update(SQL, values.toArray());
+		String deleteSQL = "delete from scoutingtags.match where matchNum=? and team not in (?, ?, ?, ?, ?, ?)";
+		jdbcTemplateObject.update(deleteSQL, schedule.getMatchNum(), schedule.getB1(), schedule.getB2(),
+				schedule.getB3(), schedule.getR1(), schedule.getR2(), schedule.getR3());
+		String updateSQL = "update scoutingtags.schedule set b1 =?, b2 =?, b3 = ?, r1 =?, r2 = ?, r3 =? where matchNum = ?";
+		return jdbcTemplateObject.update(updateSQL, schedule.getB1(), schedule.getB2(), schedule.getB3(),
+				schedule.getR1(), schedule.getR2(), schedule.getR3(), schedule.getMatchNum());
 	}
 
 	@Override
@@ -164,29 +113,6 @@ public class ScheduleServiceMySQLImpl implements ScheduleService
 	{
 		String SQL = "DELETE FROM schedule WHERE matchNum = ?";
 		jdbcTemplateObject.update(SQL, matchNum);
-	}
-
-	@Override
-	public void deleteById(Integer id)
-	{
-		String SQL = "DELETE FROM schedule WHERE id = ?";
-		jdbcTemplateObject.update(SQL, id);
-	}
-
-	@Override
-	public boolean checkForId(Integer id)
-	{
-		String SQL = "SELECT count(*) FROM schedule WHERE id = ?";
-		Integer count = jdbcTemplateObject.queryForObject(SQL, Integer.class, id);
-		return count != null && count > 0;
-	}
-
-	@Override
-	public boolean checkForMatch(Schedule schedule)
-	{
-		String SQL = "SELECT count(*) FROM schedule WHERE matchNum = ?";
-		Integer count = jdbcTemplateObject.queryForObject(SQL, Integer.class, schedule.getMatchNum());
-		return count != null && count > 0;
 	}
 
 	@Override
@@ -255,9 +181,8 @@ public class ScheduleServiceMySQLImpl implements ScheduleService
 				schedule.setR1(Integer.parseInt(record.get(5)));
 				schedule.setR2(Integer.parseInt(record.get(6)));
 				schedule.setR3(Integer.parseInt(record.get(7)));
-				if (checkForMatch(schedule))
-					update(schedule);
-				else
+				int recordsUpdated = update(schedule);
+				if (recordsUpdated < 1)
 					create(schedule);
 			}
 		}
@@ -265,5 +190,15 @@ public class ScheduleServiceMySQLImpl implements ScheduleService
 		{
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void addNewMatch()
+	{
+		Integer nextMatchNum = jdbcTemplateObject.queryForObject("select max(matchNum) from scoutingtags.schedule",
+				Integer.class);
+		String sql = "insert into scoutingtags.schedule (matchNum) values (?)";
+		jdbcTemplateObject.update(sql, ++nextMatchNum);
+
 	}
 }

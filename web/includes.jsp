@@ -36,3 +36,4 @@
 <script src="${pageContext.request.contextPath}/js/jquery.validate.min.js"></script>
 <script src="${pageContext.request.contextPath}/js/bootstrap-slider.min.js"></script>
 <script src="${pageContext.request.contextPath}/js/chosen.jquery.js"></script>
+<script src="${pageContext.request.contextPath}/js/bootstrap-filestyle.min.js"></script>

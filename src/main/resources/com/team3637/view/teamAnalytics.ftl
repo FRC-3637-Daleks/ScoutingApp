@@ -211,12 +211,12 @@ function toggle(target) {
    <table class="tagTable"  id="${team}-${grouping}-${category}-table">
    <tr>
    <td> ${matchStatistic.tag} </td>
-   <td> ${matchStatistic.totalOccurences} </td>
+   <td> ${matchStatistic.totalOccurrences} </td>
    </tr>
 <#else>
    <tr> 
    <td> ${matchStatistic.tag} </td>
-   <td> ${matchStatistic.totalOccurences} </td>
+   <td> ${matchStatistic.totalOccurrences} </td>
    </tr>
 </#if>
 </#list>

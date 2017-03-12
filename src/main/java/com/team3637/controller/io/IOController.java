@@ -31,6 +31,7 @@ import java.util.zip.ZipOutputStream;
 import javax.servlet.ServletContext;
 
 import com.team3637.service.MatchService;
+import com.team3637.service.MatchTagService;
 import com.team3637.service.ScheduleService;
 import com.team3637.service.Service;
 import com.team3637.service.TagService;
@@ -56,6 +57,8 @@ public class IOController
 	@Autowired
 	private MatchService matchService;
 	@Autowired
+	private MatchTagService matchTagService;
+	@Autowired
 	private TeamService teamService;
 	@Autowired
 	private TagService tagService;
@@ -74,12 +77,13 @@ public class IOController
 	{
 		exportSchedule();
 		exportMatches();
-		exportTeam();
+		exportMatchTags();
+		exportTeamTags();
 		exportTags();
 		String zipFile = context.getRealPath("/") + "/export/bundle.zip";
 		String[] srcFiles = { context.getRealPath("/") + "/export/schedule.csv",
-				context.getRealPath("/") + "/export/matches.csv", context.getRealPath("/") + "/export/teams.csv",
-				context.getRealPath("/") + "/export/tags.csv" };
+				context.getRealPath("/") + "/export/matches.csv", context.getRealPath("/") + "/export/matchTags.csv",
+				context.getRealPath("/") + "/export/teamTags.csv", context.getRealPath("/") + "/export/tags.csv" };
 		try
 		{
 			byte[] buffer = new byte[1024];
@@ -165,6 +169,7 @@ public class IOController
 		}
 		scheduleService.importCSV(inputDir + "/schedule.csv", delete);
 		matchService.importCSV(inputDir + "/matches.csv", delete);
+		matchTagService.importCSV(inputDir + "/matchTags.csv", delete);
 		teamService.importCSV(inputDir + "/teams.csv", delete);
 		tagService.importCSV(inputDir + "/tags.csv", delete);
 		HttpHeaders headers = new HttpHeaders();
@@ -226,6 +231,112 @@ public class IOController
 		return getCSV(matchService, "matches.csv");
 	}
 
+	@RequestMapping(value = "/matchTags.csv", method = RequestMethod.GET)
+	@ResponseBody
+	public String exportMatchTags() throws IOException
+	{
+		return getCSV(matchTagService, "matchTags.csv");
+	}
+
+	@RequestMapping(value = "/matchData.zip", method = RequestMethod.GET)
+	@ResponseBody
+	public ResponseEntity<?> exportMatchData() throws IOException
+	{
+		exportMatches();
+		exportMatchTags();
+		String zipFile = context.getRealPath("/") + "/export/matchData.zip";
+		String[] srcFiles = { context.getRealPath("/") + "/export/matches.csv",
+				context.getRealPath("/") + "/export/matchTags.csv" };
+		try
+		{
+			byte[] buffer = new byte[1024];
+			FileOutputStream fos = new FileOutputStream(zipFile);
+			ZipOutputStream zos = new ZipOutputStream(fos);
+			for (String srcFile1 : srcFiles)
+			{
+				File srcFile = new File(srcFile1);
+				FileInputStream fis = new FileInputStream(srcFile);
+				zos.putNextEntry(new ZipEntry(srcFile.getName()));
+				int length;
+				while ((length = fis.read(buffer)) > 0)
+					zos.write(buffer, 0, length);
+				zos.closeEntry();
+				fis.close();
+			}
+			zos.close();
+		}
+		catch (IOException ioe)
+		{
+			System.out.println("Error creating zip file: " + ioe);
+			return new ResponseEntity<>("Error creating zip file: " + ioe, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Location", context.getContextPath() + "/export/matchData.zip");
+		return new ResponseEntity<byte[]>(null, headers, HttpStatus.FOUND);
+	}
+
+	@RequestMapping(value = "/matchData.zip", method = RequestMethod.POST)
+	public ResponseEntity<?> importMatchData(
+			@RequestParam(value = "delete", required = false, defaultValue = "false") Boolean delete,
+			@RequestParam("file") MultipartFile file)
+	{
+		File inputDir = new File(context.getRealPath("/") + "/input");
+		if (!inputDir.exists())
+		{
+			inputDir.mkdir();
+		}
+		if (file.isEmpty())
+			return new ResponseEntity<>("File was empty", HttpStatus.INTERNAL_SERVER_ERROR);
+		try
+		{
+			byte[] buffer = file.getBytes();
+			BufferedOutputStream stream = new BufferedOutputStream(
+					new FileOutputStream(new File(inputDir.getAbsolutePath() + "/matchData.zip")));
+			stream.write(buffer);
+			stream.close();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		byte[] buffer = new byte[1024];
+		try
+		{
+			ZipInputStream zis = new ZipInputStream(new FileInputStream(inputDir.getAbsolutePath() + "/matchData.zip"));
+			ZipEntry ze = zis.getNextEntry();
+			while (ze != null)
+			{
+				String fileName = ze.getName();
+				File newFile = new File(inputDir + File.separator + fileName);
+				new File(newFile.getParent()).mkdirs();
+				FileOutputStream fos = new FileOutputStream(newFile);
+				int len;
+				while ((len = zis.read(buffer)) > 0)
+					fos.write(buffer, 0, len);
+				fos.close();
+				ze = zis.getNextEntry();
+			}
+			zis.closeEntry();
+			zis.close();
+		}
+		catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		matchService.importCSV(inputDir + "/matches.csv", delete);
+		matchTagService.importCSV(inputDir + "/matchTags.csv", delete);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Location", context.getContextPath() + "/io/");
+		return new ResponseEntity<byte[]>(null, headers, HttpStatus.FOUND);
+	}
+
 	@RequestMapping(value = "/matches.csv", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<?> importMatches(
@@ -235,20 +346,29 @@ public class IOController
 		return importCSV(matchService, "/matches.csv", file, delete);
 	}
 
-	@RequestMapping(value = "/teams.csv", method = RequestMethod.GET)
+	@RequestMapping(value = "/matchTags.csv", method = RequestMethod.POST)
 	@ResponseBody
-	public String exportTeam() throws IOException
-	{
-		return getCSV(teamService, "teams.csv");
-	}
-
-	@RequestMapping(value = "/teams.csv", method = RequestMethod.POST)
-	@ResponseBody
-	public ResponseEntity<?> importTeam(
+	public ResponseEntity<?> importMatchTags(
 			@RequestParam(value = "delete", required = false, defaultValue = "false") Boolean delete,
 			@RequestParam("file") MultipartFile file) throws IOException
 	{
-		return importCSV(teamService, "/teams.csv", file, delete);
+		return importCSV(matchTagService, "/matchTags.csv", file, delete);
+	}
+
+	@RequestMapping(value = "/teamTags.csv", method = RequestMethod.GET)
+	@ResponseBody
+	public String exportTeamTags() throws IOException
+	{
+		return getCSV(teamService, "teamTags.csv");
+	}
+
+	@RequestMapping(value = "/teamTags.csv", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<?> importTeamTags(
+			@RequestParam(value = "delete", required = false, defaultValue = "false") Boolean delete,
+			@RequestParam("file") MultipartFile file) throws IOException
+	{
+		return importCSV(teamService, "/teamTags.csv", file, delete);
 	}
 
 	@RequestMapping(value = "/tags.csv", method = RequestMethod.GET)

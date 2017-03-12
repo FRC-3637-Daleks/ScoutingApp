@@ -26,19 +26,15 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
-import com.team3637.model.Match;
-import com.team3637.model.Team;
 import com.team3637.model.TeamMatchResult;
 import com.team3637.model.TeamMatchTag;
 import com.team3637.service.MatchService;
 import com.team3637.service.TagService;
 import com.team3637.service.TeamService;
-import com.team3637.wrapper.MatchWrapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -60,54 +56,6 @@ public class MatchController
 	@RequestMapping("/")
 	public String index()
 	{
-		return "redirect:" + context.getContextPath() + "/";
-	}
-
-	@RequestMapping(value = "/add", method = RequestMethod.GET)
-	public String newMatch(@RequestParam("teamNum") Integer teamNum, @RequestParam("matchNum") Integer matchNum,
-			Model model)
-	{
-
-		Match match = matchService.getForMatchAndTeam(matchNum, teamNum);
-		Team team = teamService.getTeamByNumber(teamNum);
-		List<String> matchTags = matchService.getTags();
-		List<String> teamTags = teamService.getTags();
-		if (match == null)
-			match = new Match();
-		if (team == null)
-			team = new Team();
-
-		model.addAttribute("match", match);
-		model.addAttribute("team", team);
-		model.addAttribute("teamNum", teamNum);
-		model.addAttribute("matchNum", matchNum);
-		model.addAttribute("matchTags", matchTags);
-		model.addAttribute("teamTags", teamTags);
-
-		return "match";
-	}
-
-	@RequestMapping(value = "/list", method = RequestMethod.GET)
-	public String listMatches(Model model)
-	{
-		List<Match> matches = matchService.getMatches();
-		model.addAttribute("matchWrapper", new MatchWrapper(matches, new boolean[matches.size()]));
-		return "match-list";
-	}
-
-	@RequestMapping(value = "/list", method = RequestMethod.POST)
-	public String listMatches(@ModelAttribute("matchWrapper") MatchWrapper wrapper)
-	{
-		if (wrapper.getMatches() != null && wrapper.getMatches().size() > 0)
-		{
-			for (int i = 0; i < wrapper.getMatches().size(); i++)
-			{
-				if (wrapper.getDeleted()[i])
-				{
-					matchService.delete(wrapper.getMatches().get(i));
-				}
-			}
-		}
 		return "redirect:" + context.getContextPath() + "/";
 	}
 
@@ -136,42 +84,6 @@ public class MatchController
 			@RequestParam("pointValue") Float pointValue, HttpServletResponse response)
 	{
 		return tagService.saveTag(id, tag, type, category, grouping, inputType, pointValue);
-	}
-
-	@RequestMapping(value = "/tags/mergeMatch", method = RequestMethod.GET)
-	public String mergeMatchTags(Model model)
-	{
-		List<String> matchTags = matchService.getTags();
-		model.addAttribute("matchTags", matchTags);
-		return "merge-match-tags";
-	}
-
-	@RequestMapping(value = "/tags/mergeMatch", method = RequestMethod.POST)
-
-	public String mergeMatchTags(@RequestParam("oldTag") String oldTag, @RequestParam("newTag") String newTag)
-	{
-		// tagService.mergeTags(new Tag(oldTag, "matches"), new Tag(newTag,
-		// "matches"));
-
-		return "redirect:" + context.getContextPath() + "/m/tags";
-	}
-
-	@RequestMapping(value = "/tags/mergeTeam", method = RequestMethod.GET)
-	public String mergeTeamTags(Model model)
-	{
-		List<String> teamTags = teamService.getTags();
-		model.addAttribute("teamTags", teamTags);
-		return "merge-team-tags";
-	}
-
-	@RequestMapping(value = "/tags/mergeTeam", method = RequestMethod.POST)
-
-	public String mergeTeamTags(@RequestParam("oldTag") String oldTag, @RequestParam("newTag") String newTag)
-	{
-		// tagService.mergeTags(new Tag(oldTag, "teams"), new Tag(newTag,
-		// "teams"));
-
-		return "redirect:" + context.getContextPath() + "/m/tags";
 	}
 
 	@RequestMapping("/export/csv")

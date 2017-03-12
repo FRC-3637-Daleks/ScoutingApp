@@ -22,6 +22,7 @@ import javax.sql.DataSource;
 
 import com.team3637.model.Team;
 import com.team3637.model.TeamTag;
+import com.team3637.model.TeamTagExportModel;
 
 public interface TeamService extends Service
 {
@@ -31,31 +32,17 @@ public interface TeamService extends Service
 
 	Team getTeam(Integer id);
 
-	Team getTeamById(Integer id);
-
 	List<Team> getTeams();
-
-	Team getTeamByNumber(Integer teamNum);
-
-	Double[] getScoreRange();
-
-	Integer[] getScoreRangeFor(Team team);
-
-	void update(Team team);
 
 	void delete(Team team);
 
-	boolean checkForId(Integer id);
-
-	boolean checkForTeam(Integer id);
-
 	List<String> getTags();
-
-	void mergeTags(String oldTag, String newTag);
 
 	void incrementTag(Integer team, String tag);
 
 	void decrementTag(Integer team, String tag);
 
 	List<TeamTag> getTeamTags(Integer teamNum);
+
+	List<TeamTagExportModel> getTeamTagsForExport();
 }

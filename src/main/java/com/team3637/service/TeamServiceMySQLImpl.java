@@ -19,9 +19,14 @@ package com.team3637.service;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -30,30 +35,25 @@ import com.team3637.mapper.TagStringMapper;
 import com.team3637.mapper.TeamMapper;
 import com.team3637.model.Team;
 import com.team3637.model.TeamTag;
+import com.team3637.model.TeamTagExportModel;
 
 import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVRecord;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
 public class TeamServiceMySQLImpl implements TeamService
 {
 
 	private JdbcTemplate jdbcTemplateObject;
-	private SimpleJdbcCall addCols;
-	private SimpleJdbcCall addTag;
-	private SimpleJdbcCall mergeTags;
 
 	@Override
 	public void setDataSource(DataSource dataSource)
 	{
 		this.jdbcTemplateObject = new JdbcTemplate(dataSource);
-		this.addCols = new SimpleJdbcCall(dataSource).withProcedureName("addCols");
-		this.addTag = new SimpleJdbcCall(dataSource).withProcedureName("addTag");
-		this.mergeTags = new SimpleJdbcCall(dataSource).withProcedureName("mergeTags");
 	}
 
 	@Override
@@ -70,51 +70,25 @@ public class TeamServiceMySQLImpl implements TeamService
 	{
 		//@formatter:off
         String SQL = 
-        		    "SELECT t.id, t.team," + 
-        		    "               sum(m.score)/count(*) as avgscore, " +
+        		    "SELECT t.team," + 
+        		    "               sum(m.score)/count(m.team) as avgscore, " +
                 	"		         (select count(*)  from scoutingtags.match m2 where m2.team = t.team group by team) as matches," + 
         		    "	             sum(m.win) as wins," + 
         		    "	             sum(m.tie = 1) as ties, 				    		" + 
         		    "	             sum(m.loss = 1) as losses, " + 
-        		    "	             (SELECT sum(occurences * t.point_value) " + 
+        		    "	             (SELECT sum(occurrences * t.point_value) " + 
         		    "				     FROM scoutingtags.matchtags mt " + 
         		    "			                      inner join scoutingtags.tags t on mt.tag = t.tag " + 
         		    "                 WHERE mt.team = t.team) as ourscore, " + 
         		    "			      (SELECT sum(ranking_points) " + 
         		    "                    FROM scoutingtags.match m3 " + 
         		    "			        WHERE m3.team = t.team) as ranking_points " + 
-        		    "FROM scoutingtags.teams t" + 
+        		    "FROM (select ? as team) t" + 
         		    "             left outer join scoutingtags.match m on t.team = m.team " + 
         		    "WHERE t.team = ? " +
-        		    "group by t.id, t.team";
+        		    "group by  t.team";
         //@formatter:on				
-		return jdbcTemplateObject.queryForObject(SQL, new TeamMapper(), team);
-	}
-
-	@Override
-	public Team getTeamById(Integer id)
-	{
-		//@formatter:off
-        String SQL = 
-        		    "SELECT t.id, t.team," + 
-                    "               sum(m.score)/count(*) as avgscore, " +
-                	"		         (select count(*)  from scoutingtags.match m2 where m2.team = t.team group by team) as matches," + 
-        		    "	             sum(m.win) as wins," + 
-        		    "	             sum(m.tie = 1) as ties, 				    		" + 
-        		    "	             sum(m.loss = 1) as losses, " + 
-        		    "	             (SELECT sum(occurences * t.point_value) " + 
-        		    "				     FROM scoutingtags.matchtags mt " + 
-        		    "			                      inner join scoutingtags.tags t on mt.tag = t.tag " + 
-        		    "                 WHERE mt.team = t.team) as ourscore, " + 
-        		    "			      (SELECT sum(ranking_points) " + 
-        		    "                    FROM scoutingtags.match m3 " + 
-        		    "			        WHERE m3.team = t.team) as ranking_points " + 
-        		    "FROM scoutingtags.teams t" + 
-        		    "             left outer join scoutingtags.match m on t.team = m.team " + 
-        		    "WHERE t.id = ? " +
-        		    "group by t.id, t.team";
-        //@formatter:on		
-		return jdbcTemplateObject.queryForObject(SQL, new TeamMapper(), id);
+		return jdbcTemplateObject.queryForObject(SQL, new TeamMapper(), team, team);
 	}
 
 	@Override
@@ -122,74 +96,42 @@ public class TeamServiceMySQLImpl implements TeamService
 	{
 		//@formatter:off
         String SQL = 
-        		    "SELECT t.id, t.team," + 
-                	"               sum(m.score)/count(*) as avgscore, " +
+        		    "SELECT t.team," + 
+                	"               sum(m.score)/count(m.team) as avgscore, " +
                 	"		         (select count(*)  from scoutingtags.match m2 where m2.team = t.team group by team) as matches," + 
         		    "	             sum(m.win) as wins," + 
-        		    "	             sum(m.tie = 1) as ties, 				    		" + 
+        		    "	             sum(m.tie = 1) as ties, " + 
         		    "	             sum(m.loss = 1) as losses, " + 
-        		    "	             (SELECT sum(occurences * t.point_value) " + 
+        		    "	             (SELECT sum(occurrences * tg.point_value) " + 
         		    "				     FROM scoutingtags.matchtags mt " + 
-        		    "			                      inner join scoutingtags.tags t on mt.tag = t.tag " + 
+        		    "			                      inner join scoutingtags.tags tg on mt.tag = tg.tag " + 
         		    "                 WHERE mt.team = t.team) as ourscore, " + 
         		    "			      (SELECT sum(ranking_points) " + 
         		    "                    FROM scoutingtags.match m3 " + 
         		    "			        WHERE m3.team = t.team) as ranking_points " + 
-        		    "FROM scoutingtags.teams t" + 
+    			    "FROM (select distinct team from" +
+    				"                  (select distinct b1 as team" + 
+    				"                     from scoutingtags.schedule" +
+    				"                   union" +
+    				"                   select distinct b2 as team" + 
+    				"                    from scoutingtags.schedule" + 
+    				"                   union" + 
+    				"                  select distinct b3 as team" + 
+    				"                   from scoutingtags.schedule" + 
+    				"                  union" + 
+    				"                  select distinct r1 as team" + 
+    				"                   from scoutingtags.schedule"  +
+    				"                  union" + 
+    				"                  select distinct r2 as team" + 
+    				"                   from scoutingtags.schedule" + 
+    				"                  union" + 
+    				"                  select distinct r3 as team" + 
+    				"                   from scoutingtags.schedule) a) t" + 
         		    "             left outer join scoutingtags.match m on t.team = m.team " + 
-        		    "group by t.id, t.team " + 
+        		    "group by t.team " + 
         		    "order by t.team";
         //@formatter:on
 		return jdbcTemplateObject.query(SQL, new TeamMapper());
-	}
-
-	@Override
-	public Team getTeamByNumber(Integer teamNum)
-	{
-		//@formatter:off
-        String SQL = 
-        		    "SELECT t.id, t.team," + 
-                    "               sum(m.score)/count(*) as avgscore, " +
-                	"		         (select count(*)  from scoutingtags.match m2 where m2.team = t.team group by team) as matches," + 
-        		    "	             sum(m.win) as wins," + 
-        		    "	             sum(m.tie = 1) as ties, 				    		" + 
-        		    "	             sum(m.loss = 1) as losses, " + 
-        		    "	             (SELECT sum(occurences * t.point_value) " + 
-        		    "				     FROM scoutingtags.matchtags mt " + 
-        		    "			                      inner join scoutingtags.tags t on mt.tag = t.tag " + 
-        		    "                 WHERE mt.team = t.team) as ourscore, " + 
-        		    "			      (SELECT sum(ranking_points) " + 
-        		    "                    FROM scoutingtags.match m3 " + 
-        		    "			        WHERE m3.team = t.team) as ranking_points " + 
-        		    "FROM scoutingtags.teams t" + 
-        		    "             left outer join scoutingtags.match m on t.team = m.team " + 
-        		    "WHERE t.team = ? " +
-        		    "group by t.id, t.team";
-        //@formatter:on		
-		List<Team> results = jdbcTemplateObject.query(SQL, new TeamMapper(), teamNum);
-		return (results.size() > 0) ? results.get(0) : null;
-	}
-
-	@Override
-	public Double[] getScoreRange()
-	{
-		Double[] scores = new Double[2];
-		String SQL = "SELECT MIN(avgscore) FROM teams";
-		scores[0] = jdbcTemplateObject.queryForObject(SQL, Double.class);
-		SQL = "SELECT MAX(avgscore) FROM teams";
-		scores[1] = jdbcTemplateObject.queryForObject(SQL, Double.class);
-		return scores;
-	}
-
-	@Override
-	public Integer[] getScoreRangeFor(Team team)
-	{
-		Integer[] scores = new Integer[2];
-		String SQL = "SELECT MIN(avgscore) FROM teams WHERE team = ?";
-		scores[0] = jdbcTemplateObject.queryForObject(SQL, Integer.class, team.getTeam());
-		SQL = "SELECT MAX(avgscore) FROM teams WHERE team = ?";
-		scores[1] = jdbcTemplateObject.queryForObject(SQL, Integer.class, team.getTeam());
-		return scores;
 	}
 
 	@Override
@@ -200,22 +142,6 @@ public class TeamServiceMySQLImpl implements TeamService
 	}
 
 	@Override
-	public boolean checkForId(Integer id)
-	{
-		String SQL = "SELECT count(*) FROM teams WHERE id = ?";
-		Integer count = jdbcTemplateObject.queryForObject(SQL, Integer.class, id);
-		return count != null && count > 0;
-	}
-
-	@Override
-	public boolean checkForTeam(Integer team)
-	{
-		String SQL = "SELECT count(*) FROM teams WHERE team = ?";
-		Integer count = jdbcTemplateObject.queryForObject(SQL, Integer.class, team);
-		return count != null && count > 0;
-	}
-
-	@Override
 	public List<String> getTags()
 	{
 		String SQL = "SELECT tag FROM tags WHERE type = 'teams' ORDER BY tag";
@@ -223,30 +149,43 @@ public class TeamServiceMySQLImpl implements TeamService
 	}
 
 	@Override
-	public void mergeTags(String oldTag, String newTag)
+	public List<TeamTagExportModel> getTeamTagsForExport()
 	{
-		SqlParameterSource args = new MapSqlParameterSource().addValue("tableName", "teams").addValue("noTagCols", 4)
-				.addValue("oldTag", oldTag).addValue("newTag", newTag);
-		mergeTags.execute(args);
+		String SQL = "select team, tag, occurrences, modified_timestamp from teamtags order by team, tag";
+		return jdbcTemplateObject.query(SQL, new RowMapper<TeamTagExportModel>()
+		{
+
+			@Override
+			public TeamTagExportModel mapRow(ResultSet resultSet, int rowNum) throws SQLException
+			{
+
+				TeamTagExportModel teamTagExportModel = new TeamTagExportModel();
+				teamTagExportModel.setTeam(resultSet.getInt("team"));
+				teamTagExportModel.setTag(resultSet.getString("tag"));
+				teamTagExportModel.setOccurrences(resultSet.getInt("occurrences"));
+				teamTagExportModel.setModifiedTimestamp(resultSet.getTimestamp("modified_timestamp"));
+				return teamTagExportModel;
+			}
+		});
 	}
 
 	@Override
 	public void exportCSV(String outputFile)
 	{
-		List<Team> data = getTeams();
+		List<TeamTagExportModel> data = getTeamTagsForExport();
 		FileWriter fileWriter = null;
 		CSVPrinter csvFilePrinter = null;
 		try
 		{
 			fileWriter = new FileWriter(outputFile);
 			csvFilePrinter = new CSVPrinter(fileWriter, CSVFormat.DEFAULT.withRecordSeparator("\n"));
-			for (Team team : data)
+			for (TeamTagExportModel teamTag : data)
 			{
 				List<Object> line = new ArrayList<>();
-				for (Field field : Team.class.getDeclaredFields())
+				for (Field field : TeamTagExportModel.class.getDeclaredFields())
 				{
 					field.setAccessible(true);
-					Object value = field.get(team);
+					Object value = field.get(teamTag);
 					line.add(value);
 				}
 				csvFilePrinter.printRecord(line);
@@ -280,11 +219,11 @@ public class TeamServiceMySQLImpl implements TeamService
 	@Override
 	public void incrementTag(Integer team, String tag)
 	{
-		String sql = "UPDATE scoutingtags.teamtags SET occurences=occurences+1 WHERE team=?  AND tag=?";
+		String sql = "UPDATE scoutingtags.teamtags SET occurrences=occurrences+1 WHERE team=?  AND tag=?";
 		int rowsUpdated = jdbcTemplateObject.update(sql, team, tag);
 		if (rowsUpdated < 1)
 		{
-			String sqlInsert = "INSERT INTO scoutingtags.teamtags (team, tag, occurences) VALUES (?,?,?)";
+			String sqlInsert = "INSERT INTO scoutingtags.teamtags (team, tag, occurrences) VALUES (?,?,?)";
 			jdbcTemplateObject.update(sqlInsert, team, tag, 1);
 		}
 	}
@@ -292,7 +231,7 @@ public class TeamServiceMySQLImpl implements TeamService
 	@Override
 	public void decrementTag(Integer team, String tag)
 	{
-		String sql = "UPDATE scoutingtags.teamtags SET occurences=occurences-1 WHERE team=?  AND tag=?";
+		String sql = "UPDATE scoutingtags.teamtags SET occurrences=occurrences-1 WHERE team=?  AND tag=?";
 		jdbcTemplateObject.update(sql, team, tag);
 	}
 
@@ -301,7 +240,7 @@ public class TeamServiceMySQLImpl implements TeamService
 	{
 		//@formatter:off
 		String sql = 
-				   "SELECT grouping, category, t.tag, occurences, input_type " 
+				   "SELECT grouping, category, t.tag, occurrences, input_type " 
 		        + "FROM scoutingtags.tags t "
 				+ "             LEFT OUTER JOIN scoutingtags.teamtags m on m.tag = t.tag and team = ? "
 				+ " WHERE t.type = 'teams' " 
@@ -315,7 +254,7 @@ public class TeamServiceMySQLImpl implements TeamService
 				TeamTag teamTag = new TeamTag();
 				teamTag.setGrouping(resultSet.getString("grouping"));
 				teamTag.setCategory(resultSet.getString("category"));
-				teamTag.setOccurences(resultSet.getInt("occurences"));
+				teamTag.setOccurrences(resultSet.getInt("occurrences"));
 				teamTag.setTag(resultSet.getString("tag"));
 				teamTag.setInputType(resultSet.getString("input_type"));
 				return teamTag;
@@ -324,16 +263,63 @@ public class TeamServiceMySQLImpl implements TeamService
 	}
 
 	@Override
-	public void update(Team team)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void importCSV(String inputFile, Boolean delete)
 	{
-		// TODO Auto-generated method stub
+		try
+		{
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+			String csvData = new String(Files.readAllBytes(FileSystems.getDefault().getPath(inputFile)));
+			csvData = csvData.replaceAll("\\r", "");
+			if (delete)
+				deleteAllTeamTags();
+			CSVParser parser = CSVParser.parse(csvData, CSVFormat.DEFAULT.withRecordSeparator("\n"));
+			for (CSVRecord record : parser)
+			{
+				TeamTagExportModel teamTagExportModel = new TeamTagExportModel();
+				teamTagExportModel.setTeam(new Integer(record.get(0)));
+				teamTagExportModel.setTag(record.get(1));
+				teamTagExportModel.setOccurrences(new Integer(record.get(2)));
+				teamTagExportModel.setModifiedTimestamp(sdf.parse(record.get(3)));
+				updateInsertTeamTag(teamTagExportModel);
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
 
+	private void updateInsertTeamTag(TeamTagExportModel teamTagExportModel)
+	{
+		String selectSQL = "select modified_timestamp from scoutingtags.teamtags where team = ? and tag = ?";
+		Date currentModifiedDate = null;
+		try
+		{
+			currentModifiedDate = jdbcTemplateObject.queryForObject(selectSQL, Timestamp.class,
+					teamTagExportModel.getTeam(), teamTagExportModel.getTag());
+		}
+		catch (EmptyResultDataAccessException e)
+		{
+			// NOOP
+		}
+		if (currentModifiedDate == null)
+		{
+			String insertSQL = "insert into scoutingtags.teamtags (team, tag, occurrences, modified_timestamp) values (?, ?, ?, ?)";
+			jdbcTemplateObject.update(insertSQL, teamTagExportModel.getTeam(), teamTagExportModel.getTag(),
+					teamTagExportModel.getOccurrences(), teamTagExportModel.getModifiedTimestamp());
+		}
+		else if (currentModifiedDate.getTime() < teamTagExportModel.getModifiedTimestamp().getTime())
+		{
+			String updateSQL = "update scoutingtags.teamtags set occurrences=?, modified_timestamp = ? where team = ? and tag = ?";
+			jdbcTemplateObject.update(updateSQL, teamTagExportModel.getOccurrences(),
+					teamTagExportModel.getModifiedTimestamp(), teamTagExportModel.getTeam(),
+					teamTagExportModel.getTag());
+		}
+	}
+
+	private void deleteAllTeamTags()
+	{
+		String sql = "delete from scoutingtags.teamtags";
+		jdbcTemplateObject.update(sql);
 	}
 }

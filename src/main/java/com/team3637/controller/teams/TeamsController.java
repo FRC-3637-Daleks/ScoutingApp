@@ -31,7 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -73,57 +72,6 @@ public class TeamsController
 		return "redirect:" + context.getContextPath() + "/t/";
 	}
 
-	@RequestMapping(value = "/view/{teamNum}", method = RequestMethod.GET)
-	public String getTeam(@PathVariable("teamNum") Integer teamNum, Model model)
-	{
-		if (teamService.checkForTeam(teamNum))
-		{
-			Team team = teamService.getTeam(teamNum);
-			List<String> matchTags = tagService.getMatchUniqueTagStringsForTeam(teamNum);
-			List<String> teamTags = teamService.getTags();
-			model.addAttribute("team", team);
-			model.addAttribute("matchTags", matchTags);
-			model.addAttribute("teamTags", teamTags);
-			return "team";
-		}
-		else
-		{
-			Team team = new Team();
-			team.setTeam(teamNum);
-			List<String> teamTags = teamService.getTags();
-			model.addAttribute("team", team);
-			model.addAttribute("teamTags", teamTags);
-			return "team";
-		}
-	}
-
-	@RequestMapping(value = "/search/", method = RequestMethod.GET)
-	public String search(Model model)
-	{
-		List<String> matchTags = matchService.getTags();
-		List<String> teamTags = teamService.getTags();
-		Double[] scoreRange = teamService.getScoreRange();
-		model.addAttribute("matchTags", matchTags);
-		model.addAttribute("teamTags", teamTags);
-		model.addAttribute("minScore", scoreRange[0]);
-		model.addAttribute("maxScore", scoreRange[1]);
-		return "search";
-	}
-
-	@RequestMapping(value = "/search", method = RequestMethod.POST)
-	public String search(@RequestParam("matchTags") String matchTagsString,
-			@RequestParam("teamTags") String teamTagsString, @RequestParam("score") String score, Model model)
-	{
-		String[] matchTags = !matchTagsString.equals("") ? matchTagsString.split(",") : new String[] {};
-		String[] teamTags = !teamTagsString.equals("") ? teamTagsString.split(",") : new String[] {};
-		String[] temp = score.split(",");
-		double minScore = Double.parseDouble(temp[0]);
-		double maxScore = Double.parseDouble(temp[1]);
-		List<Team> teams = tagService.search(minScore, maxScore, matchTags, teamTags);
-		model.addAttribute("teams", teams);
-		return "search-results";
-	}
-
 	@RequestMapping(value = "/teamScouting", method = RequestMethod.GET)
 	public String teamScouting(@RequestParam("team") Integer teamNum, Model model)
 	{
@@ -150,13 +98,4 @@ public class TeamsController
 		response.setStatus(200);
 	}
 
-	@RequestMapping(value = "/add/{teamNum}", method = RequestMethod.GET)
-	public String addTeam(@PathVariable("teamNum") Integer teamNum, Model model)
-	{
-		if (!teamService.checkForTeam(teamNum))
-			teamService.create(teamNum);
-		List<Team> teams = teamService.getTeams();
-		model.addAttribute("teamWrapper", new TeamWrapper(teams, new boolean[teams.size()]));
-		return "team-list";
-	}
 }

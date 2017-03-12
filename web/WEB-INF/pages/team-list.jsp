@@ -38,12 +38,6 @@
             </button>
             <a class="navbar-brand page-scroll" href="${pageContext.request.contextPath}/">Team 3637 Scouting App</a>
         </div>
-        <div id="navbar" class="collapse navbar-collapse">
-            <div class="navbar-form navbar-right navbar-input-group form-group">
-                <input type="text" class="form-control" placeholder="Team #" name="teamNum">
-                <button type="submit" class="btn btn-info" onclick="addTeam();">Add Team</button>
-            </div>
-        </div>
     </div>
 </nav>
 <div class="container main">
@@ -67,7 +61,7 @@
                     <td class="block">${team.team}</td>
                     <td class="block">${team.matches}</td>
                     <td class="block"><fmt:formatNumber type="number" maxFractionDigits="1" value="${team.avgScore}"/></td>
-                    <td class="block">${team.ourScore}</td>
+                    <td class="block"><fmt:formatNumber type="number" maxFractionDigits="1" value="${team.ourScore}"/></td>
                     <td class="block">${team.rankingpoints}</td>
                     <td class="block">${team.wins}/${team.ties}/${team.losses}</td>                                          
                     <td class="block">

@@ -255,13 +255,13 @@ function isInt(value) {
    <td> ${matchTag.tag} </td>
    <td> 
    <#if matchTag.inputType == "checkbox">
-   		<#if matchTag.occurences != 0>
+   		<#if matchTag.occurrences != 0>
    			<input type="checkbox" onclick="toggleTag('${matchTag.tag}', this.checked);" checked>
    		<#else> 
    			<input type="checkbox" onclick="toggleTag('${matchTag.tag}', this.checked);">
    		</#if> 
    <#elseif matchTag.inputType == "incremental">
-   		<input type="text" style="width: 20px;" id="${matchTag.tag}-counter" value="${matchTag.occurences}" disabled />
+   		<input type="text" style="width: 20px;" id="${matchTag.tag}-counter" value="${matchTag.occurrences}" disabled />
    		<img src="../images/SmallPlus.png" onclick="incrementTag('${matchTag.tag}');" >
    		<img src="../images/SmallMinus.png" onclick="decrementTag('${matchTag.tag}');" >
    </#if>

@@ -234,13 +234,13 @@ function isInt(value) {
    <td> ${teamTag.tag} </td>
    <td> 
    <#if teamTag.inputType == "checkbox">
-   		<#if teamTag.occurences != 0>
+   		<#if teamTag.occurrences != 0>
    			<input type="checkbox" onclick="toggleTag('${teamTag.tag}', this.checked);" checked>
    		<#else> 
    			<input type="checkbox" onclick="toggleTag('${teamTag.tag}', this.checked);">
    		</#if> 
    <#elseif teamTag.inputType == "incremental">
-   		<input type="text" style="width: 20px;" id="${teamTag.tag}-counter" value="${teamTag.occurences}" disabled />
+   		<input type="text" style="width: 20px;" id="${teamTag.tag}-counter" value="${teamTag.occurrences}" disabled />
    		<img src="../images/SmallPlus.png" onclick="incrementTag('${teamTag.tag}');" >
    		<img src="../images/SmallMinus.png" onclick="decrementTag('${teamTag.tag}');" >
    </#if>

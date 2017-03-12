@@ -28,10 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class ScheduleController
@@ -49,23 +47,6 @@ public class ScheduleController
 		return "schedule";
 	}
 
-	@RequestMapping("/t/")
-	public String teamRedirect(@RequestParam(value = "teamNum", required = false) String teamNum)
-	{
-		if (teamNum != null && !teamNum.equals(""))
-			return "redirect:" + context.getContextPath() + "/s/t/" + teamNum;
-		else
-			return "redirect:" + context.getContextPath() + "/s/";
-	}
-
-	@RequestMapping("/t/{teamNum}")
-	public String team(@PathVariable("teamNum") Integer teamNum, Model model)
-	{
-		model.addAttribute("teamNum", teamNum);
-		model.addAttribute("schedule", scheduleService.getTeamsMatches(teamNum));
-		return "schedule";
-	}
-
 	@RequestMapping(value = "/edit", method = RequestMethod.GET)
 	public String edit(Model model)
 	{
@@ -74,25 +55,17 @@ public class ScheduleController
 		return "schedule-edit";
 	}
 
-	@RequestMapping("/edit/t/")
-	public String teamEditRedirect(@RequestParam(value = "teamNum", required = false) String teamNum)
+	@RequestMapping(value = "/edit/add", method = RequestMethod.GET)
+	public String addMatchToSchedule(Model model)
 	{
-		if (teamNum != null && !teamNum.equals(""))
-			return "redirect:/s/edit/t/" + teamNum;
-		else
-			return "redirect:" + context.getContextPath() + "/s/edit/";
-	}
-
-	@RequestMapping("/edit/t/{teamNum}")
-	public String editTeam(@PathVariable("teamNum") Integer teamNum, Model model)
-	{
-		List<Schedule> matches = scheduleService.getTeamsMatches(teamNum);
-		model.addAttribute("wrapper", new ScheduleWrapper(matches, new boolean[matches.size()]));
+		scheduleService.addNewMatch();
+		List<Schedule> matches = scheduleService.getSchedule();
+		model.addAttribute("scheduleWrapper", new ScheduleWrapper(matches, new boolean[matches.size()]));
 		return "schedule-edit";
 	}
 
 	@RequestMapping(value = "/edit", method = RequestMethod.POST)
-	public String editSummit(@ModelAttribute("schedule") ScheduleWrapper wrapper)
+	public String edit(@ModelAttribute("schedule") ScheduleWrapper wrapper)
 	{
 		if (wrapper.getSchedule() != null && wrapper.getSchedule().size() > 0)
 		{

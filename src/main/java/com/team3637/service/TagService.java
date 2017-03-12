@@ -20,9 +20,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import com.team3637.model.Match;
 import com.team3637.model.Tag;
-import com.team3637.model.Team;
 
 public interface TagService extends Service
 {
@@ -33,22 +31,6 @@ public interface TagService extends Service
 	Tag getTagByName(String name);
 
 	List<Tag> getTags();
-
-	List<Team> search(String[] matchTags, String[] teamTags);
-
-	List<Team> search(Double minScore, Double maxScore, String[] matchTags, String[] teamTags);
-
-	List<Match> searchMatches(String... params);
-
-	List<Match> searchMatches(Double minScore, Double maxScore, String... params);
-
-	List<Team> searchTeams(String... params);
-
-	List<Team> searchTeams(Double minScore, Double maxScore, String... params);
-
-	List<String> getMatchTagStringsForTeam(Integer teamNum);
-
-	List<String> getMatchUniqueTagStringsForTeam(Integer teamNum);
 
 	void deleteTagById(Integer id);
 

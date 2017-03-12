@@ -32,14 +32,6 @@
         <property name="password" value="turing"/>
     </bean>
 
-    <jdbc:initialize-database data-source="dataSource">
-        <jdbc:script separator="|" location="classpath:com/team3637/scripts/init.sql"/>
-        <jdbc:script separator="|" location="classpath:com/team3637/scripts/addCols.sql"/>
-        <jdbc:script separator="|" location="classpath:com/team3637/scripts/addTag.sql"/>
-        <jdbc:script separator="|" location="classpath:com/team3637/scripts/mergeTags.sql"/>
-        <jdbc:script separator="|" location="classpath:com/team3637/scripts/deleteTag.sql"/>
-    </jdbc:initialize-database>
-
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/pages/"/>
         <property name="suffix" value=".jsp"/>
@@ -53,9 +45,13 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="matchesService" class="com.team3637.service.MatchServiceMySQLImpl">
+    <bean id="matchService" class="com.team3637.service.MatchServiceMySQLImpl">
         <property name="dataSource" ref="dataSource"/>
     </bean>
+    
+    <bean id="matchTagService" class="com.team3637.service.MatchTagServiceMySQLImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>    
 
     <bean id="teamsService" class="com.team3637.service.TeamServiceMySQLImpl">
         <property name="dataSource" ref="dataSource"/>
