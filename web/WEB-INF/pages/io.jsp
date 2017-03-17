@@ -103,8 +103,8 @@
               enctype="multipart/form-data">
              <input type="file" class="filestyle" data-buttonText="Find file"  name="file"  id="tags" >        
              <input class="btn btn-default" type="submit" value="Import Tags">
-             <input type="checkbox" name="delete" value="false" id="tagDelete"/>
-             <label style="font-weight:normal" for="tagDelete">Delete tags before import</label>
+             <input type="checkbox" name="delete" value="true" id="delete"/>
+             <label style="font-weight:normal" for="delete">Delete tags before import</label>
         </form>
         </td>
     </tr>  
