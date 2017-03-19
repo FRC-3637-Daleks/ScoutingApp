@@ -18,8 +18,7 @@ package com.team3637.controller.schedule;
 
 import java.util.List;
 
-import javax.servlet.ServletContext;
-
+import com.team3637.bluealliance.api.EventMatchesService;
 import com.team3637.model.Schedule;
 import com.team3637.service.ScheduleService;
 import com.team3637.wrapper.ScheduleWrapper;
@@ -30,19 +29,28 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class ScheduleController
 {
+	@Autowired
+	private EventMatchesService eventMatchesService;
 
 	@Autowired
 	private ScheduleService scheduleService;
-	@Autowired
-	private ServletContext context;
 
 	@RequestMapping("/")
 	public String schedule(Model model)
 	{
+		model.addAttribute("schedule", scheduleService.getSchedule());
+		return "schedule";
+	}
+
+	@RequestMapping("/loadMatchesFromBlueAlliance")
+	public String loadMatchesFromBlueAlliance(@RequestParam("event") String event, Model model)
+	{
+		eventMatchesService.loadEventMatches(event);
 		model.addAttribute("schedule", scheduleService.getSchedule());
 		return "schedule";
 	}

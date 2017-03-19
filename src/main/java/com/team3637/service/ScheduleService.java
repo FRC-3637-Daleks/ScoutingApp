@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import com.team3637.bluealliance.api.model.Match;
 import com.team3637.model.Schedule;
 
 public interface ScheduleService extends Service
@@ -39,4 +40,6 @@ public interface ScheduleService extends Service
 	void delete(Integer matchNum);
 
 	void addNewMatch();
+
+	void updateInsertMatch(Match match);
 }

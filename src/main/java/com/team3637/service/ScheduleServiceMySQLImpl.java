@@ -29,6 +29,7 @@ import java.util.Scanner;
 
 import javax.sql.DataSource;
 
+import com.team3637.bluealliance.api.model.Match;
 import com.team3637.mapper.ScheduleMapper;
 import com.team3637.model.Schedule;
 
@@ -199,6 +200,45 @@ public class ScheduleServiceMySQLImpl implements ScheduleService
 				Integer.class);
 		String sql = "insert into scoutingtags.schedule (matchNum) values (?)";
 		jdbcTemplateObject.update(sql, ++nextMatchNum);
+
+	}
+
+	@Override
+	public void updateInsertMatch(Match match)
+	{
+		Schedule schedule = new Schedule();
+		Integer matchNum = match.getMatch_number();
+		Integer setNum = match.getSet_number();
+		Integer adder = 0;
+		String compLevel = match.getComp_level();
+		if ("ef".equals(compLevel))
+			adder += 1000;
+		if ("qf".equals(compLevel))
+			adder += 2000;
+		if ("sf".equals(compLevel))
+			adder += 3000;
+		if ("f".equals(compLevel))
+			adder += 4000;
+		if (adder > 0)
+			adder += setNum * 100;
+		schedule.setMatchNum(matchNum + adder);
+		List<String> blueTeamStrings = match.getAlliances().get("blue").getTeams();
+		if (blueTeamStrings.size() > 0)
+			schedule.setB1(Integer.parseInt(blueTeamStrings.get(0).substring(3)));
+		if (blueTeamStrings.size() > 1)
+			schedule.setB2(Integer.parseInt(blueTeamStrings.get(1).substring(3)));
+		if (blueTeamStrings.size() > 2)
+			schedule.setB3(Integer.parseInt(blueTeamStrings.get(2).substring(3)));
+		List<String> redTeamStrings = match.getAlliances().get("red").getTeams();
+		if (redTeamStrings.size() > 0)
+			schedule.setR1(Integer.parseInt(redTeamStrings.get(0).substring(3)));
+		if (redTeamStrings.size() > 1)
+			schedule.setR2(Integer.parseInt(redTeamStrings.get(1).substring(3)));
+		if (redTeamStrings.size() > 2)
+			schedule.setR3(Integer.parseInt(redTeamStrings.get(2).substring(3)));
+		int recordsUpdated = update(schedule);
+		if (recordsUpdated < 1)
+			create(schedule);
 
 	}
 }

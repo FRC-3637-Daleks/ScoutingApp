@@ -206,7 +206,7 @@ function toggle(target) {
     <th><p style="color:white; width:140px;">Matches Played: ${team.matches}</p></th>
     <th><p style="color:white; width:130px;">Avg. Score: ${team.avgScore}</p></th>
     <th><p style="color:white; width:130px;">Our Score: ${team.ourScore!}</p></th>
-    <th><p style="color:white; width:120px;">W/L/T: ${team.wins}:${team.losses}/${team.ties}</p></th>
+    <th><p style="color:white; width:120px;">W/L/T: ${team.wins}/${team.losses}/${team.ties}</p></th>
     <th><p style="color:white; width:150px;">Ranking Points: ${team.rankingpoints}</p></th>
   </tr>
 </table>  

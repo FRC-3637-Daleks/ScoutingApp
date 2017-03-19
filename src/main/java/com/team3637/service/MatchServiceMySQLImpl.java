@@ -195,9 +195,9 @@ public class MatchServiceMySQLImpl implements MatchService
 		//@formatter:off
 		String sql = 
 				    "SELECT t.team, sum(score)/count(m.team) as avgscore, count(m.team) as matches,"
-				+ "               (SELECT count(*) FROM scoutingtags.match m2 WHERE m2.team = m.team and m.win = 1) as wins,"
-				+ "               (SELECT count(*) FROM scoutingtags.match m2 WHERE m2.team = m.team and m.tie = 1) as ties, "				    		
-				+ "               (SELECT count(*) FROM scoutingtags.match m2  WHERE m2.team = m.team and m.loss = 1) as losses, "
+				+ "               (SELECT count(*) FROM scoutingtags.match m2 WHERE m2.team = m.team and m2.win = 1) as wins,"
+				+ "               (SELECT count(*) FROM scoutingtags.match m2 WHERE m2.team = m.team and m2.tie = 1) as ties, "				    		
+				+ "               (SELECT count(*) FROM scoutingtags.match m2  WHERE m2.team = m.team and m2.loss = 1) as losses, "
 				+ "				  (SELECT sum(occurrences * t.point_value) "
 				+ "                FROM scoutingtags.matchtags mt "
 			    + "				        inner join scoutingtags.tags t on mt.tag = t.tag "
