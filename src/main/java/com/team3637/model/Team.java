@@ -31,6 +31,7 @@ public class Team {
 	private List<TeamTag> teamTags;
 	private Integer rankingpoints;
 	private Integer tagsEntered;
+	private Integer startPosition;
 
 	public Integer getTagsEntered() {
 		return tagsEntered;
@@ -131,5 +132,13 @@ public class Team {
 
 	public void setTeamTags(List<TeamTag> teamTags) {
 		this.teamTags = teamTags;
+	}
+
+	public Integer getStartPosition() {
+		return startPosition;
+	}
+
+	public void setStartPosition(Integer startPosition) {
+		this.startPosition = startPosition;
 	}
 }

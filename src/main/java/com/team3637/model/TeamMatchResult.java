@@ -15,6 +15,7 @@ public class TeamMatchResult {
 	private Boolean loss;
 	private Integer rankingPoints;
 	private Integer penalty;
+	private Integer startPosition;
 
 	public Integer getRankingPoints() {
 		return rankingPoints;
@@ -78,5 +79,13 @@ public class TeamMatchResult {
 
 	public void setLoss(Boolean loss) {
 		this.loss = loss;
+	}
+
+	public Integer getStartPosition() {
+		return startPosition;
+	}
+
+	public void setStartPosition(Integer startPosition) {
+		this.startPosition = startPosition;
 	}
 }
