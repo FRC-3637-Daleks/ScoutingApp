@@ -37,6 +37,7 @@ import com.google.gson.Gson;
 import com.team3637.model.TeamMatchResult;
 import com.team3637.model.TeamMatchTag;
 import com.team3637.service.MatchService;
+import com.team3637.service.MatchTagService;
 import com.team3637.service.TagService;
 import com.team3637.service.TeamService;
 
@@ -45,6 +46,8 @@ public class MatchController {
 
 	@Autowired
 	private MatchService matchService;
+	@Autowired
+	private MatchTagService matchTagService;
 	@Autowired
 	private TeamService teamService;
 	@Autowired
@@ -185,5 +188,11 @@ public class MatchController {
 			@RequestParam("penalty") String penalty, HttpServletResponse response) {
 		matchService.saveMatchPenalty(team, match, penalty);
 		response.setStatus(200);
+	}
+
+	@RequestMapping("/getMatchTags")
+	@ResponseBody
+	public String getMatchTags(@RequestParam("team") Integer team, @RequestParam("tag") String tag) {
+		return new Gson().toJson(matchTagService.getMatchTags(team, tag));
 	}
 }

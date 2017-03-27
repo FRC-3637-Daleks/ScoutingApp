@@ -10,12 +10,14 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import com.team3637.model.MatchTag;
 import com.team3637.model.MatchTagExportModel;
 
-public interface MatchTagService extends Service
-{
+public interface MatchTagService extends Service {
 	void setDataSource(DataSource dataSource);
 
 	List<MatchTagExportModel> getMatchTagsForExport();
+
+	List<MatchTag> getMatchTags(Integer team, String tag);
 
 }
