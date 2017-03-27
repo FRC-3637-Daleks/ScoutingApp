@@ -33,6 +33,7 @@ public class Team
 	private Integer rankingpoints;
 	private Integer tagsEntered;
 	private String scoutingComments;
+	private Integer startPosition;
 
 	public Integer getTagsEntered()
 	{
@@ -168,5 +169,16 @@ public class Team
 	public void setScoutingComments(String scoutingComments)
 	{
 		this.scoutingComments = scoutingComments;
+	}
+
+	public Integer getStartPosition()
+	{
+		return startPosition;
+	}
+
+	public void setStartPosition(Integer startPosition)
+	{
+		this.startPosition = startPosition;
+
 	}
 }

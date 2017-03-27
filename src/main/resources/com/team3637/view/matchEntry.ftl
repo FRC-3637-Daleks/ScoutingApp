@@ -166,11 +166,11 @@ function saveMatchScore(score) {
            alert("Enter valid score.");   
 }  
 
-function saveMatchRankingPoints(rankingPoints) {
-        if (isInt(rankingPoints)) 
-           $.get("../m/saveMatchRankingPoints?team="+team+"&match="+match+"&rankingPoints="+rankingPoints);
+function saveMatchStartPosition(startPosition) {
+        if (isInt(startPosition)) 
+           $.get("../m/saveMatchStartPosition?team="+team+"&match="+match+"&startPosition="+startPosition);
         else 
-           alert("Enter valid ranking.");   
+           alert("Enter valid position.");   
 }  
 
 function saveMatchPenalty(penalty) {
@@ -206,7 +206,7 @@ function isInt(value) {
     <th onclick="toggle('${teamMatchResult.team}')">Team: ${teamMatchResult.team}</th>
     <th>Match: ${teamMatchResult.match}</th>
     <th>Score: <input type="text" name="score" class="teamInput" onchange="saveMatchScore(this.value);" value="${teamMatchResult.score!}"></th>
-    <th>Ranking Points: <input type="text" name="rankingPoints" class="teamInput" onchange="saveMatchRankingPoints(this.value);" value="${teamMatchResult.rankingPoints!}"></th>
+    <th>Start Position: <input type="text" name="startPosition" class="teamInput" onchange="saveMatchStartPosition(this.value);" value="${teamMatchResult.startPosition!}"></th>
     <th>Penalty Points: <input type="text" name="penalty" class="teamInput" onchange="saveMatchPenalty(this.value);" value="${teamMatchResult.penalty!}"></th>
     <th><input type="radio" name="result" id="radioWin" value="win" onclick="saveMatchResult(this.value)"  <#if teamMatchResult.win>checked</#if>><label for="radioWin">Win</label></th>
     <th><input type="radio" name="result" id="radioTie" value="tie"  onclick="saveMatchResult(this.value)"  <#if teamMatchResult.tie>checked</#if>><label for="radioTie">Tie</label></th>
