@@ -19,13 +19,15 @@ package com.team3637.mapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.springframework.jdbc.core.RowMapper;
-
 import com.team3637.model.Team;
 
-public class TeamMapper implements RowMapper<Team> {
+import org.springframework.jdbc.core.RowMapper;
+
+public class TeamMapper implements RowMapper<Team>
+{
 	@Override
-	public Team mapRow(ResultSet resultSet, int rowNum) throws SQLException {
+	public Team mapRow(ResultSet resultSet, int rowNum) throws SQLException
+	{
 		Team team = new Team();
 		team.setTeam(resultSet.getInt("team"));
 		team.setMatches(resultSet.getInt("matches"));
@@ -36,6 +38,7 @@ public class TeamMapper implements RowMapper<Team> {
 		team.setOurScore(resultSet.getDouble("ourscore"));
 		team.setRankingpoints(resultSet.getInt("ranking_points"));
 		team.setTagsEntered(resultSet.getInt("tagsentered"));
+		team.setScoutingComments(resultSet.getString("scouting_comments"));
 		return team;
 	}
 }

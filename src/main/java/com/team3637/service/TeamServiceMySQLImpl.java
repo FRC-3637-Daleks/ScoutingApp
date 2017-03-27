@@ -86,13 +86,14 @@ public class TeamServiceMySQLImpl implements TeamService
         		    "                 WHERE mt.team = t.team and occurrences > 0) as tagsentered, " +
         		    "			      (SELECT sum(ranking_points) " + 
         		    "                    FROM scoutingtags.match m3 " + 
-        		    "			        WHERE m3.team = t.team) as ranking_points " + 
-        		    "FROM (select ? as team) t" + 
+        		    "			        WHERE m3.team = t.team) as ranking_points, " +
+        		    "                 t.scouting_comments " +
+        		    "FROM  scoutingtags.teams t " +
         		    "             left outer join scoutingtags.match m on t.team = m.team " + 
         		    "WHERE t.team = ? " +
         		    "group by  t.team";
         //@formatter:on				
-		return jdbcTemplateObject.queryForObject(SQL, new TeamMapper(), team, team);
+		return jdbcTemplateObject.queryForObject(SQL, new TeamMapper(), team);
 	}
 
 	@Override
@@ -116,7 +117,8 @@ public class TeamServiceMySQLImpl implements TeamService
         		    "                 WHERE mt.team = t.team and occurrences > 0) as tagsentered, " +
         		    "			      (SELECT sum(ranking_points) " + 
         		    "                    FROM scoutingtags.match m3 " + 
-        		    "			        WHERE m3.team = t.team) as ranking_points " + 
+        		    "			        WHERE m3.team = t.team) as ranking_points, " + 
+        		    "                t.scouting_comments " +
     			    "from scoutingtags.teams t" + 
         		    "           left outer join scoutingtags.match m on t.team = m.team " + 
         		    "group by t.team " + 
@@ -312,5 +314,12 @@ public class TeamServiceMySQLImpl implements TeamService
 	{
 		String sql = "delete from scoutingtags.teamtags";
 		jdbcTemplateObject.update(sql);
+	}
+
+	@Override
+	public void saveTeamScoutingComments(Integer team, String scoutingComments)
+	{
+		String insertSQL = "update scoutingtags.teams set scouting_comments = ? where team = ?";
+		jdbcTemplateObject.update(insertSQL, scoutingComments, team);
 	}
 }

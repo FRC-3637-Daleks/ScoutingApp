@@ -27,6 +27,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -204,26 +205,10 @@ public class MatchServiceMySQLImpl implements MatchService
                 + "                where mt.team = m.team) as ourscore, "
 			    + "               (SELECT sum(ranking_points) "
                 + "                FROM scoutingtags.match m3 "
-			    + "                where m3.team = m.team) as rankingpoints "
-				+ "FROM (select distinct team from" 
-				+ "                   (select distinct b1 as team" 
-				+ "                      from scoutingtags.schedule" 
-				+ "                    union" 
-				+ "                    select distinct b2 as team" 
-				+ "                     from scoutingtags.schedule" 
-				+ "                    union" 
-				+ "                   select distinct b3 as team" 
-				+ "                    from scoutingtags.schedule" 
-				+ "                   union" 
-				+ "                   select distinct r1 as team" 
-				+ "                    from scoutingtags.schedule" 
-				+ "                   union" 
-				+ "                   select distinct r2 as team" 
-				+ "                    from scoutingtags.schedule" 
-				+ "                   union" 
-				+ "                   select distinct r3 as team" 
-				+ "                    from scoutingtags.schedule) a) t" 
-				+ "                    left outer join scoutingtags.match m on m.team = t.team "
+			    + "                where m3.team = m.team) as rankingpoints, " 
+                + "                scouting_comments "
+				+ "FROM scoutingtags.teams t" 
+				+ "             left outer join scoutingtags.match m on m.team = t.team "
 				+ "WHERE ? is null or t.team = ? "
 				+ "GROUP BY t.team";
 		//@formatter:on		
@@ -241,6 +226,7 @@ public class MatchServiceMySQLImpl implements MatchService
 				team.setLosses(resultSet.getInt("losses"));
 				team.setOurScore(resultSet.getDouble("ourscore"));
 				team.setRankingpoints(resultSet.getInt("rankingpoints"));
+				team.setScoutingComments(resultSet.getString("scouting_comments"));
 				return team;
 			}
 		}, teamNum, teamNum);
@@ -343,6 +329,19 @@ public class MatchServiceMySQLImpl implements MatchService
 				team = resultSet.getInt("r3");
 				matchTeams.getTeams().add(findTeam(teams, team));
 				matchTeams.getAllianceMap().put(team.toString(), "Red");
+
+				Iterator<Team> teamIt = matchTeams.getTeams().iterator();
+				while (!matchTeams.getHasData() && teamIt.hasNext())
+				{
+					Team nextTeam = teamIt.next();
+					Iterator<MatchStatistics> matchStatsIt = nextTeam.getMatchStatistics().iterator();
+					while (!matchTeams.getHasData() && matchStatsIt.hasNext())
+					{
+						MatchStatistics matchStatistics = matchStatsIt.next();
+						if (matchStatistics.getTotalOccurrences() > 0)
+							matchTeams.setHasData(true);
+					}
+				}
 				return matchTeams;
 			}
 		}, match, match);

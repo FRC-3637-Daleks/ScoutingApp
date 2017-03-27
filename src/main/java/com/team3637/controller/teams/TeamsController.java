@@ -90,6 +90,14 @@ public class TeamsController
 		response.setStatus(200);
 	}
 
+	@RequestMapping(value = "/saveTeamScoutingComments", method = RequestMethod.GET)
+	public void saveTeamScoutingComments(@RequestParam("team") Integer team,
+			@RequestParam("scoutingComments") String scoutingComments, HttpServletResponse response)
+	{
+		teamService.saveTeamScoutingComments(team, scoutingComments);
+		response.setStatus(200);
+	}
+
 	@RequestMapping(value = "/decrementTag", method = RequestMethod.GET)
 	public void decrementTag(@RequestParam("team") Integer team, @RequestParam("tag") String tag,
 			HttpServletResponse response)

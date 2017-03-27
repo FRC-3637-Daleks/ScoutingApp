@@ -267,6 +267,8 @@ function toggle(target) {
   <#if grouping != "">
      </tr>
   </table>
+ <div class="sectionHeader">Scouting Comments</div>
+ <textarea disabled  rows="3" cols="100" >${team.scoutingComments!}</textarea>
  </div>
  </div> 
   </#if>

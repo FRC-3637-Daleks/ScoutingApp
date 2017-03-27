@@ -9,6 +9,7 @@ public class MatchTeams
 {
 	private Integer match;
 	private List<Team> teams = new ArrayList<Team>();
+	private Boolean hasData = false;
 
 	private Map<String, String> allianceMap = new HashMap<String, String>();
 
@@ -40,5 +41,15 @@ public class MatchTeams
 	public void setTeams(List<Team> teams)
 	{
 		this.teams = teams;
+	}
+
+	public Boolean getHasData()
+	{
+		return hasData;
+	}
+
+	public void setHasData(Boolean hasData)
+	{
+		this.hasData = hasData;
 	}
 }

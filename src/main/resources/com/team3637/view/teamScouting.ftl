@@ -154,11 +154,9 @@ function decrementTag(target) {
 	
 }
 
-function saveTeamRankingPoints(rankingPoints) {
-        if (isInt(score)) 
-           $.get("../t/teamRankingPoints?team="+team+"&rankingPoints="+rankingPoints);
-        else 
-           alert("Enter valid ranking points.");   
+
+function saveTeamScoutingComments(scoutingComments) {
+         $.get("../t/saveTeamScoutingComments?team="+team+"&scoutingComments="+scoutingComments);
 }  
 
 function isInt(value) {
@@ -192,6 +190,10 @@ function isInt(value) {
     <th>Losses: ${team.wins}</th>       
   </tr>
 </table>
+<div>Scouting Comments</div>
+<textarea name="scoutingComments"  rows="3" cols="100"  onchange="saveTeamScoutingComments(this.value);">
+${team.scoutingComments!}
+</textarea>
 </form>
 <div id="${team.team}-team">  
 <form>

@@ -45,4 +45,6 @@ public interface TeamService extends Service
 	List<TeamTag> getTeamTags(Integer teamNum);
 
 	List<TeamTagExportModel> getTeamTagsForExport();
+
+	void saveTeamScoutingComments(Integer team, String scoutingComments);
 }
