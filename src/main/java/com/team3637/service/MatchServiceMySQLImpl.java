@@ -145,6 +145,7 @@ public class MatchServiceMySQLImpl implements MatchService
 				match.setRankingPoints(Integer.parseInt(record.get(7)));
 				match.setPenalty(Integer.parseInt(record.get(8)));
 				match.setModifiedTimestamp(sdf.parse(record.get(9)));
+				match.setStartPosition(Integer.parseInt(record.get(10)));
 				updateInsertMatch(match);
 			}
 		}
@@ -176,17 +177,17 @@ public class MatchServiceMySQLImpl implements MatchService
 		}
 		if (currentModifiedDate == null)
 		{
-			String insertSQL = "insert into scoutingtags.match (team, matchNum, score, win, loss, tie, ranking_points, penalty, modified_timestamp) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			String insertSQL = "insert into scoutingtags.match (team, matchNum, score, win, loss, tie, ranking_points, penalty, modified_timestamp, start_positiion) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			jdbcTemplateObject.update(insertSQL, match.getTeam(), match.getMatchNum(), match.getScore(), match.getWin(),
 					match.getLoss(), match.getTie(), match.getPenalty(), match.getRankingPoints(),
 					match.getModifiedTimestamp());
 		}
 		else if (currentModifiedDate.getTime() < match.getModifiedTimestamp().getTime())
 		{
-			String updateSQL = "update scoutingtags.match set score=?, win=?, loss=?, tie=?, ranking_points=?, penalty=?, modified_timestamp=? where team=? and matchNum=?";
+			String updateSQL = "update scoutingtags.match set score=?, win=?, loss=?, tie=?, ranking_points=?, penalty=?, modified_timestamp=?, start_position = ? where team=? and matchNum=?";
 			jdbcTemplateObject.update(updateSQL, match.getScore(), match.getWin(), match.getLoss(), match.getTie(),
-					match.getRankingPoints(), match.getPenalty(), match.getModifiedTimestamp(), match.getTeam(),
-					match.getMatchNum());
+					match.getRankingPoints(), match.getPenalty(), match.getModifiedTimestamp(),
+					match.getStartPosition(), match.getTeam(), match.getMatchNum());
 		}
 	}
 
@@ -426,7 +427,7 @@ public class MatchServiceMySQLImpl implements MatchService
 	@Override
 	public TeamMatchResult getTeamMatchResult(Integer team, Integer match) {
 		// @formatter:off
-		String sql = "SELECT team, matchNum, score, win, tie, loss, ranking_points, penalty, starting_position "
+		String sql = "SELECT team, matchNum, score, win, tie, loss, ranking_points, penalty, start_position "
 				           + "FROM scoutingtags.match m " 
 				           + "WHERE  team = ? and matchNum = ?";
 		// @formatter:on
@@ -457,7 +458,7 @@ public class MatchServiceMySQLImpl implements MatchService
 					teamMatchResult.setTie(!resultSet.wasNull() && result > 0);
 					result = resultSet.getInt("loss");
 					teamMatchResult.setLoss(!resultSet.wasNull() && result > 0);
-					Integer startPosition = resultSet.getInt("starting_position");
+					Integer startPosition = resultSet.getInt("start_position");
 					if (!resultSet.wasNull())
 						teamMatchResult.setStartPosition(startPosition);
 					return teamMatchResult;
@@ -467,7 +468,7 @@ public class MatchServiceMySQLImpl implements MatchService
 		catch (EmptyResultDataAccessException e)
 		{
 			// @formatter:off
-			String insertSQL = "insert into  scoutingtags.match (team, matchNum, win, tie, loss, ranking_points, penalty, score) values (?, ?, 0, 0, 0, 0, 0, 0)";
+			String insertSQL = "insert into  scoutingtags.match (team, matchNum, win, tie, loss, ranking_points, penalty, score, start_position) values (?, ?, 0, 0, 0, 0, 0, 0, ?)";
 			// @formatter:on
 			jdbcTemplateObject.update(insertSQL, team, match);
 			teamMatchResult = new TeamMatchResult();
@@ -486,11 +487,11 @@ public class MatchServiceMySQLImpl implements MatchService
 	@Override
 	public void saveMatchStartPosition(Integer team, Integer match, String startPosition)
 	{
-		String sql = "UPDATE scoutingtags.match SET starting_position = ? WHERE team=? AND matchNum=?";
+		String sql = "UPDATE scoutingtags.match SET start_position = ? WHERE team=? AND matchNum=?";
 		int rowsUpdated = jdbcTemplateObject.update(sql, startPosition, team, match);
 		if (rowsUpdated < 1)
 		{
-			String sqlInsert = "INSERT INTO scoutingtags.match (team, matchNum, starting_position) VALUES (?,?,?)";
+			String sqlInsert = "INSERT INTO scoutingtags.match (team, matchNum, start_position) VALUES (?,?,?)";
 			jdbcTemplateObject.update(sqlInsert, team, match, startPosition);
 		}
 

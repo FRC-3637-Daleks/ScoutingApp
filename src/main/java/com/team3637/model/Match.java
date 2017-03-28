@@ -18,7 +18,8 @@ package com.team3637.model;
 
 import java.util.Date;
 
-public class Match {
+public class Match
+{
 
 	private Integer id;
 
@@ -40,83 +41,115 @@ public class Match {
 
 	private Date modifiedTimestamp;
 
-	public Date getModifiedTimestamp() {
+	private Integer startPosition;
+
+	public Date getModifiedTimestamp()
+	{
 		return modifiedTimestamp;
 	}
 
-	public void setModifiedTimestamp(Date modifiedTimestamp) {
+	public void setModifiedTimestamp(Date modifiedTimestamp)
+	{
 		this.modifiedTimestamp = modifiedTimestamp;
 	}
 
-	public Integer getRankingPoints() {
+	public Integer getRankingPoints()
+	{
 		return rankingPoints;
 	}
 
-	public void setRankingPoints(Integer rankingPoints) {
+	public void setRankingPoints(Integer rankingPoints)
+	{
 		this.rankingPoints = rankingPoints;
 	}
 
-	public Integer getPenalty() {
+	public Integer getPenalty()
+	{
 		return penalty;
 	}
 
-	public void setPenalty(Integer penalty) {
+	public void setPenalty(Integer penalty)
+	{
 		this.penalty = penalty;
 	}
 
-	public Integer getWin() {
+	public Integer getWin()
+	{
 		return win;
 	}
 
-	public void setWin(Integer win) {
+	public void setWin(Integer win)
+	{
 		this.win = win;
 	}
 
-	public Integer getLoss() {
+	public Integer getLoss()
+	{
 		return loss;
 	}
 
-	public void setLoss(Integer loss) {
+	public void setLoss(Integer loss)
+	{
 		this.loss = loss;
 	}
 
-	public Integer getTie() {
+	public Integer getTie()
+	{
 		return tie;
 	}
 
-	public void setTie(Integer tie) {
+	public void setTie(Integer tie)
+	{
 		this.tie = tie;
 	}
 
-	public Integer getId() {
+	public Integer getId()
+	{
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Integer id)
+	{
 		this.id = id;
 	}
 
-	public Integer getMatchNum() {
+	public Integer getMatchNum()
+	{
 		return matchNum;
 	}
 
-	public void setMatchNum(Integer matchNum) {
+	public void setMatchNum(Integer matchNum)
+	{
 		this.matchNum = matchNum;
 	}
 
-	public Integer getTeam() {
+	public Integer getTeam()
+	{
 		return team;
 	}
 
-	public void setTeam(Integer team) {
+	public void setTeam(Integer team)
+	{
 		this.team = team;
 	}
 
-	public Integer getScore() {
+	public Integer getScore()
+	{
 		return score;
 	}
 
-	public void setScore(Integer score) {
+	public void setScore(Integer score)
+	{
 		this.score = score;
+	}
+
+	public Integer getStartPosition()
+	{
+		return startPosition;
+	}
+
+	public void setStartPosition(Integer startPosition)
+	{
+		this.startPosition = startPosition;
 	}
 }

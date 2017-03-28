@@ -19,13 +19,15 @@ package com.team3637.mapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.springframework.jdbc.core.RowMapper;
-
 import com.team3637.model.Match;
 
-public class MatchMapper implements RowMapper<Match> {
+import org.springframework.jdbc.core.RowMapper;
+
+public class MatchMapper implements RowMapper<Match>
+{
 	@Override
-	public Match mapRow(ResultSet resultSet, int rowNum) throws SQLException {
+	public Match mapRow(ResultSet resultSet, int rowNum) throws SQLException
+	{
 		Match match = new Match();
 		match.setId(resultSet.getInt("id"));
 		match.setMatchNum(resultSet.getInt("matchNum"));
@@ -37,6 +39,7 @@ public class MatchMapper implements RowMapper<Match> {
 		match.setRankingPoints(resultSet.getInt("ranking_points"));
 		match.setPenalty(resultSet.getInt("penalty"));
 		match.setModifiedTimestamp(resultSet.getTimestamp("modified_timestamp"));
+		match.setStartPosition(resultSet.getInt("start_position"));
 		return match;
 	}
 }
