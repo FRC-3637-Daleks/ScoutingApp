@@ -63,13 +63,13 @@
             Team Scouting Data
         </th>
         <td>
-        <a class="btn btn-default" href="${pageContext.request.contextPath}/io/teamTags.csv" download>Export
+        <a class="btn btn-default" href="${pageContext.request.contextPath}/io/teamData.zip" download>Export
             Team Scouting Data</a>
         </td>
         <td>            
-        <form action="${pageContext.request.contextPath}/io/teamTags.csv" method="post" class="form-inline"
+        <form action="${pageContext.request.contextPath}/io/teamData.zip" method="post" class="form-inline"
               enctype="multipart/form-data">
-            <input type="file" class="filestyle" data-buttonText="Find file" name="file"  id="teamTags" >                       
+            <input type="file" class="filestyle" data-buttonText="Find file" name="file"  id="teams" >                       
             <input class="btn btn-default" type="submit" value="Import Team Scouting Data">
         </form>
      </td>

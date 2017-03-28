@@ -21,11 +21,11 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import com.team3637.model.Team;
+import com.team3637.model.TeamExportModel;
 import com.team3637.model.TeamTag;
 import com.team3637.model.TeamTagExportModel;
 
-public interface TeamService extends Service
-{
+public interface TeamService extends Service {
 	void setDataSource(DataSource dataSource);
 
 	void create(Integer teamNum);
@@ -47,4 +47,10 @@ public interface TeamService extends Service
 	List<TeamTagExportModel> getTeamTagsForExport();
 
 	void saveTeamScoutingComments(Integer team, String scoutingComments);
+
+	void exportTeamCSV(String filePath);
+
+	List<TeamExportModel> getTeamsForExport();
+
+	void importTeamsCSV(String string, Boolean delete);
 }
