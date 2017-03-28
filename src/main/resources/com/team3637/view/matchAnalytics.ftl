@@ -7,6 +7,14 @@ body {
 	background-color: #ebebe0;
 }
 
+.dataNotImported {
+    background-color: #cecec4;
+}
+
+.dataImported {
+    background-color:#ebebe0 ; 
+}
+
 .categoryTable{
     border-spacing: 0px;  
 }
@@ -179,7 +187,12 @@ function toggle(target) {
 </#if>
 <#list matchTeamsList as matchTeams>
 <#assign teams = matchTeams.teams> 
-<div onclick="toggle('${matchTeams.match}-match')">
+
+<#assign dataImportStyle = "dataNotImported"> 
+<#if matchTeams.hasData>  
+<#assign dataImportStyle = "dataImported"> 
+</#if>  
+<div class="${dataImportStyle}" onclick="toggle('${matchTeams.match}-match')">
 <table class = "matchHeader" cellspacing = "0">
   <tr>
     <th><p style="color:black; width:100px;">Match: ${matchTeams.match}</p></th>
