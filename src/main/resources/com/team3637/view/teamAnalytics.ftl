@@ -245,7 +245,7 @@ $(document).ready(function(){
 <#else> 
    <tr>       
    <td> ${matchStatistic.tag} </td>  
-   <td> <a href="javascript:void(0);"  data-title="${matchStatistic.tag}"  data-template='<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content"></div></div>' data-url="/ScoutingApp/m/getMatchTags?team=${team}&tag=${matchStatistic.tag}" class="total-occurrences-popover-ajax">${matchStatistic.totalOccurrences}</a> </td>
+   <td><a href="javascript:void(0);"  data-title="${matchStatistic.tag}"  data-template='<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content"></div></div>' data-url="/ScoutingApp/m/getMatchTags?team=${team}&tag=${matchStatistic.tag}" class="total-occurrences-popover-ajax">${matchStatistic.totalOccurrences}</a> </td>
    </tr>   
 </#if>
 </#list>   
