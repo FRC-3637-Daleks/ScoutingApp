@@ -114,7 +114,8 @@ body {
 <link href="../css/bootstrap-slider.css" rel="stylesheet"/> 
 <link href="../css/chosen.css" rel="stylesheet"/>
 <link href="../css/main.css" rel="stylesheet"/>
-<script src="../js/jquery.min.js"></script>
+<script src="../js/jquery.min.js"></script> 
+<script src="../bootstrap/js/bootstrap.min.js"></script> 
 <script>
 function show(target) {
     document.getElementById(target).style.display = 'block';
@@ -131,6 +132,34 @@ function toggle(target) {
 		hide(target);
 	}
 }
+
+function registerPopOvers()
+{
+  $("a.total-occurrences-popover-ajax").each(function() {
+           $(this).popover({  
+              trigger:"focus",
+              placement: function (context, source) { 
+                    var obj = $(source);
+                    $.get(obj.data("url"),function(d) {
+                              var jsonObject =  JSON.parse(d); 
+                              var popoverHTML = '<div>'+obj.data("title")+'</div><table style="width: 100%"><tr><td width="50%">Match</td><td  width="50%">#</td></tr>';
+                              $.each(jsonObject, function( key, val ) {
+                                        popoverHTML+='<tr><td>' + val.match+'</td><td>'+val.occurrences+'</td></tr>';    
+                              }); 
+                             popoverHTML += '</table>';  
+                             $(context).html(popoverHTML) ;  
+                    });
+              },
+              content: "loading",
+              html:true   
+           });   
+      });     
+}
+
+$(document).ready(function(){
+   registerPopOvers();
+});
+
 </script>
 </head>
 <body style="background-color: #ebebe0">
@@ -204,23 +233,23 @@ function toggle(target) {
    </tr>
    </table>	
    </td>
-   </#if>
+   </#if> 
    <#assign category =  matchStatistic.category>
    <td>
    <div class="categoryTitle" onclick="toggle('${team}-${grouping}-${category}-table')">${category}</div>
    <table class="tagTable"  id="${team}-${grouping}-${category}-table">
    <tr>
    <td> ${matchStatistic.tag} </td>
-   <td> ${matchStatistic.totalOccurrences} </td>
+   <td><a href="javascript:void(0);"  data-title="${matchStatistic.tag}" data-template='<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content"></div></div>' data-url="/ScoutingApp/m/getMatchTags?team=${team}&tag=${matchStatistic.tag}" class="total-occurrences-popover-ajax">${matchStatistic.totalOccurrences}</a> </td>
    </tr>
-<#else>
-   <tr> 
-   <td> ${matchStatistic.tag} </td>
-   <td> ${matchStatistic.totalOccurrences} </td>
-   </tr>
+<#else> 
+   <tr>       
+   <td> ${matchStatistic.tag} </td>  
+   <td> <a href="javascript:void(0);"  data-title="${matchStatistic.tag}"  data-template='<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content"></div></div>' data-url="/ScoutingApp/m/getMatchTags?team=${team}&tag=${matchStatistic.tag}" class="total-occurrences-popover-ajax">${matchStatistic.totalOccurrences}</a> </td>
+   </tr>   
 </#if>
-</#list>
- <#if category != "">
+</#list>   
+ <#if category != ""> 
    </tr>
    </table>	
    </td>
