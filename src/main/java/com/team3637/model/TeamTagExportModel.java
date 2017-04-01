@@ -14,6 +14,7 @@ public class TeamTagExportModel
 	private String tag;
 	private Integer occurrences;
 	private Date modifiedTimestamp;
+	private String eventId;
 
 	public Integer getTeam()
 	{
@@ -53,5 +54,15 @@ public class TeamTagExportModel
 	public void setModifiedTimestamp(Date modifiedTimestamp)
 	{
 		this.modifiedTimestamp = modifiedTimestamp;
+	}
+
+	public String getEventId()
+	{
+		return eventId;
+	}
+
+	public void setEventId(String eventId)
+	{
+		this.eventId = eventId;
 	}
 }

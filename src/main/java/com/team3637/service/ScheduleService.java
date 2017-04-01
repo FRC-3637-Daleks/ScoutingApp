@@ -31,8 +31,6 @@ public interface ScheduleService extends Service
 
 	Schedule getMatch(Integer matchNum);
 
-	List<Schedule> getTeamsMatches(Integer teamNum);
-
 	List<Schedule> getSchedule();
 
 	int update(Schedule schedule);
@@ -42,4 +40,6 @@ public interface ScheduleService extends Service
 	void addNewMatch();
 
 	void updateInsertMatch(Match match);
+
+	String getDefaultEvent();
 }

@@ -14,6 +14,7 @@ public class Match
 	private String comp_level;
 	private Integer match_number;
 	private Integer set_number;
+	private String eventId;
 	private HashMap<String, Alliance> alliances = new HashMap<String, Alliance>();
 
 	public class Alliance
@@ -80,6 +81,16 @@ public class Match
 	public void setSet_number(Integer set_number)
 	{
 		this.set_number = set_number;
+	}
+
+	public String getEventId()
+	{
+		return eventId;
+	}
+
+	public void setEventId(String eventId)
+	{
+		this.eventId = eventId;
 	}
 
 }

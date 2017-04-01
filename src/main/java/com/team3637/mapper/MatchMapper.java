@@ -40,6 +40,7 @@ public class MatchMapper implements RowMapper<Match>
 		match.setPenalty(resultSet.getInt("penalty"));
 		match.setModifiedTimestamp(resultSet.getTimestamp("modified_timestamp"));
 		match.setStartPosition(resultSet.getInt("start_position"));
+		match.setEventId(resultSet.getString("event_id"));
 		return match;
 	}
 }

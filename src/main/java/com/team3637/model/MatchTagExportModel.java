@@ -15,6 +15,7 @@ public class MatchTagExportModel
 	private String tag;
 	private Integer occurrences;
 	private Date modifiedTimestamp;
+	private String eventId;
 
 	public Integer getTeam()
 	{
@@ -64,5 +65,15 @@ public class MatchTagExportModel
 	public void setMatch(Integer match)
 	{
 		this.match = match;
+	}
+
+	public String getEventId()
+	{
+		return eventId;
+	}
+
+	public void setEventId(String eventId)
+	{
+		this.eventId = eventId;
 	}
 }

@@ -10,6 +10,7 @@ public class MatchTeams
 	private Integer match;
 	private List<Team> teams = new ArrayList<Team>();
 	private Boolean hasData = false;
+	private String eventId;
 
 	private Map<String, String> allianceMap = new HashMap<String, String>();
 
@@ -51,5 +52,15 @@ public class MatchTeams
 	public void setHasData(Boolean hasData)
 	{
 		this.hasData = hasData;
+	}
+
+	public String getEventId()
+	{
+		return eventId;
+	}
+
+	public void setEventId(String eventId)
+	{
+		this.eventId = eventId;
 	}
 }

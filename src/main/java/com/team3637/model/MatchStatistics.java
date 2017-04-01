@@ -8,6 +8,7 @@ public class MatchStatistics
 	private int totalOccurrences;
 	private String tag;
 	private Integer team;
+	private String eventId;
 
 	public Integer getTeam()
 	{
@@ -57,6 +58,16 @@ public class MatchStatistics
 	public void setTotalOccurrences(int totalOccurrences)
 	{
 		this.totalOccurrences = totalOccurrences;
+	}
+
+	public String getEventId()
+	{
+		return eventId;
+	}
+
+	public void setEventId(String eventId)
+	{
+		this.eventId = eventId;
 	}
 
 }

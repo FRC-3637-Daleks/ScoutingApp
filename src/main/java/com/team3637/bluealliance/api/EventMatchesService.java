@@ -9,7 +9,10 @@ package com.team3637.bluealliance.api;
 import java.util.List;
 
 import com.team3637.bluealliance.api.model.Match;
+import com.team3637.bluealliance.api.model.Team;
+import com.team3637.model.TeamExportModel;
 import com.team3637.service.ScheduleService;
+import com.team3637.service.TeamService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -28,6 +31,9 @@ public class EventMatchesService
 
 	@Autowired
 	private ScheduleService scheduleService;
+
+	@Autowired
+	private TeamService teamService;
 
 	public RestTemplate getRestTemplate()
 	{
@@ -54,7 +60,31 @@ public class EventMatchesService
 		List<Match> matches = matchEventResponse.getBody();
 		for (Match match : matches)
 		{
+			match.setEventId(event);
 			scheduleService.updateInsertMatch(match);
+		}
+	}
+
+	public void loadEventTeams(String event)
+	{
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("X-TBA-App-Id", "3637:ScoutingApp:3");
+		headers.add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
+
+		HttpEntity<String> requestEntity = new HttpEntity<String>(headers);
+		ResponseEntity<List<Team>> teamsEventResponse = restTemplate.exchange(
+				"https://www.thebluealliance.com/api/v2/event/" + event + "/teams", HttpMethod.GET, requestEntity,
+				new ParameterizedTypeReference<List<Team>>()
+				{
+				});
+		List<Team> teams = teamsEventResponse.getBody();
+		for (Team team : teams)
+		{
+			TeamExportModel teamExportModel = new TeamExportModel();
+			teamExportModel.setEventId(event);
+			teamExportModel.setTeam(team.getTeam_number());
+			teamExportModel.setName(team.getNickname());
+			teamService.updateInsertTeam(teamExportModel);
 		}
 	}
 }

@@ -6,7 +6,8 @@
  */
 package com.team3637.model;
 
-public class TeamMatchResult {
+public class TeamMatchResult
+{
 	private Integer team;
 	private Integer match;
 	private Integer score;
@@ -16,76 +17,105 @@ public class TeamMatchResult {
 	private Integer rankingPoints;
 	private Integer penalty;
 	private Integer startPosition;
+	private String eventId;
 
-	public Integer getRankingPoints() {
+	public Integer getRankingPoints()
+	{
 		return rankingPoints;
 	}
 
-	public void setRankingPoints(Integer rankingPoints) {
+	public void setRankingPoints(Integer rankingPoints)
+	{
 		this.rankingPoints = rankingPoints;
 	}
 
-	public Integer getPenalty() {
+	public Integer getPenalty()
+	{
 		return penalty;
 	}
 
-	public void setPenalty(Integer penalty) {
+	public void setPenalty(Integer penalty)
+	{
 		this.penalty = penalty;
 	}
 
-	public Integer getTeam() {
+	public Integer getTeam()
+	{
 		return team;
 	}
 
-	public void setTeam(Integer team) {
+	public void setTeam(Integer team)
+	{
 		this.team = team;
 	}
 
-	public Integer getMatch() {
+	public Integer getMatch()
+	{
 		return match;
 	}
 
-	public void setMatch(Integer match) {
+	public void setMatch(Integer match)
+	{
 		this.match = match;
 	}
 
-	public Integer getScore() {
+	public Integer getScore()
+	{
 		return score;
 	}
 
-	public void setScore(Integer score) {
+	public void setScore(Integer score)
+	{
 		this.score = score;
 	}
 
-	public Boolean getWin() {
+	public Boolean getWin()
+	{
 		return win;
 	}
 
-	public void setWin(Boolean win) {
+	public void setWin(Boolean win)
+	{
 		this.win = win;
 	}
 
-	public Boolean getTie() {
+	public Boolean getTie()
+	{
 		return tie;
 	}
 
-	public void setTie(Boolean tie) {
+	public void setTie(Boolean tie)
+	{
 		this.tie = tie;
 	}
 
-	public Boolean getLoss() {
+	public Boolean getLoss()
+	{
 		return loss;
 	}
 
-	public void setLoss(Boolean loss) {
+	public void setLoss(Boolean loss)
+	{
 		this.loss = loss;
 	}
 
-	public Integer getStartPosition() {
+	public Integer getStartPosition()
+	{
 		return startPosition;
 	}
 
-	public void setStartPosition(Integer startPosition) {
+	public void setStartPosition(Integer startPosition)
+	{
 		this.startPosition = startPosition;
+	}
+
+	public String getEventId()
+	{
+		return eventId;
+	}
+
+	public void setEventId(String eventId)
+	{
+		this.eventId = eventId;
 	}
 }

@@ -8,6 +8,7 @@ public class TeamMatchTag
 	private int occurrences;
 	private String tag;
 	private String inputType;
+	private String eventId;
 
 	public String getInputType()
 	{
@@ -57,6 +58,16 @@ public class TeamMatchTag
 	public void setOccurrences(int occurrences)
 	{
 		this.occurrences = occurrences;
+	}
+
+	public String getEventId()
+	{
+		return eventId;
+	}
+
+	public void setEventId(String eventId)
+	{
+		this.eventId = eventId;
 	}
 
 }

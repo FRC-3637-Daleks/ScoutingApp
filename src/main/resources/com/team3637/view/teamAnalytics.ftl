@@ -147,7 +147,7 @@ function registerPopOvers()
                                         popoverHTML+='<tr><td>' + val.match+'</td><td>'+val.occurrences+'</td></tr>';    
                               }); 
                              popoverHTML += '</table>';  
-                             $(context).html(popoverHTML) ;  
+                             $(context).html(popoverHTML) ; 
                     });
               },
               content: "loading",

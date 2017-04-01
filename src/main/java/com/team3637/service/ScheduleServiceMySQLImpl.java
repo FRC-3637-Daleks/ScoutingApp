@@ -69,10 +69,11 @@ public class ScheduleServiceMySQLImpl implements ScheduleService
 
 	public void create(Schedule schedule)
 	{
-		String SQL = "INSERT INTO schedule (matchNum, b1, b2, b3, r1, r2, r3) VALUES (?, ?, ?, ?, ?, ?, ?);";
+		if (schedule.getEventId() == null)
+			schedule.setEventId(getDefaultEvent());
+		String SQL = "INSERT INTO schedule (matchNum, b1, b2, b3, r1, r2, r3, event_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 		jdbcTemplateObject.update(SQL, schedule.getMatchNum(), schedule.getB1(), schedule.getB2(), schedule.getB3(),
-				schedule.getR1(), schedule.getR2(), schedule.getR3());
-
+				schedule.getR1(), schedule.getR2(), schedule.getR3(), schedule.getEventId());
 	}
 
 	@Override
@@ -83,17 +84,9 @@ public class ScheduleServiceMySQLImpl implements ScheduleService
 	}
 
 	@Override
-	public List<Schedule> getTeamsMatches(Integer teamNum)
-	{
-		String SQL = "SELECT * FROM schedule WHERE b1 = ? OR b2 = ? OR b3 = ? OR r1 = ? OR r2 = ? OR r3 = ?";
-		return jdbcTemplateObject.query(SQL, new ScheduleMapper(), teamNum, teamNum, teamNum, teamNum, teamNum,
-				teamNum);
-	}
-
-	@Override
 	public List<Schedule> getSchedule()
 	{
-		String SQL = "SELECT * FROM schedule";
+		String SQL = "select matchNum, event_id, b1, b2, b3, r1, r2, r3, event_id from schedule where event_id = (select event_id from event where active = 1)";
 		List<Schedule> schedule = jdbcTemplateObject.query(SQL, new ScheduleMapper());
 		return schedule;
 	}
@@ -101,18 +94,20 @@ public class ScheduleServiceMySQLImpl implements ScheduleService
 	@Override
 	public int update(Schedule schedule)
 	{
-		String deleteSQL = "delete from scoutingtags.match where matchNum=? and team not in (?, ?, ?, ?, ?, ?)";
+		if (schedule.getEventId() == null)
+			schedule.setEventId(getDefaultEvent());
+		String deleteSQL = "delete from scoutingtags.match where matchNum=? and team not in (?, ?, ?, ?, ?, ?) and event_id = ?";
 		jdbcTemplateObject.update(deleteSQL, schedule.getMatchNum(), schedule.getB1(), schedule.getB2(),
-				schedule.getB3(), schedule.getR1(), schedule.getR2(), schedule.getR3());
-		String updateSQL = "update scoutingtags.schedule set b1 =?, b2 =?, b3 = ?, r1 =?, r2 = ?, r3 =? where matchNum = ?";
+				schedule.getB3(), schedule.getR1(), schedule.getR2(), schedule.getR3(), schedule.getEventId());
+		String updateSQL = "update scoutingtags.schedule set b1 =?, b2 =?, b3 = ?, r1 =?, r2 = ?, r3 =?, event_id =? where matchNum = ?";
 		return jdbcTemplateObject.update(updateSQL, schedule.getB1(), schedule.getB2(), schedule.getB3(),
-				schedule.getR1(), schedule.getR2(), schedule.getR3(), schedule.getMatchNum());
+				schedule.getR1(), schedule.getR2(), schedule.getR3(), schedule.getEventId(), schedule.getMatchNum());
 	}
 
 	@Override
 	public void delete(Integer matchNum)
 	{
-		String SQL = "DELETE FROM schedule WHERE matchNum = ?";
+		String SQL = "DELETE FROM schedule WHERE matchNum = ? and event_id = (select event_id from event where active = 1)";
 		jdbcTemplateObject.update(SQL, matchNum);
 	}
 
@@ -182,6 +177,7 @@ public class ScheduleServiceMySQLImpl implements ScheduleService
 				schedule.setR1(Integer.parseInt(record.get(5)));
 				schedule.setR2(Integer.parseInt(record.get(6)));
 				schedule.setR3(Integer.parseInt(record.get(7)));
+				schedule.setEventId(record.get(8));
 				int recordsUpdated = update(schedule);
 				if (recordsUpdated < 1)
 					create(schedule);
@@ -198,7 +194,7 @@ public class ScheduleServiceMySQLImpl implements ScheduleService
 	{
 		Integer nextMatchNum = jdbcTemplateObject.queryForObject("select max(matchNum) from scoutingtags.schedule",
 				Integer.class);
-		String sql = "insert into scoutingtags.schedule (matchNum) values (?)";
+		String sql = "insert into scoutingtags.schedule (matchNum, event_id) values (?,  (select event_id from event where active = 1))";
 		jdbcTemplateObject.update(sql, ++nextMatchNum);
 
 	}
@@ -236,9 +232,16 @@ public class ScheduleServiceMySQLImpl implements ScheduleService
 			schedule.setR2(Integer.parseInt(redTeamStrings.get(1).substring(3)));
 		if (redTeamStrings.size() > 2)
 			schedule.setR3(Integer.parseInt(redTeamStrings.get(2).substring(3)));
+		schedule.setEventId(match.getEventId());
 		int recordsUpdated = update(schedule);
 		if (recordsUpdated < 1)
 			create(schedule);
+	}
 
+	@Override
+	public String getDefaultEvent()
+	{
+		return jdbcTemplateObject.queryForObject("select event_id from scoutingtags.event where active = 1",
+				String.class);
 	}
 }

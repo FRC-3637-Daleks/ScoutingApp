@@ -25,10 +25,9 @@ import com.team3637.model.TeamExportModel;
 import com.team3637.model.TeamTag;
 import com.team3637.model.TeamTagExportModel;
 
-public interface TeamService extends Service {
+public interface TeamService extends Service
+{
 	void setDataSource(DataSource dataSource);
-
-	void create(Integer teamNum);
 
 	Team getTeam(Integer id);
 
@@ -53,4 +52,6 @@ public interface TeamService extends Service {
 	List<TeamExportModel> getTeamsForExport();
 
 	void importTeamsCSV(String string, Boolean delete);
+
+	void updateInsertTeam(TeamExportModel teamExportModel);
 }

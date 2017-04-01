@@ -34,6 +34,7 @@ public class Team
 	private Integer tagsEntered;
 	private String scoutingComments;
 	private Integer startPosition;
+	private String eventId;
 
 	public Integer getTagsEntered()
 	{
@@ -180,5 +181,15 @@ public class Team
 	{
 		this.startPosition = startPosition;
 
+	}
+
+	public String getEventId()
+	{
+		return eventId;
+	}
+
+	public void setEventId(String eventId)
+	{
+		this.eventId = eventId;
 	}
 }

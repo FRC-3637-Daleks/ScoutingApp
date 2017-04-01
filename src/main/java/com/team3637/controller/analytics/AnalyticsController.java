@@ -44,13 +44,14 @@ public class AnalyticsController
 	private ServletContext context;
 
 	@RequestMapping(value = "/teamAnalytics", method = RequestMethod.GET)
-	public String teamAnalytics(@RequestParam(value = "team", required = false) Integer teamNum, Model model)
+	public String teamAnalytics(@RequestParam(value = "team", required = false) Integer teamNum,
+			@RequestParam(value = "event", required = false) String eventId, Model model)
 	{
-		List<Team> teams = matchService.getTeamMatchSummaryInfo(teamNum);
+		List<Team> teams = matchService.getTeamMatchSummaryInfo(teamNum, eventId);
 		model.addAttribute("teams", teams);
 		for (Team team : teams)
 		{
-			List<MatchStatistics> matchStatistics = matchService.getTeamMatchStatistics(team.getTeam());
+			List<MatchStatistics> matchStatistics = matchService.getTeamMatchStatistics(team.getTeam(), eventId);
 			team.setMatchStatistics(matchStatistics);
 		}
 		return "teamAnalytics";
@@ -58,15 +59,18 @@ public class AnalyticsController
 	}
 
 	@RequestMapping(value = "/teamAnalyticsByMatch", method = RequestMethod.GET)
-	public String teamAnalyticsByMatch(@RequestParam(value = "match", required = false) Integer match, Model model)
+	public String teamAnalyticsByMatch(@RequestParam(value = "match", required = false) Integer match,
+			@RequestParam(value = "event", required = false) String eventId, Model model)
 	{
-		List<Team> teams = matchService.getTeamMatchSummaryInfo(null);
+		if (eventId == null)
+			eventId = matchService.getDefaultEvent();
+		List<Team> teams = matchService.getTeamMatchSummaryInfo(null, eventId);
 		for (Team team : teams)
 		{
-			List<MatchStatistics> matchStatistics = matchService.getTeamMatchStatistics(team.getTeam());
+			List<MatchStatistics> matchStatistics = matchService.getTeamMatchStatistics(team.getTeam(), eventId);
 			team.setMatchStatistics(matchStatistics);
 		}
-		List<MatchTeams> matchTeamsList = matchService.getMatchTeams(match, teams);
+		List<MatchTeams> matchTeamsList = matchService.getMatchTeams(match, teams, eventId);
 		model.addAttribute("matchTeamsList", matchTeamsList);
 		return "matchAnalytics";
 
@@ -74,15 +78,17 @@ public class AnalyticsController
 
 	@RequestMapping(value = "/exportTeamAnalyticsByMatch", method = RequestMethod.GET)
 	public String exportTeamAnalyticsByMatch(@RequestParam(value = "match", required = false) Integer match,
-			Model model, HttpServletResponse response)
+			@RequestParam(value = "event", required = false) String eventId, Model model, HttpServletResponse response)
 	{
-		List<Team> teams = matchService.getTeamMatchSummaryInfo(null);
+		if (eventId == null)
+			eventId = matchService.getDefaultEvent();
+		List<Team> teams = matchService.getTeamMatchSummaryInfo(null, eventId);
 		for (Team team : teams)
 		{
-			List<MatchStatistics> matchStatistics = matchService.getTeamMatchStatistics(team.getTeam());
+			List<MatchStatistics> matchStatistics = matchService.getTeamMatchStatistics(team.getTeam(), eventId);
 			team.setMatchStatistics(matchStatistics);
 		}
-		List<MatchTeams> matchTeamsList = matchService.getMatchTeams(match, teams);
+		List<MatchTeams> matchTeamsList = matchService.getMatchTeams(match, teams, eventId);
 		model.addAttribute("matchTeamsList", matchTeamsList);
 		model.addAttribute("export", true);
 		response.setContentType("application/octet-stream");
@@ -92,14 +98,14 @@ public class AnalyticsController
 	}
 
 	@RequestMapping(value = "/exportTeamAnalytics", method = RequestMethod.GET)
-	public String exportTeamAnalytics(@RequestParam(value = "team", required = false) Integer teamNum, Model model,
-			HttpServletResponse response)
+	public String exportTeamAnalytics(@RequestParam(value = "team", required = false) Integer teamNum,
+			@RequestParam(value = "event", required = false) String eventId, Model model, HttpServletResponse response)
 	{
-		List<Team> teams = matchService.getTeamMatchSummaryInfo(teamNum);
+		List<Team> teams = matchService.getTeamMatchSummaryInfo(teamNum, eventId);
 		model.addAttribute("teams", teams);
 		for (Team team : teams)
 		{
-			List<MatchStatistics> matchStatistics = matchService.getTeamMatchStatistics(team.getTeam());
+			List<MatchStatistics> matchStatistics = matchService.getTeamMatchStatistics(team.getTeam(), eventId);
 			team.setMatchStatistics(matchStatistics);
 		}
 		model.addAttribute("export", true);

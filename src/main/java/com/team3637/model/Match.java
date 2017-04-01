@@ -43,6 +43,8 @@ public class Match
 
 	private Integer startPosition;
 
+	private String eventId;
+
 	public Date getModifiedTimestamp()
 	{
 		return modifiedTimestamp;
@@ -151,5 +153,15 @@ public class Match
 	public void setStartPosition(Integer startPosition)
 	{
 		this.startPosition = startPosition;
+	}
+
+	public String getEventId()
+	{
+		return eventId;
+	}
+
+	public void setEventId(String eventId)
+	{
+		this.eventId = eventId;
 	}
 }

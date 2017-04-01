@@ -21,6 +21,7 @@ import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
+import com.team3637.bluealliance.api.EventMatchesService;
 import com.team3637.model.Team;
 import com.team3637.service.MatchService;
 import com.team3637.service.TagService;
@@ -47,6 +48,9 @@ public class TeamsController
 	private TagService tagService;
 	@Autowired
 	private ServletContext context;
+
+	@Autowired
+	private EventMatchesService eventMatchesService;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String listTeams(Model model)
@@ -103,6 +107,13 @@ public class TeamsController
 			HttpServletResponse response)
 	{
 		teamService.decrementTag(team, tag);
+		response.setStatus(200);
+	}
+
+	@RequestMapping("/loadEventTeamsFromBlueAlliance")
+	public void loadMatchesFromBlueAlliance(@RequestParam("event") String event, HttpServletResponse response)
+	{
+		eventMatchesService.loadEventTeams(event);
 		response.setStatus(200);
 	}
 
