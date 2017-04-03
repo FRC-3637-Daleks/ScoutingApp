@@ -298,7 +298,7 @@ public class TeamServiceMySQLImpl implements TeamService
 		String sql = 
 				   "SELECT grouping, category, t.tag, occurrences, input_type, event_id " 
 		        + "FROM scoutingtags.tags t "
-				+ "             LEFT OUTER JOIN scoutingtags.teamtags m on m.tag = t.tag and team = ? "
+				+ "             LEFT OUTER JOIN scoutingtags.teamtags m on m.tag = t.tag and team = ? and event_id = (select event_id from scoutingtags.event where active = 1) "
 				+ " WHERE t.type = 'teams' " 
 				+ "ORDER BY grouping, category, t.tag;";
 		//@formatter:on

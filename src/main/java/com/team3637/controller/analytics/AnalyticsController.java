@@ -27,6 +27,7 @@ import com.team3637.model.MatchStatistics;
 import com.team3637.model.MatchTeams;
 import com.team3637.model.Team;
 import com.team3637.service.MatchService;
+import com.team3637.service.ScheduleService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -41,6 +42,8 @@ public class AnalyticsController
 	@Autowired
 	private MatchService matchService;
 	@Autowired
+	private ScheduleService scheduleService;
+	@Autowired
 	private ServletContext context;
 
 	@RequestMapping(value = "/teamAnalytics", method = RequestMethod.GET)
@@ -54,6 +57,8 @@ public class AnalyticsController
 			List<MatchStatistics> matchStatistics = matchService.getTeamMatchStatistics(team.getTeam(), eventId);
 			team.setMatchStatistics(matchStatistics);
 		}
+		model.addAttribute("events", scheduleService.getEventList());
+		model.addAttribute("selectedEvent", eventId);
 		return "teamAnalytics";
 
 	}
@@ -72,6 +77,8 @@ public class AnalyticsController
 		}
 		List<MatchTeams> matchTeamsList = matchService.getMatchTeams(match, teams, eventId);
 		model.addAttribute("matchTeamsList", matchTeamsList);
+		model.addAttribute("events", scheduleService.getEventList());
+		model.addAttribute("selectedEvent", eventId);
 		return "matchAnalytics";
 
 	}

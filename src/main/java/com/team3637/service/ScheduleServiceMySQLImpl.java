@@ -86,7 +86,7 @@ public class ScheduleServiceMySQLImpl implements ScheduleService
 	@Override
 	public List<Schedule> getSchedule()
 	{
-		String SQL = "select matchNum, event_id, b1, b2, b3, r1, r2, r3, event_id from schedule where event_id = (select event_id from event where active = 1)";
+		String SQL = "select id, matchNum, event_id, b1, b2, b3, r1, r2, r3, event_id from schedule where event_id = (select event_id from event where active = 1)";
 		List<Schedule> schedule = jdbcTemplateObject.query(SQL, new ScheduleMapper());
 		return schedule;
 	}
@@ -96,12 +96,9 @@ public class ScheduleServiceMySQLImpl implements ScheduleService
 	{
 		if (schedule.getEventId() == null)
 			schedule.setEventId(getDefaultEvent());
-		String deleteSQL = "delete from scoutingtags.match where matchNum=? and team not in (?, ?, ?, ?, ?, ?) and event_id = ?";
-		jdbcTemplateObject.update(deleteSQL, schedule.getMatchNum(), schedule.getB1(), schedule.getB2(),
-				schedule.getB3(), schedule.getR1(), schedule.getR2(), schedule.getR3(), schedule.getEventId());
-		String updateSQL = "update scoutingtags.schedule set b1 =?, b2 =?, b3 = ?, r1 =?, r2 = ?, r3 =?, event_id =? where matchNum = ?";
+		String updateSQL = "update scoutingtags.schedule set b1 =?, b2 =?, b3 = ?, r1 =?, r2 = ?, r3 =? where matchNum = ? and event_id = ?";
 		return jdbcTemplateObject.update(updateSQL, schedule.getB1(), schedule.getB2(), schedule.getB3(),
-				schedule.getR1(), schedule.getR2(), schedule.getR3(), schedule.getEventId(), schedule.getMatchNum());
+				schedule.getR1(), schedule.getR2(), schedule.getR3(), schedule.getMatchNum(), schedule.getEventId());
 	}
 
 	@Override
@@ -243,5 +240,12 @@ public class ScheduleServiceMySQLImpl implements ScheduleService
 	{
 		return jdbcTemplateObject.queryForObject("select event_id from scoutingtags.event where active = 1",
 				String.class);
+	}
+
+	@Override
+	public List<String> getEventList()
+	{
+		return jdbcTemplateObject.queryForList(
+				"select event_id from scoutingtags.event order by active desc, event_id asc", String.class);
 	}
 }

@@ -42,4 +42,6 @@ public interface ScheduleService extends Service
 	void updateInsertMatch(Match match);
 
 	String getDefaultEvent();
+
+	List<String> getEventList();
 }

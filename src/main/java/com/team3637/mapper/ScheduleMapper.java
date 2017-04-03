@@ -29,6 +29,7 @@ public class ScheduleMapper implements RowMapper<Schedule>
 	public Schedule mapRow(ResultSet resultSet, int rowNum) throws SQLException
 	{
 		Schedule schedule = new Schedule();
+		schedule.setId(resultSet.getInt("id"));
 		schedule.setEventId(resultSet.getString("event_id"));
 		schedule.setMatchNum(resultSet.getInt("matchNum"));
 		schedule.setB1(resultSet.getInt("b1"));

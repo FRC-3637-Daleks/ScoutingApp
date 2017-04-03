@@ -186,6 +186,11 @@ function registerPopOvers()
       });     
 }
 
+function changeEvent(eventId)
+{
+      document.location.href = "../analytics/teamAnalyticsByMatch?event="+eventId;  
+}
+
 $(document).ready(function(){
    registerPopOvers();
 });
@@ -208,11 +213,28 @@ $(document).ready(function(){
             </ul> 
             <ul class="nav navbar-nav"> 
                 <li><a href="../">Back</a></li>
-            </ul> 
-        </div>
+            </ul>  
+            <ul class="nav navbar-nav">  
+                <li> 
+                   <form class="form-inline"> 
+                   <div class="control-group">  
+                     <select class="form-control input-sm"  id="eventSelector" onchange="changeEvent(this.value)"> 
+                     <#list events as event>
+                        <#if event == selectedEvent>   
+                            <option value="${event}" selected>${event}</option>     
+                        <#else>
+                             <option value="${event}">${event}</option> 
+                        </#if>   
+                     </#list> 
+                   </select>  
+                   </div>
+                   </form> 
+                 </li>  
+            </ul>  
+        </div> 
     </div>
-</nav>
-</#if>
+</nav> 
+</#if> 
 <#list matchTeamsList as matchTeams>
 <#assign teams = matchTeams.teams> 
 
