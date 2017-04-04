@@ -178,9 +178,11 @@ public class MatchTagServiceMySQLImpl implements MatchTagService
 	}
 
 	@Override
-	public List<MatchTag> getMatchTags(Integer team, String tag)
+	public List<MatchTag> getMatchTags(Integer team, String tag, String eventId)
 	{
-		String SQL = "select team, tag, matchNum, occurrences, event_id from scoutingtags.matchtags where team = ? and tag = ?  and event_id = (select event_id from scoutingtags.event where active = 1)"
+		if (eventId == null)
+			eventId = getDefaultEvent();
+		String SQL = "select team, tag, matchNum, occurrences, event_id from scoutingtags.matchtags where team = ? and tag = ?  and event_id = ?"
 				+ "order by matchNum";
 		return jdbcTemplateObject.query(SQL, new RowMapper<MatchTag>()
 		{
@@ -197,6 +199,13 @@ public class MatchTagServiceMySQLImpl implements MatchTagService
 				matchTag.setEventId(resultSet.getString("event_id"));
 				return matchTag;
 			}
-		}, team, tag);
+		}, team, tag, eventId);
+	}
+
+	@Override
+	public String getDefaultEvent()
+	{
+		return jdbcTemplateObject.queryForObject("select event_id from scoutingtags.event where active = 1",
+				String.class);
 	}
 }

@@ -111,10 +111,13 @@ public class TeamsController
 	}
 
 	@RequestMapping("/loadEventTeamsFromBlueAlliance")
-	public void loadMatchesFromBlueAlliance(@RequestParam("event") String event, HttpServletResponse response)
+	public String loadMatchesFromBlueAlliance(@RequestParam("event") String event, HttpServletResponse response,
+			Model model)
 	{
 		eventMatchesService.loadEventTeams(event);
-		response.setStatus(200);
+		List<Team> teams = teamService.getTeams();
+		model.addAttribute("teamWrapper", new TeamWrapper(teams, new boolean[teams.size()]));
+		return "team-list";
 	}
 
 }

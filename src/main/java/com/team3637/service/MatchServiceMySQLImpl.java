@@ -178,10 +178,10 @@ public class MatchServiceMySQLImpl implements MatchService
 		}
 		if (currentModifiedDate == null)
 		{
-			String insertSQL = "insert into scoutingtags.match (team, matchNum, score, win, loss, tie, ranking_points, penalty, modified_timestamp, start_positiion, event_id) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
+			String insertSQL = "insert into scoutingtags.match (team, matchNum, score, win, loss, tie, ranking_points, penalty, modified_timestamp, start_position, event_id) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			jdbcTemplateObject.update(insertSQL, match.getTeam(), match.getMatchNum(), match.getScore(), match.getWin(),
 					match.getLoss(), match.getTie(), match.getPenalty(), match.getRankingPoints(),
-					match.getModifiedTimestamp(), match.getEventId());
+					match.getModifiedTimestamp(), match.getStartPosition(), match.getEventId());
 		}
 		else if (currentModifiedDate.getTime() < match.getModifiedTimestamp().getTime())
 		{

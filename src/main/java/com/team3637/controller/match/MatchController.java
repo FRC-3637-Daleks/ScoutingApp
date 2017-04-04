@@ -25,14 +25,6 @@ import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.google.gson.Gson;
 import com.team3637.model.TeamMatchResult;
 import com.team3637.model.TeamMatchTag;
@@ -41,8 +33,17 @@ import com.team3637.service.MatchTagService;
 import com.team3637.service.TagService;
 import com.team3637.service.TeamService;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 @Controller
-public class MatchController {
+public class MatchController
+{
 
 	@Autowired
 	private MatchService matchService;
@@ -56,12 +57,14 @@ public class MatchController {
 	private ServletContext context;
 
 	@RequestMapping("/")
-	public String index() {
+	public String index()
+	{
 		return "redirect:" + context.getContextPath() + "/";
 	}
 
 	@RequestMapping(value = "/tags", method = RequestMethod.GET)
-	public String tags(Model model) {
+	public String tags(Model model)
+	{
 		List<String> matchTags = matchService.getTags();
 		List<String> teamTags = teamService.getTags();
 		model.addAttribute("matchTags", matchTags);
@@ -70,7 +73,8 @@ public class MatchController {
 	}
 
 	@RequestMapping(value = "/deleteTag", method = RequestMethod.GET)
-	public void deleteTag(@RequestParam("id") Integer id, HttpServletResponse response) {
+	public void deleteTag(@RequestParam("id") Integer id, HttpServletResponse response)
+	{
 		tagService.deleteTag(id);
 		response.setStatus(200);
 	}
@@ -80,13 +84,15 @@ public class MatchController {
 	public Integer saveTag(@RequestParam("id") Integer id, @RequestParam("tag") String tag,
 			@RequestParam("type") String type, @RequestParam("category") String category,
 			@RequestParam("grouping") String grouping, @RequestParam("inputType") String inputType,
-			@RequestParam("pointValue") Float pointValue, HttpServletResponse response) {
+			@RequestParam("pointValue") Float pointValue, HttpServletResponse response)
+	{
 		return tagService.saveTag(id, tag, type, category, grouping, inputType, pointValue);
 	}
 
 	@RequestMapping("/export/csv")
 	@ResponseBody
-	public String exportCSV() throws IOException {
+	public String exportCSV() throws IOException
+	{
 		String file = "matches.csv";
 		File exportDirectory = new File(context.getRealPath("/") + "/export");
 		if (!exportDirectory.exists())
@@ -98,32 +104,37 @@ public class MatchController {
 
 	@RequestMapping("/matchTags")
 	@ResponseBody
-	public String getMatchTags() {
+	public String getMatchTags()
+	{
 		return new Gson().toJson(matchService.getTags());
 	}
 
 	@RequestMapping("/teamTagGroupings")
 	@ResponseBody
-	public List<String> getTeamTagGroupings(HttpServletResponse response) {
+	public List<String> getTeamTagGroupings(HttpServletResponse response)
+	{
 		response.setContentType("application/json");
 		return tagService.getTeamTagGroupings();
 	}
 
 	@RequestMapping("/matchTagGroupings")
 	@ResponseBody
-	public List<String> getMatchTagGroupings(HttpServletResponse response) {
+	public List<String> getMatchTagGroupings(HttpServletResponse response)
+	{
 		response.setContentType("application/json");
 		return tagService.getMatchTagGroupings();
 	}
 
 	@RequestMapping("/teamTags")
 	@ResponseBody
-	public String getTeamTags() {
+	public String getTeamTags()
+	{
 		return new Gson().toJson(teamService.getTags());
 	}
 
 	@RequestMapping(value = "/manageTags", method = RequestMethod.GET)
-	public String manageTags(Model model) {
+	public String manageTags(Model model)
+	{
 
 		model.addAttribute("teamTags", tagService.getTeamTags());
 		model.addAttribute("matchTags", tagService.getMatchTags());
@@ -132,7 +143,8 @@ public class MatchController {
 	}
 
 	@RequestMapping(value = "/matchEntry", method = RequestMethod.GET)
-	public String matchEntry(@RequestParam("team") Integer team, @RequestParam("match") Integer match, Model model) {
+	public String matchEntry(@RequestParam("team") Integer team, @RequestParam("match") Integer match, Model model)
+	{
 		TeamMatchResult teamMatchResult = matchService.getTeamMatchResult(team, match);
 		List<TeamMatchTag> matchTags = matchService.getTeamMatchTags(team, match);
 
@@ -143,56 +155,65 @@ public class MatchController {
 
 	@RequestMapping(value = "/incrementTag", method = RequestMethod.GET)
 	public void incrementTag(@RequestParam("team") Integer team, @RequestParam("match") Integer match,
-			@RequestParam("tag") String tag, HttpServletResponse response) {
+			@RequestParam("tag") String tag, HttpServletResponse response)
+	{
 		matchService.incrementTag(team, match, tag);
 		response.setStatus(200);
 	}
 
 	@RequestMapping(value = "/decrementTag", method = RequestMethod.GET)
 	public void decrementTag(@RequestParam("team") Integer team, @RequestParam("match") Integer match,
-			@RequestParam("tag") String tag, HttpServletResponse response) {
+			@RequestParam("tag") String tag, HttpServletResponse response)
+	{
 		matchService.decrementTag(team, match, tag);
 		response.setStatus(200);
 	}
 
 	@RequestMapping(value = "/saveMatchResult", method = RequestMethod.GET)
 	public void saveMapResult(@RequestParam("team") Integer team, @RequestParam("match") Integer match,
-			@RequestParam("result") String result, HttpServletResponse response) {
+			@RequestParam("result") String result, HttpServletResponse response)
+	{
 		matchService.saveMatchResult(team, match, result);
 		response.setStatus(200);
 	}
 
 	@RequestMapping(value = "/saveMatchScore", method = RequestMethod.GET)
 	public void saveMatchScore(@RequestParam("team") Integer team, @RequestParam("match") Integer match,
-			@RequestParam("score") String score, HttpServletResponse response) {
+			@RequestParam("score") String score, HttpServletResponse response)
+	{
 		matchService.saveMatchScore(team, match, score);
 		response.setStatus(200);
 	}
 
 	@RequestMapping(value = "/saveMatchRankingPoints", method = RequestMethod.GET)
 	public void saveMatchRankingPoints(@RequestParam("team") Integer team, @RequestParam("match") Integer match,
-			@RequestParam("rankingPoints") String rankingPoints, HttpServletResponse response) {
+			@RequestParam("rankingPoints") String rankingPoints, HttpServletResponse response)
+	{
 		matchService.saveMatchRankingPoints(team, match, rankingPoints);
 		response.setStatus(200);
 	}
 
 	@RequestMapping(value = "/saveMatchStartPosition", method = RequestMethod.GET)
 	public void saveMatchStartPosition(@RequestParam("team") Integer team, @RequestParam("match") Integer match,
-			@RequestParam("startPosition") String startPosition, HttpServletResponse response) {
+			@RequestParam("startPosition") String startPosition, HttpServletResponse response)
+	{
 		matchService.saveMatchStartPosition(team, match, startPosition);
 		response.setStatus(200);
 	}
 
 	@RequestMapping(value = "/saveMatchPenalty", method = RequestMethod.GET)
 	public void saveMatchPenalty(@RequestParam("team") Integer team, @RequestParam("match") Integer match,
-			@RequestParam("penalty") String penalty, HttpServletResponse response) {
+			@RequestParam("penalty") String penalty, HttpServletResponse response)
+	{
 		matchService.saveMatchPenalty(team, match, penalty);
 		response.setStatus(200);
 	}
 
 	@RequestMapping("/getMatchTags")
 	@ResponseBody
-	public String getMatchTags(@RequestParam("team") Integer team, @RequestParam("tag") String tag) {
-		return new Gson().toJson(matchTagService.getMatchTags(team, tag));
+	public String getMatchTags(@RequestParam("team") Integer team, @RequestParam("tag") String tag,
+			@RequestParam("event") String event)
+	{
+		return new Gson().toJson(matchTagService.getMatchTags(team, tag, event));
 	}
 }

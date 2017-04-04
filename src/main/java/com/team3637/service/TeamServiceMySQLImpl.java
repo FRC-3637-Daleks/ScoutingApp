@@ -428,9 +428,9 @@ public class TeamServiceMySQLImpl implements TeamService
 		else if (teamExportModel.getModifiedTimestamp() == null
 				|| currentModifiedDate.getTime() < teamExportModel.getModifiedTimestamp().getTime())
 		{
-			String updateSQL = "update scoutingtags.teams set name=?, scouting_comments=?, modified_timestamp = ?, event_id=? where team = ?";
+			String updateSQL = "update scoutingtags.teams set name=?, scouting_comments=?, modified_timestamp = ? where team = ? and event_id = ?";
 			jdbcTemplateObject.update(updateSQL, teamExportModel.getName(), teamExportModel.getScoutingComments(),
-					teamExportModel.getModifiedTimestamp(), teamExportModel.getEventId(), teamExportModel.getTeam());
+					teamExportModel.getModifiedTimestamp(), teamExportModel.getTeam(), teamExportModel.getEventId());
 		}
 	}
 

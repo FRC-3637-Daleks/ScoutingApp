@@ -37,6 +37,7 @@
 </nav>
 <div class="main container">
   <table  class="table table-striped table-bordered">
+  <caption>Export/Import</caption>  
   <tr>
     <th>Type</th>
     <th>Export</th>
@@ -124,6 +125,39 @@
         </td>
     </tr>
    </table>
+  <table  class="table table-striped table-bordered">
+  <caption>Blue Alliance API</caption>  
+  <tr>
+    <th>Type</th>
+    <th>Import</th>
+  </tr>
+    <tr>
+        <th>
+           Team Data
+        </th>
+        <td>          
+        <form action="${pageContext.request.contextPath}/t/loadEventTeamsFromBlueAlliance" method="post" class="form-inline"
+              enctype="multipart/form-data">
+             <label for="event">Event Id:</label>
+            <input type="text"  name="event" id="event"  />         
+            <input class="btn btn-default" type="submit" value="Load Event Teams">
+        </form>
+        </td>
+    </tr>  
+    <tr>
+        <th>
+           Schedule Data
+        </th>
+        <td>          
+        <form action="${pageContext.request.contextPath}/s/loadMatchesFromBlueAlliance" method="post" class="form-inline"
+              enctype="multipart/form-data">
+             <label for="event">Event Id:</label>
+            <input type="text"  name="event" id="event"  />         
+            <input class="btn btn-default" type="submit" value="Load Event Schedule">
+        </form>
+        </td>
+    </tr>      
+    </table>
 </div>
 </body>
 </html>

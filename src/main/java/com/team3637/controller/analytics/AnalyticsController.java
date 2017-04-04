@@ -48,7 +48,9 @@ public class AnalyticsController
 
 	@RequestMapping(value = "/teamAnalytics", method = RequestMethod.GET)
 	public String teamAnalytics(@RequestParam(value = "team", required = false) Integer teamNum,
-			@RequestParam(value = "event", required = false) String eventId, Model model)
+			@RequestParam(value = "event", required = false) String eventId,
+			@RequestParam(value = "hideComments", required = false, defaultValue = "false") Boolean hideComments,
+			Model model)
 	{
 		List<Team> teams = matchService.getTeamMatchSummaryInfo(teamNum, eventId);
 		model.addAttribute("teams", teams);
@@ -59,13 +61,16 @@ public class AnalyticsController
 		}
 		model.addAttribute("events", scheduleService.getEventList());
 		model.addAttribute("selectedEvent", eventId);
+		model.addAttribute("hideComments", hideComments);
 		return "teamAnalytics";
 
 	}
 
 	@RequestMapping(value = "/teamAnalyticsByMatch", method = RequestMethod.GET)
 	public String teamAnalyticsByMatch(@RequestParam(value = "match", required = false) Integer match,
-			@RequestParam(value = "event", required = false) String eventId, Model model)
+			@RequestParam(value = "event", required = false) String eventId,
+			@RequestParam(value = "hideComments", required = false, defaultValue = "false") Boolean hideComments,
+			Model model)
 	{
 		if (eventId == null)
 			eventId = matchService.getDefaultEvent();
@@ -79,6 +84,7 @@ public class AnalyticsController
 		model.addAttribute("matchTeamsList", matchTeamsList);
 		model.addAttribute("events", scheduleService.getEventList());
 		model.addAttribute("selectedEvent", eventId);
+		model.addAttribute("hideComments", hideComments);
 		return "matchAnalytics";
 
 	}

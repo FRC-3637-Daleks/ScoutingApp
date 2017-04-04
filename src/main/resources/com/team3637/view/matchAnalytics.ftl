@@ -163,6 +163,7 @@ function toggle(target) {
 		hide(target);
 	}
 }
+
 function registerPopOvers()
 {
   $("a.total-occurrences-popover-ajax").each(function() {
@@ -184,11 +185,24 @@ function registerPopOvers()
               html:true   
            });   
       });     
-}
+} 
 
 function changeEvent(eventId)
 {
-      document.location.href = "../analytics/teamAnalyticsByMatch?event="+eventId;  
+      document.location.href = "../analytics/teamAnalyticsByMatch?event="+eventId+"&hideComments="+$('#hideComments').is(':checked');
+}
+
+function toggleComments(hide)
+{  
+if (hide)
+$('.teamComments').hide();
+else  
+$('.teamComments').show();
+}
+
+function goTo(href)
+{
+     document.location.href =href +"?event="+$('#eventSelector').val()+"&hideComments="+$('#hideComments').is(':checked'); 
 }
 
 $(document).ready(function(){
@@ -206,27 +220,32 @@ $(document).ready(function(){
         </div>
         <div id="navbar" class="collapse navbar-collapse"> 
             <ul class="nav navbar-nav"> 
-                <li><a href="../analytics/teamAnalytics">All Teams</a></li>
+                <li><a href="#" onclick='goTo("../analytics/teamAnalytics")'>All Teams</a></li>
             </ul>
-            <ul class="nav navbar-nav"> 
-                <li><a href="../analytics/exportTeamAnalyticsByMatch">Export</a></li>
-            </ul> 
             <ul class="nav navbar-nav"> 
                 <li><a href="../">Back</a></li>
             </ul>  
-            <ul class="nav navbar-nav">  
+            <ul class="nav navbar-nav">     
                 <li> 
-                   <form class="form-inline"> 
-                   <div class="control-group">  
-                     <select class="form-control input-sm"  id="eventSelector" onchange="changeEvent(this.value)"> 
+                   <form class="form-inline">    
+                    <div class="control-group">  
+                     <label for"eventSelector" style="color:#9d9d9d;">Event:</label>  
+                     <select class="form-control input-sm"   id="eventSelector" onchange="changeEvent(this.value)"> 
                      <#list events as event>
                         <#if event == selectedEvent>   
                             <option value="${event}" selected>${event}</option>     
                         <#else>
                              <option value="${event}">${event}</option> 
-                        </#if>   
+                        </#if>    
                      </#list> 
-                   </select>  
+                   </select>   
+                                       
+                    <label for"hideComments" style="color:#9d9d9d;">Hide Comments:</label>  
+                    <#if hideComments>                     
+                   <input type"checkbox" type="checkbox" id="hideComments" value="hide" class="form-control input-sm" onchange="toggleComments(this.checked);"  checked/> 
+                   <#else>
+                   <input type"checkbox" type="checkbox" id="hideComments" value="hide" class="form-control input-sm" onchange="toggleComments(this.checked);" /> 
+                   </#if>
                    </div>
                    </form> 
                  </li>  
@@ -313,12 +332,12 @@ $(document).ready(function(){
    <table class="tagTable"  id="${matchTeams.match}-match-${team}-${grouping}-${category}-table">
    <tr>
    <td> ${matchStatistic.tag} </td>
-   <td><a href="javascript:void(0);"  data-title="${matchStatistic.tag}" data-template='<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content"></div></div>' data-url="/ScoutingApp/m/getMatchTags?team=${team}&tag=${matchStatistic.tag}" class="total-occurrences-popover-ajax">${matchStatistic.totalOccurrences}</a> </td>
+   <td><a href="javascript:void(0);"  data-title="${matchStatistic.tag}" data-template='<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content"></div></div>' data-url="/ScoutingApp/m/getMatchTags?team=${team}&tag=${matchStatistic.tag}&event=${selectedEvent}" class="total-occurrences-popover-ajax">${matchStatistic.totalOccurrences}</a> </td>
     </tr>
 <#else>
    <tr>
    <td> ${matchStatistic.tag} </td>
-   <td><a href="javascript:void(0);"  data-title="${matchStatistic.tag}"  data-template='<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content"></div></div>' data-url="/ScoutingApp/m/getMatchTags?team=${team}&tag=${matchStatistic.tag}" class="total-occurrences-popover-ajax">${matchStatistic.totalOccurrences}</a> </td>
+   <td><a href="javascript:void(0);"  data-title="${matchStatistic.tag}"  data-template='<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content"></div></div>' data-url="/ScoutingApp/m/getMatchTags?team=${team}&tag=${matchStatistic.tag}&event=${selectedEvent}" class="total-occurrences-popover-ajax">${matchStatistic.totalOccurrences}</a> </td>
    </tr>
 </#if>
 </#list>
@@ -329,9 +348,15 @@ $(document).ready(function(){
    </#if>
   <#if grouping != "">
      </tr>
-  </table>
- <div class="sectionHeader">Scouting Comments</div>
+  </table> 
+ <#if hideComments>     
+ <div class="teamComments" style="display:none;">
+ <#else>
+  <div class="teamComments">
+ </#if>
+  <div class="sectionHeader">Scouting Comments</div>
  <textarea disabled  rows="3" cols="100" >${team.scoutingComments!}</textarea>
+ </div>   
  </div>
  </div> 
   </#if>
