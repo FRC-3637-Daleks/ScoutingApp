@@ -86,7 +86,7 @@ public class ScheduleServiceMySQLImpl implements ScheduleService
 	@Override
 	public List<Schedule> getSchedule()
 	{
-		String SQL = "select id, matchNum, event_id, b1, b2, b3, r1, r2, r3, event_id from schedule where event_id = (select event_id from event where active = 1)";
+		String SQL = "select id, matchNum, event_id, b1, b2, b3, r1, r2, r3, event_id from schedule where event_id = (select event_id from event where active = 1) order by matchNum";
 		List<Schedule> schedule = jdbcTemplateObject.query(SQL, new ScheduleMapper());
 		return schedule;
 	}
