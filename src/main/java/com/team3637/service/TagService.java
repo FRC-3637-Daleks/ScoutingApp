@@ -21,9 +21,9 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import com.team3637.model.Tag;
+import com.team3637.model.TagAnalyticsTeamData;
 
-public interface TagService extends Service
-{
+public interface TagService extends Service {
 	void setDataSource(DataSource dataSource);
 
 	Tag getTag(Integer id);
@@ -58,4 +58,6 @@ public interface TagService extends Service
 
 	Integer saveTag(Integer id, String tag, String type, String category, String grouping, String inputType,
 			Float pointValue);
+
+	List<TagAnalyticsTeamData> getTopTenTeamsForTag(Tag tag, String eventId);
 }

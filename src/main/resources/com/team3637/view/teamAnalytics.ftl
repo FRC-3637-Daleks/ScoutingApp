@@ -188,20 +188,32 @@ $(document).ready(function(){
             <a class="navbar-brand page-scroll" href="../">Team 3637 Scouting App</a> 
         </div>
         <div id="navbar" class="collapse navbar-collapse">
-			<ul class="nav navbar-nav"> 
-                <li><a  href="#" onclick='goTo("../analytics/teamAnalyticsByMatch")'>By Match</a></li>  
-            </ul> 
-            <ul class="nav navbar-nav"> 
-                <li><a href="../">Back</a></li>
-            </ul> 
-            <ul class="nav navbar-nav">   
+            <ul class="nav navbar-nav">
                 <li> 
                    <form class="form-inline">    
                     <div class="control-group">  
+                    <label for"reportSelector" style="color:#9d9d9d;">Report:</label>  
+                     <select class="form-control input-sm"   id="reportSelector" onchange='goTo("../analytics/"+this.value)'>    
+                         <#if selectedReportType == "teamAnalyticsByMatch">
+                            <option value="teamAnalyticsByMatch" selected>By Match</option>
+                         <#else>   
+                         	<option value="teamAnalyticsByMatch">By Match</option>
+                         </#if>
+                         <#if selectedReportType == "teamAnalytics">
+                            <option value="teamAnalytics" selected>All Teams</option>
+                         <#else>   
+                         	<option value="teamAnalytics">All Teams</option>
+                         </#if>
+                         <#if selectedReportType == "tagAnalytics">
+                            <option value="tagAnalytics" selected>By Tag</option>
+                         <#else>   
+                         	<option value="tagAnalytics">By Tag</option>
+                         </#if>
+                  	 </select>
                      <label for"eventSelector" style="color:#9d9d9d;">Event:</label>  
                      <select class="form-control input-sm"   id="eventSelector" onchange="changeEvent(this.value)"> 
                      <#list events as event>
-                        <#if event == selectedEvent>   
+                        <#if selectedEvent == event>   
                             <option value="${event}" selected>${event}</option>     
                         <#else>
                              <option value="${event}">${event}</option> 

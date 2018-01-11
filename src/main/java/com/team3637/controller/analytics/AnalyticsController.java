@@ -18,16 +18,11 @@
 
 package com.team3637.controller.analytics;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
-
-import com.team3637.model.MatchStatistics;
-import com.team3637.model.MatchTeams;
-import com.team3637.model.Team;
-import com.team3637.service.MatchService;
-import com.team3637.service.ScheduleService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,32 +31,42 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.team3637.model.MatchStatistics;
+import com.team3637.model.MatchTeams;
+import com.team3637.model.Tag;
+import com.team3637.model.TagAnalytics;
+import com.team3637.model.TagAnalyticsTeamData;
+import com.team3637.model.Team;
+import com.team3637.service.MatchService;
+import com.team3637.service.ScheduleService;
+import com.team3637.service.TagService;
+
 @Controller
-public class AnalyticsController
-{
+public class AnalyticsController {
 	@Autowired
 	private MatchService matchService;
 	@Autowired
 	private ScheduleService scheduleService;
 	@Autowired
 	private ServletContext context;
+	@Autowired
+	private TagService tagService;
 
 	@RequestMapping(value = "/teamAnalytics", method = RequestMethod.GET)
 	public String teamAnalytics(@RequestParam(value = "team", required = false) Integer teamNum,
 			@RequestParam(value = "event", required = false) String eventId,
 			@RequestParam(value = "hideComments", required = false, defaultValue = "false") Boolean hideComments,
-			Model model)
-	{
+			Model model) {
 		List<Team> teams = matchService.getTeamMatchSummaryInfo(teamNum, eventId);
 		model.addAttribute("teams", teams);
-		for (Team team : teams)
-		{
+		for (Team team : teams) {
 			List<MatchStatistics> matchStatistics = matchService.getTeamMatchStatistics(team.getTeam(), eventId);
 			team.setMatchStatistics(matchStatistics);
 		}
 		model.addAttribute("events", scheduleService.getEventList());
 		model.addAttribute("selectedEvent", eventId);
 		model.addAttribute("hideComments", hideComments);
+		model.addAttribute("selectedReportType", "teamAnalytics");
 		return "teamAnalytics";
 
 	}
@@ -70,13 +75,11 @@ public class AnalyticsController
 	public String teamAnalyticsByMatch(@RequestParam(value = "match", required = false) Integer match,
 			@RequestParam(value = "event", required = false) String eventId,
 			@RequestParam(value = "hideComments", required = false, defaultValue = "false") Boolean hideComments,
-			Model model)
-	{
+			Model model) {
 		if (eventId == null)
 			eventId = matchService.getDefaultEvent();
 		List<Team> teams = matchService.getTeamMatchSummaryInfo(null, eventId);
-		for (Team team : teams)
-		{
+		for (Team team : teams) {
 			List<MatchStatistics> matchStatistics = matchService.getTeamMatchStatistics(team.getTeam(), eventId);
 			team.setMatchStatistics(matchStatistics);
 		}
@@ -85,19 +88,19 @@ public class AnalyticsController
 		model.addAttribute("events", scheduleService.getEventList());
 		model.addAttribute("selectedEvent", eventId);
 		model.addAttribute("hideComments", hideComments);
+		model.addAttribute("selectedReportType", "teamAnalyticsByMatch");
 		return "matchAnalytics";
 
 	}
 
 	@RequestMapping(value = "/exportTeamAnalyticsByMatch", method = RequestMethod.GET)
 	public String exportTeamAnalyticsByMatch(@RequestParam(value = "match", required = false) Integer match,
-			@RequestParam(value = "event", required = false) String eventId, Model model, HttpServletResponse response)
-	{
+			@RequestParam(value = "event", required = false) String eventId, Model model,
+			HttpServletResponse response) {
 		if (eventId == null)
 			eventId = matchService.getDefaultEvent();
 		List<Team> teams = matchService.getTeamMatchSummaryInfo(null, eventId);
-		for (Team team : teams)
-		{
+		for (Team team : teams) {
 			List<MatchStatistics> matchStatistics = matchService.getTeamMatchStatistics(team.getTeam(), eventId);
 			team.setMatchStatistics(matchStatistics);
 		}
@@ -112,12 +115,11 @@ public class AnalyticsController
 
 	@RequestMapping(value = "/exportTeamAnalytics", method = RequestMethod.GET)
 	public String exportTeamAnalytics(@RequestParam(value = "team", required = false) Integer teamNum,
-			@RequestParam(value = "event", required = false) String eventId, Model model, HttpServletResponse response)
-	{
+			@RequestParam(value = "event", required = false) String eventId, Model model,
+			HttpServletResponse response) {
 		List<Team> teams = matchService.getTeamMatchSummaryInfo(teamNum, eventId);
 		model.addAttribute("teams", teams);
-		for (Team team : teams)
-		{
+		for (Team team : teams) {
 			List<MatchStatistics> matchStatistics = matchService.getTeamMatchStatistics(team.getTeam(), eventId);
 			team.setMatchStatistics(matchStatistics);
 		}
@@ -125,6 +127,30 @@ public class AnalyticsController
 		response.setContentType("application/octet-stream");
 		response.setHeader("Content-Disposition", "attachment;filename=teamAnalyticsByMatch.html");
 		return "teamAnalytics";
+
+	}
+
+	@RequestMapping(value = "/tagAnalytics", method = RequestMethod.GET)
+	public String tagAnalytics(@RequestParam(value = "event", required = false) String eventId,
+			@RequestParam(value = "hideComments", required = false, defaultValue = "false") Boolean hideComments,
+			Model model) {
+		if (eventId == null)
+			eventId = matchService.getDefaultEvent();
+		List<TagAnalytics> tagAnalytics = new ArrayList<TagAnalytics>();
+		List<Tag> tags = tagService.getMatchTags();
+		for (Tag tag : tags) {
+			List<TagAnalyticsTeamData> tagAnalyticsTeamData = tagService.getTopTenTeamsForTag(tag, eventId);
+			TagAnalytics nextTag = new TagAnalytics();
+			nextTag.setTag(tag);
+			nextTag.setTopScoringTeams(topScoringTeams);
+			tagAnalytics.add(nextTag);
+		}
+		model.addAttribute("tagAnalyticsList", tagAnalytics);
+		model.addAttribute("events", scheduleService.getEventList());
+		model.addAttribute("selectedEvent", eventId);
+		model.addAttribute("hideComments", hideComments);
+		model.addAttribute("selectedReportType", "tagAnalytics");
+		return "tagAnalytics";
 
 	}
 }
