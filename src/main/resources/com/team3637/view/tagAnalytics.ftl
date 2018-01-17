@@ -25,12 +25,23 @@ body {
     border-collapse:collapse;
 }
 
+.tagTable th{
+    font-weight:bold;
+    font-size:15px;
+    padding-left:25px;
+    padding-right:25px;
+    border-collapse:collapse;
+    border: 1px solid gray !important;
+    background-color:#CFA600;
+}
+
 .tagTable td{
     font-size: 12px;
     border-collapse: collapse;  
     border: 1px solid gray !important; 
     padding-right: 5px;
     padding-left: 5px;  
+    text-align: center;
 }
   
 .categoryTable td{ 
@@ -131,13 +142,19 @@ body {
      text-align: center
 }
 
-.matchHeader th{
+.tagHeader th{
     font-weight:bold;
     font-size:15px;
     padding-left:25px;
-    padding-right:25px;
+    padding-right:1124px;
     border-collapse:collapse;
+    background-color:#ebebe0;
 }
+
+hr.style1 {
+	border-color:#000000;
+{
+
 </style>
 <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
 <link href="../css/bootstrap-tokenfield.css" rel="stylesheet"/>
@@ -269,113 +286,28 @@ $(document).ready(function(){
 <#assign tag = tagAnalytics.tag> 
 
 <#assign dataImportStyle = "dataNotImported"> 
-<#if tagAnlytics.hasData>  
-<#assign dataImportStyle = "dataImported"> 
-</#if>  
-<div class="${dataImportStyle}" onclick="toggle('${tag}')">
-<table class = "matchHeader" cellspacing = "0">
+<hr class = "style1">
+<div class="${dataImportStyle}" onclick="toggle('${tag}-tag-div')">
+<table class = "tagHeader" cellspacing = "0">
   <tr>
-    <th><p style="color:black; width:100px;">Tag: ${tag}</p></th>
-  <#list teams as team>
-  <#assign teamHeaderStyle = "teamHeader"+ matchTeams.allianceMap[team.team?string]>
-    <th><p class = "${teamHeaderStyle}">${team.team}</p></th>
-  </#list>
+    <th><p style="color:black; width:300px;">Tag: ${tag}</p></th>
   </tr>
 </table>
 </div>
-<div id="${matchTeams.match}-match"  style = "display:none;">
-<#assign teams = matchTeams.teams> 
-<#assign teamNum = -1> 
-<#list teams as team>
-<#if teamNum == -1 || teamNum != team.team>
-<#if teamNum != -1>  
-</div>
-</#if>
-<#assign teamHeaderStyle = "teamHeader"+ matchTeams.allianceMap[team.team?string]> 
-<div onclick="toggle('${matchTeams.match}-match-${team}-team')"> 
-<table class = "${teamHeaderStyle}" cellspacing = "0">
-  <tr>
-    <th><p style="color:white; width:100px;">Team: ${team.team}</p></th>
-    <th><p style="color:white; width:140px;">Matches Played: ${team.matches}</p></th>
-    <th><p style="color:white; width:130px;">Avg. Score: ${team.avgScore}</p></th>
-    <th><p style="color:white; width:130px;">Our Score: ${team.ourScore!}</p></th>
-    <th><p style="color:white; width:120px;">W/L/T: ${team.wins}/${team.losses}/${team.ties}</p></th>
-    <th><p style="color:white; width:150px;">Ranking Points: ${team.rankingpoints}</p></th>
-  </tr>
-</table>  
-</div>
-<div id="${matchTeams.match}-match-${team}-team" style = "display:none;">
-</#if>
-<#assign grouping = ""> 
-<#assign category = ""> 
-<#list team.matchStatistics as matchStatistic>
-<#if grouping == "" || grouping != matchStatistic.grouping>   
-   <#if category != "">   
-   </tr>
-   </table>	
-   </td>
-   </#if>
-  <#if grouping != "">
-     </tr>
-  </table>
-   </div>
-  </div>
-  <br>   
-  </#if>
-   <#assign grouping = matchStatistic.grouping> 
-   <#assign tableId = team.team + "-" + grouping> 
-   <div class="sectionWrapper">
-  <div class="sectionParent">
-  <div class="sectionHeader" onclick="toggle('${matchTeams.match}-match-${tableId}')">${grouping}</div>
-  <table class="categoryTable" id="${matchTeams.match}-match-${tableId}">
-    <tr>
-    <#assign category = ""> 
-</#if>
-<#if category == "" || category != matchStatistic.category>
-   <#if category != "">
-   </tr>  
-   </table>	
-   </td>
-   </#if>
-   <#assign category =  matchStatistic.category>
-   <td>
-   <div class="categoryTitle" onclick="toggle('${matchTeams.match}-match-${team}-${grouping}-${category}-table')">${category}</div>
-   <table class="tagTable"  id="${matchTeams.match}-match-${team}-${grouping}-${category}-table">
+<div id="${tag}-tag-div"  style = "display:none;">
+<table class="tagTable"  id="${tag}-tag-table">
    <tr>
-   <td> ${matchStatistic.tag} </td>
-   <td><a href="javascript:void(0);"  data-title="${matchStatistic.tag}" data-template='<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content"></div></div>' data-url="/ScoutingApp/m/getMatchTags?team=${team}&tag=${matchStatistic.tag}&event=${selectedEvent}" class="total-occurrences-popover-ajax">${matchStatistic.totalOccurrences}</a> </td>
+   <th>Overall Score</th>
+   <th>Team</th>
+   </tr>
+   <#list tagAnalytics.topScoringTeams as nextTeam>
+   <tr>
+   <td>${nextTeam.score}</td>
+   <td>${nextTeam.team}</td>
     </tr>
-<#else>
-   <tr>
-   <td> ${matchStatistic.tag} </td>
-   <td><a href="javascript:void(0);"  data-title="${matchStatistic.tag}"  data-template='<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content"></div></div>' data-url="/ScoutingApp/m/getMatchTags?team=${team}&tag=${matchStatistic.tag}&event=${selectedEvent}" class="total-occurrences-popover-ajax">${matchStatistic.totalOccurrences}</a> </td>
-   </tr>
-</#if>
+   </#list>
+</table>
+</div>
 </#list>
- <#if category != "">
-   </tr>
-   </table>	
-   </td>
-   </#if>
-  <#if grouping != "">
-     </tr>
-  </table> 
- <#if hideComments>     
- <div class="teamComments" style="display:none;">
- <#else>
-  <div class="teamComments">
- </#if>
-  <div class="sectionHeader">Scouting Comments</div>
- <textarea disabled  rows="3" cols="100" >${team.scoutingComments!}</textarea>
- </div>   
- </div>
- </div> 
-  </#if>
- <#assign teamNum =  team.team>
- </#list>
- </div>
- </div>
- </#list>
- </div>
 </body>
 </html>
