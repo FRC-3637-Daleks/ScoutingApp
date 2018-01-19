@@ -32,7 +32,7 @@ body {
     padding-right:25px;
     border-collapse:collapse;
     border: 1px solid gray !important;
-    background-color:#CFA600;
+    background-color:#D4C304;
 }
 
 .tagTable td{
@@ -143,16 +143,17 @@ body {
 }
 
 .tagHeader th{
-    font-weight:bold;
     font-size:15px;
-    padding-left:25px;
-    padding-right:1124px;
-    border-collapse:collapse;
     background-color:#ebebe0;
+    width:1%;
+    border-spacing: 0px;
 }
 
 hr.style1 {
 	border-color:#000000;
+    padding-right:0px;
+    margin-top:5px;
+    margin-bottom:5px;
 {
 
 </style>
@@ -206,7 +207,7 @@ function registerPopOvers()
 
 function changeEvent(eventId)
 {
-      document.location.href = "../analytics/teamAnalyticsByMatch?event="+eventId+"&hideComments="+$('#hideComments').is(':checked');
+      document.location.href = "../analytics/tagAnalytics?event="+eventId+"&hideComments="+$('#hideComments').is(':checked');
 }
 
 function toggleComments(hide)
@@ -283,18 +284,20 @@ $(document).ready(function(){
 </nav> 
 </#if> 
 <#list tagAnalyticsList as tagAnalytics>
-<#assign tag = tagAnalytics.tag> 
+<#assign tag = tagAnalytics.tag>
 
-<#assign dataImportStyle = "dataNotImported"> 
-<hr class = "style1">
+<#assign dataImportStyle = "dataNotImported">
 <div class="${dataImportStyle}" onclick="toggle('${tag}-tag-div')">
 <table class = "tagHeader" cellspacing = "0">
   <tr>
-    <th><p style="color:black; width:300px;">Tag: ${tag}</p></th>
+    <th><p style="color:black; width:300px; padding-left:10px;"><u>Tag: ${tag.tag}</u></p></th>
+    <th><p style="color:black; width:300px;"><u>Grouping: ${tag.grouping}</u></p></th>
+    <th><p style="color:black; width:300px;"><u>Category: ${tag.category}</u></p></th>
+    <th><p style="color:black; width:300px;"><u>Point Value: ${tag.pointValue}</u></p></th>
   </tr>
 </table>
 </div>
-<div id="${tag}-tag-div"  style = "display:none;">
+<div id="${tag}-tag-div"  style = "display:none">
 <table class="tagTable"  id="${tag}-tag-table">
    <tr>
    <th>Overall Score</th>
@@ -307,7 +310,8 @@ $(document).ready(function(){
     </tr>
    </#list>
 </table>
-</div>
+</div> 
+<hr class = "style1">
 </#list>
 </body>
 </html>

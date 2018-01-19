@@ -49,7 +49,7 @@ body {
 } 
 
 .sectionHeader {
-    background-color:#00A22E;
+    background-color:#00b333;
     font-weight:bold; 
     text-align:center;
     padding-right:15px;
@@ -63,7 +63,7 @@ body {
 }
 
 .teamHeader th{
-    background-color:#8F0000; 
+    background-color:#ebebe0; 
     font-weight:bold;
     font-size:15px;
     margin-left: 10px;
@@ -82,7 +82,7 @@ body {
     padding-left:0px;
     padding-right:0px; 
     border-collapse:collapse; 
-    color:white; 
+    color:black; 
 } 
 
 .teamInput {
@@ -96,7 +96,7 @@ body {
 .categoryTitle {
     text-align: 
     center; height: 20px; 
-    background-color:#CFA600; 
+    background-color:#D4C304;
     font-size:13px;  
     font-weight:bold;
     padding-right:15px;
@@ -243,12 +243,12 @@ $(document).ready(function(){
 <div onclick="toggle('${team}-team')">
 <table class = "teamHeader" cellspacing = "0">
   <tr>
-    <th><p style="color:white; width:100px;">Team: ${team.team}</p></th>
-    <th><p style="color:white; width:140px;">Matches Played: ${team.matches}</p></th>
-    <th><p style="color:white; width:130px;">Avg. Score: ${team.avgScore}</p></th>
-    <th><p style="color:white; width:130px;">Our Score: ${team.ourScore!}</p></th>
-    <th><p style="color:white; width:120px;">W/L/T: ${team.wins}/${team.losses}/${team.ties}</p></th>
-    <th><p style="color:white; width:150px;">Ranking Points: ${team.rankingpoints}</p></th>
+    <th><p style="color:black; width:100px;">Team: ${team.team}</p></th>
+    <th><p style="color:black; width:140px;">Matches Played: ${team.matches}</p></th>
+    <th><p style="color:black; width:130px;">Avg. Score: ${team.avgScore}</p></th>
+    <th><p style="color:black; width:130px;">Our Score: ${team.ourScore!}</p></th>
+    <th><p style="color:black; width:120px;">W/L/T: ${team.wins}/${team.losses}/${team.ties}</p></th>
+    <th><p style="color:black; width:150px;">Ranking Points: ${team.rankingpoints}</p></th>
   </tr>
 </table>
 </div>
