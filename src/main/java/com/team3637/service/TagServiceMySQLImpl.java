@@ -58,14 +58,14 @@ public class TagServiceMySQLImpl implements TagService {
 
 	@Override
 	public void createTag(Tag tag) {
-		String SQL = "INSERT INTO tags (tag, category, grouping, type, input_type) VALUES (?, ?, ?, ?, ?);";
+		String SQL = "INSERT INTO tags (tag, category, grouping, type, input_type, is_ranking_point) VALUES (?, ?, ?, ?, ?, ?);";
 		jdbcTemplateObject.update(SQL, tag.getTag(), tag.getCategory(), tag.getGrouping(), tag.getType(),
-				tag.getInputType());
+				tag.getInputType(), tag.getIsRankingPoint());
 	}
 
 	@Override
 	public Tag getTag(Integer id) {
-		String SQL = "SELECT id, tag, category, grouping, type, input_type FROM scoutingtags.tagsWHERE id = ?";
+		String SQL = "SELECT id, tag, category, grouping, type, input_type, is_ranking_point FROM scoutingtags.tagsWHERE id = ?";
 		return jdbcTemplateObject.queryForObject(SQL, new TagMapper(), id);
 	}
 
@@ -83,31 +83,31 @@ public class TagServiceMySQLImpl implements TagService {
 
 	@Override
 	public List<Tag> getMatchTags() {
-		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value FROM scoutingtags.tags WHERE type='matches' ORDER BY grouping, category, tag";
+		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, is_ranking_point FROM scoutingtags.tags WHERE type='matches' ORDER BY grouping, category, tag";
 		return jdbcTemplateObject.query(SQL, new TagMapper());
 	}
 
 	@Override
 	public List<Tag> getTeamTags() {
-		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value FROM scoutingtags.tags WHERE type='teams' ORDER BY grouping, category, tag";
+		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, is_ranking_point FROM scoutingtags.tags WHERE type='teams' ORDER BY grouping, category, tag";
 		return jdbcTemplateObject.query(SQL, new TagMapper());
 	}
 
 	@Override
 	public List<Tag> getTags() {
-		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value FROM scoutingtags.tags ORDER BY type, grouping, category";
+		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, is_ranking_point FROM scoutingtags.tags ORDER BY type, grouping, category";
 		return jdbcTemplateObject.query(SQL, new TagMapper());
 	}
 
 	@Override
 	public void updateInsertTag(Tag tag) {
-		String SQL = "UPDATE scoutingtags.tags SET tag=?, type=?, category=?, grouping=?, input_type=?, point_value=? WHERE id=?";
+		String SQL = "UPDATE scoutingtags.tags SET tag=?, type=?, category=?, grouping=?, input_type=?, point_value=?, is_ranking_point=? WHERE id=?";
 		int updatedRows = jdbcTemplateObject.update(SQL, tag.getTag(), tag.getType(), tag.getCategory(),
-				tag.getGrouping(), tag.getInputType(), tag.getPointValue(), tag.getId());
+				tag.getGrouping(), tag.getInputType(), tag.getPointValue(), tag.getIsRankingPoint(), tag.getId());
 		if (updatedRows < 1) {
-			String insertSQL = "insert into scoutingtags.tags (id, tag, type, category, grouping, input_type, point_value) values (?, ?, ?, ?, ?, ?, ?)";
+			String insertSQL = "insert into scoutingtags.tags (id, tag, type, category, grouping, input_type, point_value, is_ranking_point) values (?, ?, ?, ?, ?, ?, ?)";
 			jdbcTemplateObject.update(insertSQL, tag.getId(), tag.getTag(), tag.getType(), tag.getCategory(),
-					tag.getGrouping(), tag.getInputType(), tag.getPointValue());
+					tag.getGrouping(), tag.getInputType(), tag.getPointValue(), tag.getIsRankingPoint());
 		}
 	}
 
@@ -200,6 +200,7 @@ public class TagServiceMySQLImpl implements TagService {
 				tag.setGrouping(record.get(4));
 				tag.setInputType(record.get(5));
 				tag.setPointValue(Float.parseFloat(record.get(6)));
+				tag.setIsRankingPoint(Integer.parseInt(record.get(7)));
 				updateInsertTag(tag);
 			}
 		} catch (IOException e) {
@@ -235,12 +236,13 @@ public class TagServiceMySQLImpl implements TagService {
 
 	@Override
 	public Integer saveTag(Integer id, String tag, String type, String category, String grouping, String inputType,
-			Float pointValue) {
-		String sql = "UPDATE scoutingtags.tags SET tag=?, type=?, category=?, grouping=?, input_type=?, point_value=? WHERE id=?";
-		int rowsUpdated = jdbcTemplateObject.update(sql, tag, type, category, grouping, inputType, pointValue, id);
+			Float pointValue, Integer isRankingPoint) {
+		String sql = "UPDATE scoutingtags.tags SET tag=?, type=?, category=?, grouping=?, input_type=?, point_value=?, is_ranking_point=? WHERE id=?";
+		int rowsUpdated = jdbcTemplateObject.update(sql, tag, type, category, grouping, inputType, pointValue,
+				isRankingPoint, id);
 		if (rowsUpdated < 1) {
-			String sqlInsert = "INSERT INTO scoutingtags.tags (tag, type, category, grouping, input_type, point_value) VALUES (?,?,?,?,?,?)";
-			jdbcTemplateObject.update(sqlInsert, tag, type, category, grouping, inputType, pointValue);
+			String sqlInsert = "INSERT INTO scoutingtags.tags (tag, type, category, grouping, input_type, point_value, is_ranking_point) VALUES (?,?,?,?,?,?,?)";
+			jdbcTemplateObject.update(sqlInsert, tag, type, category, grouping, inputType, pointValue, isRankingPoint);
 			id = jdbcTemplateObject.queryForObject("select id from scoutingtags.tags where tag = ?", Integer.class,
 					tag);
 		}
