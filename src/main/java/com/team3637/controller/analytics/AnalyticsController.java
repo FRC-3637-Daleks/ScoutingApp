@@ -142,7 +142,7 @@ public class AnalyticsController {
 			List<TagAnalyticsTeamData> tagAnalyticsTeamData = tagService.getTopTenTeamsForTag(tag, eventId);
 			TagAnalytics nextTag = new TagAnalytics();
 			nextTag.setTag(tag);
-			nextTag.setTopScoringTeams(topScoringTeams);
+			nextTag.setTopScoringTeams(tagAnalyticsTeamData);
 			tagAnalytics.add(nextTag);
 		}
 		model.addAttribute("tagAnalyticsList", tagAnalytics);

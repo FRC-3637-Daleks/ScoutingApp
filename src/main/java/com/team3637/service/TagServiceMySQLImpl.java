@@ -270,4 +270,11 @@ public class TagServiceMySQLImpl implements TagService {
 			}
 		}, eventId, tag.getTag());
 	}
+
+	@Override
+	public Integer saveTag(Integer id, String tag, String type, String category, String grouping, String inputType,
+			Float pointValue, Integer isRankingPoint, Integer year) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
