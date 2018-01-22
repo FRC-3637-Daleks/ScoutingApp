@@ -32,7 +32,6 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -58,44 +57,26 @@ public class TagServiceMySQLImpl implements TagService {
 
 	@Override
 	public void createTag(Tag tag) {
-		String SQL = "INSERT INTO tags (tag, category, grouping, type, input_type) VALUES (?, ?, ?, ?, ?);";
+		String SQL = "INSERT INTO tags (tag, category, grouping, type, input_type, year) VALUES (?, ?, ?, ?, ?, ?);";
 		jdbcTemplateObject.update(SQL, tag.getTag(), tag.getCategory(), tag.getGrouping(), tag.getType(),
-				tag.getInputType());
-	}
-
-	@Override
-	public Tag getTag(Integer id) {
-		String SQL = "SELECT id, tag, category, grouping, type, input_type FROM scoutingtags.tagsWHERE id = ?";
-		return jdbcTemplateObject.queryForObject(SQL, new TagMapper(), id);
-	}
-
-	@Override
-	public Tag getTagByName(String name) {
-		String SQL = "SELECT * FROM tags WHERE tag = ?";
-		Tag tag = null;
-		try {
-			tag = jdbcTemplateObject.queryForObject(SQL, new TagMapper(), name);
-		} catch (IncorrectResultSizeDataAccessException e) {
-			System.err.println("Could not find tag: " + name);
-		}
-		return tag;
+				tag.getInputType(), tag.getYear());
 	}
 
 	@Override
 	public List<Tag> getMatchTags() {
-		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value FROM scoutingtags.tags WHERE type='matches' ORDER BY grouping, category, tag";
+		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, year FROM scoutingtags.tags WHERE type='matches' ORDER BY grouping, category, tag";
 		return jdbcTemplateObject.query(SQL, new TagMapper());
 	}
 
 	@Override
 	public List<Tag> getTeamTags() {
-		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value FROM scoutingtags.tags WHERE type='teams' ORDER BY grouping, category, tag";
+		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, year FROM scoutingtags.tags WHERE type='teams' ORDER BY grouping, category, tag";
 		return jdbcTemplateObject.query(SQL, new TagMapper());
 	}
 
 	@Override
 	public List<Tag> getTags() {
-		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value FROM scoutingtags.tags ORDER BY type, grouping, category";
+		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, year FROM scoutingtags.tags ORDER BY type, grouping, category";
 		return jdbcTemplateObject.query(SQL, new TagMapper());
 	}
 
@@ -105,16 +86,10 @@ public class TagServiceMySQLImpl implements TagService {
 		int updatedRows = jdbcTemplateObject.update(SQL, tag.getTag(), tag.getType(), tag.getCategory(),
 				tag.getGrouping(), tag.getInputType(), tag.getPointValue(), tag.getId());
 		if (updatedRows < 1) {
-			String insertSQL = "insert into scoutingtags.tags (id, tag, type, category, grouping, input_type, point_value) values (?, ?, ?, ?, ?, ?, ?)";
+			String insertSQL = "insert into scoutingtags.tags (id, tag, type, category, grouping, input_type, point_value, year) values (?, ?, ?, ?, ?, ?, ?, ?)";
 			jdbcTemplateObject.update(insertSQL, tag.getId(), tag.getTag(), tag.getType(), tag.getCategory(),
-					tag.getGrouping(), tag.getInputType(), tag.getPointValue());
+					tag.getGrouping(), tag.getInputType(), tag.getPointValue(), tag.getYear());
 		}
-	}
-
-	@Override
-	public void deleteTagById(Integer id) {
-		String tag = jdbcTemplateObject.queryForObject("SELECT tag FROM tags WHERE id = ?", String.class, id);
-		deleteTag(tag);
 	}
 
 	@Override
@@ -123,30 +98,6 @@ public class TagServiceMySQLImpl implements TagService {
 		deleteTag.execute(args);
 		String SQL = "DELETE FROM tags WHERE tag = ?";
 		jdbcTemplateObject.update(SQL, name);
-	}
-
-	@Override
-	public boolean checkTagForId(Integer id) {
-		String SQL = "SELECT count(*) FROM tags WHERE id = ?";
-		Integer count = jdbcTemplateObject.queryForObject(SQL, Integer.class, id);
-		return count != null && count > 0;
-	}
-
-	@Override
-	public boolean checkForTag(Tag tag) {
-		String SQL = "SELECT count(*) FROM tags WHERE tag = ? AND type = ?";
-		Integer count = jdbcTemplateObject.queryForObject(SQL, Integer.class, tag.getTag(), tag.getType());
-		return count != null && count > 0;
-	}
-
-	@Override
-	public void mergeTags(Tag oldTag, Tag newTag) {
-		if (!oldTag.getType().equals(newTag.getType()))
-			return;
-		SqlParameterSource args = new MapSqlParameterSource().addValue("tableName", oldTag.getType())
-				.addValue("noTagCols", 4).addValue("oldTag", oldTag.getTag()).addValue("newTag", newTag.getTag());
-		mergeTags.execute(args);
-		deleteTag(oldTag.getTag());
 	}
 
 	@Override
@@ -200,6 +151,7 @@ public class TagServiceMySQLImpl implements TagService {
 				tag.setGrouping(record.get(4));
 				tag.setInputType(record.get(5));
 				tag.setPointValue(Float.parseFloat(record.get(6)));
+				tag.setYear(Integer.parseInt(record.get(7)));
 				updateInsertTag(tag);
 			}
 		} catch (IOException e) {
@@ -235,12 +187,12 @@ public class TagServiceMySQLImpl implements TagService {
 
 	@Override
 	public Integer saveTag(Integer id, String tag, String type, String category, String grouping, String inputType,
-			Float pointValue) {
+			Float pointValue, Integer isRankingPoint, Integer year) {
 		String sql = "UPDATE scoutingtags.tags SET tag=?, type=?, category=?, grouping=?, input_type=?, point_value=? WHERE id=?";
 		int rowsUpdated = jdbcTemplateObject.update(sql, tag, type, category, grouping, inputType, pointValue, id);
 		if (rowsUpdated < 1) {
-			String sqlInsert = "INSERT INTO scoutingtags.tags (tag, type, category, grouping, input_type, point_value) VALUES (?,?,?,?,?,?)";
-			jdbcTemplateObject.update(sqlInsert, tag, type, category, grouping, inputType, pointValue);
+			String sqlInsert = "INSERT INTO scoutingtags.tags (tag, type, category, grouping, input_type, point_value, year) VALUES (?,?,?,?,?,?,?)";
+			jdbcTemplateObject.update(sqlInsert, tag, type, category, grouping, inputType, pointValue, year);
 			id = jdbcTemplateObject.queryForObject("select id from scoutingtags.tags where tag = ?", Integer.class,
 					tag);
 		}
@@ -250,14 +202,14 @@ public class TagServiceMySQLImpl implements TagService {
 	@Override
 	public List<TagAnalyticsTeamData> getTopTenTeamsForTag(Tag tag, String eventId) {
 
-		//@formatter:off
-		String sql = "SELECT sum(occurrences) * t.point_value as score, team "
-					+	"FROM scoutingtags.matchtags m "
-					+	"		inner join scoutingtags.tags t on t.tag = m.tag "
-					+	"where event_id = ? and m.tag = ? "
-					+	"group by team order by 1 desc limit 10";
-		
-		//@formatter:on
+		// @formatter:off
+		String sql = "SELECT sum(occurrences) * t.point_value as score, team " 
+				+ "FROM scoutingtags.matchtags m "
+				+ "		inner join scoutingtags.tags t on t.tag = m.tag "
+				+ "  	inner join scoutingtags.event e on e.event_id = m.event_id and e.year = t.year "
+				+ "where m.event_id = ? and m.tag = ? " 
+				+ "group by team order by 1 desc limit 10";
+		// @formatter:on
 		return jdbcTemplateObject.query(sql, new RowMapper<TagAnalyticsTeamData>() {
 			@Override
 			public TagAnalyticsTeamData mapRow(ResultSet resultSet, int rowNum) throws SQLException {
