@@ -64,13 +64,21 @@ public class TagServiceMySQLImpl implements TagService {
 
 	@Override
 	public List<Tag> getMatchTags() {
-		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, year FROM scoutingtags.tags WHERE type='matches' ORDER BY grouping, category, tag";
+		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, year "
+				+ "FROM scoutingtags.tags "
+				+ "WHERE type='matches' and year = (select year from scoutingtags.competition_year where active = 1)"
+				+ "ORDER BY grouping, category, tag";
 		return jdbcTemplateObject.query(SQL, new TagMapper());
 	}
 
 	@Override
 	public List<Tag> getTeamTags() {
-		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, year FROM scoutingtags.tags WHERE type='teams' ORDER BY grouping, category, tag";
+		//@formatter:off
+		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, year "
+				+ "FROM scoutingtags.tags "
+				+ "WHERE type='teams' and year = (select year from scoutingtags.competition_year where active = 1)"
+				+ "ORDER BY grouping, category, tag";
+		//@formatter:on
 		return jdbcTemplateObject.query(SQL, new TagMapper());
 	}
 
@@ -191,8 +199,8 @@ public class TagServiceMySQLImpl implements TagService {
 		String sql = "UPDATE scoutingtags.tags SET tag=?, type=?, category=?, grouping=?, input_type=?, point_value=? WHERE id=?";
 		int rowsUpdated = jdbcTemplateObject.update(sql, tag, type, category, grouping, inputType, pointValue, id);
 		if (rowsUpdated < 1) {
-			String sqlInsert = "INSERT INTO scoutingtags.tags (tag, type, category, grouping, input_type, point_value, year) VALUES (?,?,?,?,?,?,?)";
-			jdbcTemplateObject.update(sqlInsert, tag, type, category, grouping, inputType, pointValue, year);
+			String sqlInsert = "INSERT INTO scoutingtags.tags (tag, type, category, grouping, input_type, point_value, year) VALUES (?,?,?,?,?,?,select year from scoutingtags.competition_year where active = 1)";
+			jdbcTemplateObject.update(sqlInsert, tag, type, category, grouping, inputType, pointValue);
 			id = jdbcTemplateObject.queryForObject("select id from scoutingtags.tags where tag = ?", Integer.class,
 					tag);
 		}
