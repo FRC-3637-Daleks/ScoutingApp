@@ -182,15 +182,13 @@ function editTag(tagId, type) {
       $( "#category-" + tagId )[0].style.display =  'none'; 
       $( "#grouping-" + tagId )[0].style.display =  'none';  
       $( "#inputType-" + tagId )[0].style.display =  'none'; 
-      $( "#pointValue-" + tagId )[0].style.display =  'none';
-      $( "#isRankingPoint-" + tagId )[0].style.display =  'none';             
+      $( "#pointValue-" + tagId )[0].style.display =  'none';      
       $( "#saveIcon-" + tagId )[0].style.display =  'block'; 
       $( "#tag-edit-" + tagId )[0].style.display =  'block'; 
       $( "#category-edit-" + tagId )[0].style.display =  'block'; 
       $( "#grouping-edit-" + tagId )[0].style.display =  'block';   
       $( "#inputType-edit-" + tagId )[0].style.display =  'block';      
-      $( "#pointValue-edit-" + tagId )[0].style.display =  'block'; 
-	  $( "#isRankingPoint-edit-" + tagId )[0].style.display =  'block';        
+      $( "#pointValue-edit-" + tagId )[0].style.display =  'block';        
       var inputTypeSelect = $( "#inputType-edit-input-" + tagId )[0];
       $(inputTypeSelect).empty();
       $(inputTypeOptions).each(function(i, v){
@@ -200,9 +198,13 @@ function editTag(tagId, type) {
       var groupingSelect = $( "#grouping-edit-input-" + tagId )[0];
       $(groupingSelect).empty();
       if (type == 'matches')
+      {
+       	 $( "#isRankingPoint-" + tagId )[0].style.display =  'none'; 
+       	 $( "#isRankingPoint-edit-" + tagId )[0].style.display =  'block';  
          $(matchTagGroupingOptions).each(function(i, v){
              $(groupingSelect).append($("<option>", { value: v, html: v }));
          });
+     }
      else
         $(teamTagGroupingOptions).each(function(i, v){
           $(groupingSelect).append($("<option>", { value: v, html: v }));
@@ -221,9 +223,12 @@ function saveTag(tagId, type) {
          var pointValue = $( "#pointValue-edit-input-" + tagId )[0].value;
          var isRankingPoint = 0;
          var isRankingPointValue = "No";
-         if ($( "#isRankingPoint-edit-input-" + tagId )[0].checked)	{
-         	isRankingPoint = 1;
-         	isRankingPointValue = "Yes";	}
+         if (type == 'matches')
+      	 {
+         	if ($( "#isRankingPoint-edit-input-" + tagId )[0].checked)	{
+         		isRankingPoint = 1;
+         		isRankingPointValue = "Yes";	}
+         }
          $.ajax({
               url: "../m/saveTag?id="+tagId+"&tag="+tag+"&grouping="+grouping+"&category="+category+"&inputType="+inputType+"&type="+type+"&pointValue="+pointValue+"&isRankingPoint="+isRankingPoint,
               type: 'GET',
@@ -263,9 +268,10 @@ function saveTag(tagId, type) {
                    $( "#grouping-" + tagId )[0].innerHTML = grouping;
                    $( "#category-" + tagId )[0].innerHTML = category;
                    $( "#inputType-" + tagId )[0].innerHTML = inputType;                 
-                   $( "#pointValue-" + tagId )[0].innerHTML = pointValue;      
-                   $( "#isRankingPoint-" + tagId )[0].innerHTML = isRankingPointValue;                                          
-                   cancelEditTag(tagId);  
+                   $( "#pointValue-" + tagId )[0].innerHTML = pointValue; 
+                   if (type == 'matches')     
+                   	 $( "#isRankingPoint-" + tagId )[0].innerHTML = isRankingPointValue;                                          
+                   cancelEditTag(tagId, type);  
               },
               error: function () { 
                    alert( "Error occurred saving tag." );
@@ -273,24 +279,27 @@ function saveTag(tagId, type) {
           }); 
      }
      else
-        cancelEditTag(tagId);
+        cancelEditTag(tagId, type);
 } 
 
-function cancelEditTag(tagId) {
+function cancelEditTag(tagId, type) {
       $( "#editIcon-" + tagId )[0].style.display =  'block'; 
       $( "#tag-" + tagId )[0].style.display =  'block'; 
       $( "#category-" + tagId )[0].style.display =  'block'; 
       $( "#grouping-" + tagId )[0].style.display =  'block'; 
       $( "#inputType-" + tagId )[0].style.display =  'block'; 
-      $( "#pointValue-" + tagId )[0].style.display =  'block';  
-      $( "#isRankingPoint-" + tagId )[0].style.display =  'block';      
+      $( "#pointValue-" + tagId )[0].style.display =  'block';        
       $( "#saveIcon-" + tagId )[0].style.display =  'none'; 
       $( "#tag-edit-" + tagId )[0].style.display =  'none'; 
       $( "#category-edit-" + tagId )[0].style.display =  'none'; 
       $( "#grouping-edit-" + tagId )[0].style.display =  'none'; 
       $( "#inputType-edit-" + tagId )[0].style.display =  'none';        
-      $( "#pointValue-edit-" + tagId )[0].style.display =  'none';       
-      $( "#isRankingPoint-edit-" + tagId )[0].style.display =  'none';       
+      $( "#pointValue-edit-" + tagId )[0].style.display =  'none';
+      if(type == 'matches') 
+      {   
+      	$( "#isRankingPoint-" + tagId )[0].style.display =  'block';   
+      	$( "#isRankingPoint-edit-" + tagId )[0].style.display =  'none';  
+      }     
 } 
 
 function createNewMatchTag() {
