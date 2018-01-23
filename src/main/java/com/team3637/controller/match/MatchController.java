@@ -75,6 +75,14 @@ public class MatchController {
 		response.setStatus(200);
 	}
 
+	public Integer saveTag(@RequestParam("id") Integer id, @RequestParam("tag") String tag,
+			@RequestParam("type") String type, @RequestParam("category") String category,
+			@RequestParam("grouping") String grouping, @RequestParam("inputType") String inputType,
+			@RequestParam("pointValue") Float pointValue, @RequestParam("isRankingPoint") Integer isRankingPoint,
+			HttpServletResponse response) {
+		return tagService.saveTag(id, tag, type, category, grouping, inputType, pointValue, isRankingPoint);
+	}
+
 	@RequestMapping("/export/csv")
 	@ResponseBody
 	public String exportCSV() throws IOException {
