@@ -11,3 +11,7 @@ INSERT INTO `scoutingtags`.`competition_year` (`year`, `active`) VALUES ('2018',
 
 ALTER TABLE `scoutingtags`.`tags` 
 CHANGE COLUMN `year` `year` INT(11) NOT NULL ;
+
+ALTER TABLE `scoutingtags`.`tags` 
+DROP PRIMARY KEY,
+ADD PRIMARY KEY (`tag`, `year`);

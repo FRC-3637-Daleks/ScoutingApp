@@ -49,15 +49,4 @@ public interface TagService extends Service {
 
 	List<TagAnalyticsTeamData> getTopTenTeamsForTag(Tag tag, String eventId);
 
-	Tag getTag(Integer id);
-
-	Tag getTagByName(String name);
-
-	void deleteTagById(Integer id);
-
-	boolean checkTagForId(Integer id);
-
-	boolean checkForTag(Tag tag);
-
-	void mergeTags(Tag oldTag, Tag newTag);
 }

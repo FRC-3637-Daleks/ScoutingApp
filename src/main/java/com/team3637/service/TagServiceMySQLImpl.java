@@ -106,7 +106,8 @@ public class TagServiceMySQLImpl implements TagService {
 	public void deleteTag(String name) {
 		SqlParameterSource args = new MapSqlParameterSource().addValue("tagName", name);
 		deleteTag.execute(args);
-		String SQL = "DELETE FROM tags WHERE tag = ?";
+		String SQL = "DELETE FROM tags WHERE tag = ?"
+				+ "and year = (select year from scoutingtags.competition_year where active = 1)";
 		jdbcTemplateObject.update(SQL, name);
 	}
 
@@ -230,12 +231,5 @@ public class TagServiceMySQLImpl implements TagService {
 				return tagAnalyticsTeamData;
 			}
 		}, eventId, tag.getTag());
-	}
-
-	@Override
-	public Integer saveTag(Integer id, String tag, String type, String category, String grouping, String inputType,
-			Float pointValue, Integer isRankingPoint, Integer year) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

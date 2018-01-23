@@ -75,6 +75,8 @@ public class MatchController {
 		response.setStatus(200);
 	}
 
+	@RequestMapping(value = "/saveTag", method = RequestMethod.GET)
+	@ResponseBody
 	public Integer saveTag(@RequestParam("id") Integer id, @RequestParam("tag") String tag,
 			@RequestParam("type") String type, @RequestParam("category") String category,
 			@RequestParam("grouping") String grouping, @RequestParam("inputType") String inputType,
