@@ -45,7 +45,19 @@ public interface TagService extends Service {
 	void updateInsertTag(Tag tag);
 
 	Integer saveTag(Integer id, String tag, String type, String category, String grouping, String inputType,
-			Float pointValue, Integer isRankingPoint, Integer year);
+			Float pointValue, Integer isRankingPoint);
 
 	List<TagAnalyticsTeamData> getTopTenTeamsForTag(Tag tag, String eventId);
+
+	Tag getTag(Integer id);
+
+	Tag getTagByName(String name);
+
+	void deleteTagById(Integer id);
+
+	boolean checkTagForId(Integer id);
+
+	boolean checkForTag(Tag tag);
+
+	void mergeTags(Tag oldTag, Tag newTag);
 }
