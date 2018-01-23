@@ -57,17 +57,19 @@ public class TagServiceMySQLImpl implements TagService {
 
 	@Override
 	public void createTag(Tag tag) {
-		String SQL = "INSERT INTO tags (tag, category, grouping, type, input_type, year) VALUES (?, ?, ?, ?, ?, ?);";
+		String SQL = "INSERT INTO tags (tag, category, grouping, type, input_type, is_ranking_point) VALUES (?, ?, ?, ?, ?, ?);";
 		jdbcTemplateObject.update(SQL, tag.getTag(), tag.getCategory(), tag.getGrouping(), tag.getType(),
-				tag.getInputType(), tag.getYear());
+				tag.getInputType(), tag.getIsRankingPoint());
 	}
 
 	@Override
 	public List<Tag> getMatchTags() {
+		//@formatter:off
 		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, year "
 				+ "FROM scoutingtags.tags "
 				+ "WHERE type='matches' and year = (select year from scoutingtags.competition_year where active = 1)"
 				+ "ORDER BY grouping, category, tag";
+		//@formatter:on
 		return jdbcTemplateObject.query(SQL, new TagMapper());
 	}
 
@@ -84,19 +86,19 @@ public class TagServiceMySQLImpl implements TagService {
 
 	@Override
 	public List<Tag> getTags() {
-		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, year FROM scoutingtags.tags ORDER BY type, grouping, category";
+		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, is_ranking_point FROM scoutingtags.tags ORDER BY type, grouping, category";
 		return jdbcTemplateObject.query(SQL, new TagMapper());
 	}
 
 	@Override
 	public void updateInsertTag(Tag tag) {
-		String SQL = "UPDATE scoutingtags.tags SET tag=?, type=?, category=?, grouping=?, input_type=?, point_value=? WHERE id=?";
+		String SQL = "UPDATE scoutingtags.tags SET tag=?, type=?, category=?, grouping=?, input_type=?, point_value=?, is_ranking_point=? WHERE id=?";
 		int updatedRows = jdbcTemplateObject.update(SQL, tag.getTag(), tag.getType(), tag.getCategory(),
-				tag.getGrouping(), tag.getInputType(), tag.getPointValue(), tag.getId());
+				tag.getGrouping(), tag.getInputType(), tag.getPointValue(), tag.getIsRankingPoint(), tag.getId());
 		if (updatedRows < 1) {
-			String insertSQL = "insert into scoutingtags.tags (id, tag, type, category, grouping, input_type, point_value, year) values (?, ?, ?, ?, ?, ?, ?, ?)";
+			String insertSQL = "insert into scoutingtags.tags (id, tag, type, category, grouping, input_type, point_value, is_ranking_point) values (?, ?, ?, ?, ?, ?, ?)";
 			jdbcTemplateObject.update(insertSQL, tag.getId(), tag.getTag(), tag.getType(), tag.getCategory(),
-					tag.getGrouping(), tag.getInputType(), tag.getPointValue(), tag.getYear());
+					tag.getGrouping(), tag.getInputType(), tag.getPointValue(), tag.getIsRankingPoint());
 		}
 	}
 
@@ -159,7 +161,7 @@ public class TagServiceMySQLImpl implements TagService {
 				tag.setGrouping(record.get(4));
 				tag.setInputType(record.get(5));
 				tag.setPointValue(Float.parseFloat(record.get(6)));
-				tag.setYear(Integer.parseInt(record.get(7)));
+				tag.setIsRankingPoint(Integer.parseInt(record.get(7)));
 				updateInsertTag(tag);
 			}
 		} catch (IOException e) {
@@ -195,12 +197,13 @@ public class TagServiceMySQLImpl implements TagService {
 
 	@Override
 	public Integer saveTag(Integer id, String tag, String type, String category, String grouping, String inputType,
-			Float pointValue, Integer isRankingPoint, Integer year) {
-		String sql = "UPDATE scoutingtags.tags SET tag=?, type=?, category=?, grouping=?, input_type=?, point_value=? WHERE id=?";
-		int rowsUpdated = jdbcTemplateObject.update(sql, tag, type, category, grouping, inputType, pointValue, id);
+			Float pointValue, Integer isRankingPoint) {
+		String sql = "UPDATE scoutingtags.tags SET tag=?, type=?, category=?, grouping=?, input_type=?, point_value=?, is_ranking_point=? WHERE id=?";
+		int rowsUpdated = jdbcTemplateObject.update(sql, tag, type, category, grouping, inputType, pointValue,
+				isRankingPoint, id);
 		if (rowsUpdated < 1) {
-			String sqlInsert = "INSERT INTO scoutingtags.tags (tag, type, category, grouping, input_type, point_value, year) VALUES (?,?,?,?,?,?,select year from scoutingtags.competition_year where active = 1)";
-			jdbcTemplateObject.update(sqlInsert, tag, type, category, grouping, inputType, pointValue);
+			String sqlInsert = "INSERT INTO scoutingtags.tags (tag, type, category, grouping, input_type, point_value, is_ranking_point, year) VALUES (?,?,?,?,?,?,?,(select year from scoutingtags.competition_year where active = 1))";
+			jdbcTemplateObject.update(sqlInsert, tag, type, category, grouping, inputType, pointValue, isRankingPoint);
 			id = jdbcTemplateObject.queryForObject("select id from scoutingtags.tags where tag = ?", Integer.class,
 					tag);
 		}
@@ -210,14 +213,14 @@ public class TagServiceMySQLImpl implements TagService {
 	@Override
 	public List<TagAnalyticsTeamData> getTopTenTeamsForTag(Tag tag, String eventId) {
 
-		// @formatter:off
-		String sql = "SELECT sum(occurrences) * t.point_value as score, team " 
-				+ "FROM scoutingtags.matchtags m "
-				+ "		inner join scoutingtags.tags t on t.tag = m.tag "
-				+ "  	inner join scoutingtags.event e on e.event_id = m.event_id and e.year = t.year "
-				+ "where m.event_id = ? and m.tag = ? " 
-				+ "group by team order by 1 desc limit 10";
-		// @formatter:on
+		//@formatter:off
+		String sql = "SELECT sum(occurrences) * t.point_value as score, team "
+					+	"FROM scoutingtags.matchtags m "
+					+	"		inner join scoutingtags.tags t on t.tag = m.tag "
+					+	"where event_id = ? and m.tag = ? "
+					+	"group by team order by 1 desc limit 10";
+		
+		//@formatter:on
 		return jdbcTemplateObject.query(sql, new RowMapper<TagAnalyticsTeamData>() {
 			@Override
 			public TagAnalyticsTeamData mapRow(ResultSet resultSet, int rowNum) throws SQLException {
@@ -227,5 +230,12 @@ public class TagServiceMySQLImpl implements TagService {
 				return tagAnalyticsTeamData;
 			}
 		}, eventId, tag.getTag());
+	}
+
+	@Override
+	public Integer saveTag(Integer id, String tag, String type, String category, String grouping, String inputType,
+			Float pointValue, Integer isRankingPoint, Integer year) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

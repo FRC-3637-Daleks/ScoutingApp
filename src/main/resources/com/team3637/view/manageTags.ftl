@@ -221,9 +221,9 @@ function saveTag(tagId, type) {
          var pointValue = $( "#pointValue-edit-input-" + tagId )[0].value;
          var isRankingPoint = 0;
          var isRankingPointValue = "No";
-         if ($( "#isRankingPoint-edit-input-" + tagId )[0].checked)
+         if ($( "#isRankingPoint-edit-input-" + tagId )[0].checked)	{
          	isRankingPoint = 1;
-         	isRankingPointValue = "Yes";
+         	isRankingPointValue = "Yes";	}
          $.ajax({
               url: "../m/saveTag?id="+tagId+"&tag="+tag+"&grouping="+grouping+"&category="+category+"&inputType="+inputType+"&type="+type+"&pointValue="+pointValue+"&isRankingPoint="+isRankingPoint,
               type: 'GET',
@@ -362,7 +362,7 @@ function createNewTeamTag() {
   </tr> 
   <#list matchTags as matchTag>
   <#assign isRankingPoint = "No">
-  <#if matchTag.isRankingPoint!0 == 1>
+  <#if matchTag.isRankingPoint == 1>
   	<#assign isRankingPoint = "Yes">
   </#if>  
   <tr id="row-${matchTag.id}">
@@ -373,7 +373,7 @@ function createNewTeamTag() {
   <td><div id="inputType-${matchTag.id}">${matchTag.inputType}</div><div id="inputType-edit-${matchTag.id}" style="display:none;"><select  id="inputType-edit-input-${matchTag.id}"></select></div></td> 
   <td><div id="pointValue-${matchTag.id}">${matchTag.pointValue?string["0.#"]}</div><div id="pointValue-edit-${matchTag.id}" style="display:none;"><input  id="pointValue-edit-input-${matchTag.id}"  type="text" value="${matchTag.pointValue?string["0.#"]}"></input></div></td>  
   <td><div id="isRankingPoint-${matchTag.id}">${isRankingPoint}</div><div id="isRankingPoint-edit-${matchTag.id}" style="display:none;">
-  <#if matchTag.isRankingPoint!0 == 1>
+  <#if matchTag.isRankingPoint == 1>
   	<input  id="isRankingPoint-edit-input-${matchTag.id}"  type="checkbox" checked value="${matchTag.isRankingPoint!0}"></input>
   <#else>
   	<input  id="isRankingPoint-edit-input-${matchTag.id}"  type="checkbox" value="${matchTag.isRankingPoint!0}"></input>
