@@ -62,6 +62,15 @@ public class AnalyticsController {
 		for (Team team : teams) {
 			List<MatchStatistics> matchStatistics = matchService.getTeamMatchStatistics(team.getTeam(), eventId);
 			team.setMatchStatistics(matchStatistics);
+			if (team.getRankingpoints() == null || team.getRankingpoints() == 0) {
+				int rankingPoints = team.getTies() + (team.getWins() * 2);
+				for (MatchStatistics matchStatistic : matchStatistics) {
+					if (matchStatistic.isRankingPoint()) {
+						rankingPoints += matchStatistic.getTotalOccurrences();
+					}
+					team.setRankingpoints(rankingPoints);
+				}
+			}
 		}
 		model.addAttribute("events", scheduleService.getEventList());
 		model.addAttribute("selectedEvent", eventId);
@@ -82,6 +91,15 @@ public class AnalyticsController {
 		for (Team team : teams) {
 			List<MatchStatistics> matchStatistics = matchService.getTeamMatchStatistics(team.getTeam(), eventId);
 			team.setMatchStatistics(matchStatistics);
+			if (team.getRankingpoints() == null || team.getRankingpoints() == 0) {
+				int rankingPoints = team.getTies() + (team.getWins() * 2);
+				for (MatchStatistics matchStatistic : matchStatistics) {
+					if (matchStatistic.isRankingPoint()) {
+						rankingPoints += matchStatistic.getTotalOccurrences();
+					}
+					team.setRankingpoints(rankingPoints);
+				}
+			}
 		}
 		List<MatchTeams> matchTeamsList = matchService.getMatchTeams(match, teams, eventId);
 		model.addAttribute("matchTeamsList", matchTeamsList);

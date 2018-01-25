@@ -65,7 +65,7 @@ public class TagServiceMySQLImpl implements TagService {
 	@Override
 	public List<Tag> getMatchTags() {
 		//@formatter:off
-		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, year "
+		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, is_ranking_point, year "
 				+ "FROM scoutingtags.tags "
 				+ "WHERE type='matches' and year = (select year from scoutingtags.competition_year where active = 1)"
 				+ "ORDER BY grouping, category, tag";
@@ -76,7 +76,7 @@ public class TagServiceMySQLImpl implements TagService {
 	@Override
 	public List<Tag> getTeamTags() {
 		//@formatter:off
-		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, year "
+		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, is_ranking_point, year "
 				+ "FROM scoutingtags.tags "
 				+ "WHERE type='teams' and year = (select year from scoutingtags.competition_year where active = 1)"
 				+ "ORDER BY grouping, category, tag";
