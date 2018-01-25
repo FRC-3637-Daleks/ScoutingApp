@@ -34,6 +34,7 @@ public class TagMapper implements RowMapper<Tag> {
 		tag.setGrouping(resultSet.getString("grouping"));
 		tag.setInputType(resultSet.getString("input_type"));
 		tag.setPointValue(resultSet.getFloat("point_value"));
+		tag.setIsRankingPoint(resultSet.getInt("is_ranking_point"));
 		tag.setYear(resultSet.getInt("year"));
 		return tag;
 	}

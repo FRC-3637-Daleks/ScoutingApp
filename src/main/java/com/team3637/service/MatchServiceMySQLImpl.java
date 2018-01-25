@@ -210,7 +210,7 @@ public class MatchServiceMySQLImpl implements MatchService {
 	@Override
 	public List<MatchStatistics> getTeamMatchStatistics(Integer teamNum, String eventId) {
 		// @formatter:off
-		String sql = "SELECT team, t.grouping, category, m.tag, tg.sequence, sum(occurrences) as occurrences, m.event_id "
+		String sql = "SELECT team, t.grouping, category, m.tag, tg.sequence, t.is_ranking_point, sum(occurrences) as occurrences, m.event_id "
 				+ " FROM scoutingtags.matchtags m " 
 				+ "      inner join scoutingtags.tags t on m.tag = t.tag "
 				+ "		 inner join scoutingtags.event e on e.event_id = m.event_id and e.year = t.year"
@@ -218,7 +218,7 @@ public class MatchServiceMySQLImpl implements MatchService {
 				+ "WHERE (? is null or team = ?)  and m.event_id = ? "
 				+ "GROUP BY team, t.grouping,sequence, category, m.tag, m.event_id " 
 				+ "union "
-				+ "SELECT team, t.grouping, category, m.tag, tg.sequence, sum(occurrences) as occurrences, m.event_id "
+				+ "SELECT team, t.grouping, category, m.tag, tg.sequence, t.is_ranking_point, sum(occurrences) as occurrences, m.event_id "
 				+ " FROM scoutingtags.teamtags m " 
 				+ "      inner join scoutingtags.tags t on m.tag = t.tag "
 				+ "		 inner join scoutingtags.event e on e.event_id = m.event_id and e.year = t.year"
@@ -240,6 +240,7 @@ public class MatchServiceMySQLImpl implements MatchService {
 				matchStatistics.setTotalOccurrences(resultSet.getInt("occurrences"));
 				matchStatistics.setTag(resultSet.getString("tag"));
 				matchStatistics.setEventId(resultSet.getString("event_id"));
+				matchStatistics.setRankingPoint(resultSet.getInt("is_ranking_point") == 1);
 				return matchStatistics;
 			}
 		}, teamNum, teamNum, eventId, teamNum, teamNum, eventId);
@@ -369,17 +370,6 @@ public class MatchServiceMySQLImpl implements MatchService {
 		if (rowsUpdated < 1) {
 			String sqlInsert = "INSERT INTO scoutingtags.match (team, matchNum, score, event_id) VALUES (?,?,?,  (select event_id from scoutingtags.event where active = 1))";
 			jdbcTemplateObject.update(sqlInsert, team, match, score);
-		}
-	}
-
-	@Override
-
-	public void saveMatchRankingPoints(Integer team, Integer match, String rankingPoints) {
-		String sql = "UPDATE scoutingtags.match SET ranking_points = ? WHERE team=? AND matchNum=?  and event_id = (select event_id from scoutingtags.event where active = 1)";
-		int rowsUpdated = jdbcTemplateObject.update(sql, rankingPoints, team, match);
-		if (rowsUpdated < 1) {
-			String sqlInsert = "INSERT INTO scoutingtags.match (team, matchNum, ranking_points,event_id) VALUES (?,?,?, (select event_id from scoutingtags.event where active = 1))";
-			jdbcTemplateObject.update(sqlInsert, team, match, rankingPoints);
 		}
 	}
 
