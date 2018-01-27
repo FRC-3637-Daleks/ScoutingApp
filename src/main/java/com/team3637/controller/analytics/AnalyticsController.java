@@ -156,18 +156,23 @@ public class AnalyticsController {
 			eventId = matchService.getDefaultEvent();
 		List<TagAnalytics> tagAnalytics = new ArrayList<TagAnalytics>();
 		List<Tag> tags = tagService.getMatchTags();
+		List<String> categories = new ArrayList<String>();
 		for (Tag tag : tags) {
 			List<TagAnalyticsTeamData> tagAnalyticsTeamData = tagService.getTopTenTeamsForTag(tag, eventId);
 			TagAnalytics nextTag = new TagAnalytics();
 			nextTag.setTag(tag);
 			nextTag.setTopScoringTeams(tagAnalyticsTeamData);
 			tagAnalytics.add(nextTag);
+			if (!categories.contains(tag.getCategory())) {
+				categories.add(tag.getCategory());
+			}
 		}
 		model.addAttribute("tagAnalyticsList", tagAnalytics);
 		model.addAttribute("events", scheduleService.getEventList());
 		model.addAttribute("selectedEvent", eventId);
 		model.addAttribute("hideComments", hideComments);
 		model.addAttribute("selectedReportType", "tagAnalytics");
+		model.addAttribute("categories", categories);
 		return "tagAnalytics";
 
 	}

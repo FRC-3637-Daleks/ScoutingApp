@@ -35,8 +35,9 @@
 } 
 
 .sectionHeader {
-    background-color:#00A22E;
-    font-weight:bold; 
+    background-color:#BC2132;
+    font-weight:bold;
+    color:#E9E9E9;
     text-align:center;
     padding-right:15px;
     padding-left:15px;    
@@ -49,7 +50,7 @@
 }
 
 .teamHeader th{
-    background-color:#8F0000; 
+    background-color:#393939; 
     font-weight:bold;
     font-size:17px;
     margin-left: 10px;
@@ -61,7 +62,7 @@
 }
 
 .teamHeader label{
-    background-color:#8F0000;
+    background-color:#393939;
     font-weight:bold;
     font-size:20px;
     padding-left:0px;
@@ -81,7 +82,7 @@
 .categoryTitle {
     text-align: 
     center; height: 20px; 
-    background-color:#CFA600; 
+    background-color:#ADADAD; 
     font-size:13px;  
     font-weight:bold;
     padding-right:15px;

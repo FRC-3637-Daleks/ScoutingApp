@@ -32,7 +32,7 @@ body {
     padding-right:25px;
     border-collapse:collapse;
     border: 1px solid gray !important;
-    background-color:#CFA600;
+    background-color:#D4C304;
 }
 
 .tagTable td{
@@ -143,17 +143,20 @@ body {
 }
 
 .tagHeader th{
-    font-weight:bold;
     font-size:15px;
-    padding-left:25px;
-    padding-right:1124px;
-    border-collapse:collapse;
     background-color:#ebebe0;
+    width:1%;
+    border-spacing: 0px;
 }
 
 hr.style1 {
 	border-color:#000000;
-{
+    padding-right:0px;
+    margin-top:5px;
+    margin-bottom:5px;
+}
+
+span.name { color:#545454; }
 
 </style>
 <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
@@ -206,7 +209,7 @@ function registerPopOvers()
 
 function changeEvent(eventId)
 {
-      document.location.href = "../analytics/teamAnalyticsByMatch?event="+eventId+"&hideComments="+$('#hideComments').is(':checked');
+      document.location.href = "../analytics/tagAnalytics?event="+eventId+"&hideComments="+$('#hideComments').is(':checked');
 }
 
 function toggleComments(hide)
@@ -267,13 +270,23 @@ $(document).ready(function(){
                              <option value="${event}">${event}</option>
                         </#if>
                      </#list> 
-                   </select>        
+                   	 </select>        
                     <label for"hideComments" style="color:#9d9d9d;">Hide Comments:</label>  
                     <#if hideComments>                     
                    <input type"checkbox" type="checkbox" id="hideComments" value="hide" class="form-control input-sm" onchange="toggleComments(this.checked);"  checked/> 
                    <#else>
                    <input type"checkbox" type="checkbox" id="hideComments" value="hide" class="form-control input-sm" onchange="toggleComments(this.checked);" /> 
                    </#if>
+                   <label for"reportSelector" style="color:#9d9d9d;">Category:</label>  
+                     <select class="form-control input-sm"   id="reportSelector" onchange='goTo("../analytics/"+this.value)'>    
+                     <#list events as event>
+                     	<#if selectedEvent == event>
+                            <option value="${event}" selected>${event}</option>   
+                        <#else>
+                             <option value="${event}">${event}</option>
+                        </#if>
+                     </#list>
+                   	 </select>
                    </div>
                    </form> 
                  </li>  
@@ -283,18 +296,20 @@ $(document).ready(function(){
 </nav> 
 </#if> 
 <#list tagAnalyticsList as tagAnalytics>
-<#assign tag = tagAnalytics.tag> 
+<#assign tag = tagAnalytics.tag>
 
-<#assign dataImportStyle = "dataNotImported"> 
-<hr class = "style1">
+<#assign dataImportStyle = "dataNotImported">
 <div class="${dataImportStyle}" onclick="toggle('${tag}-tag-div')">
 <table class = "tagHeader" cellspacing = "0">
   <tr>
-    <th><p style="color:black; width:300px;">Tag: ${tag}</p></th>
+    <th><p style="color:black; width:300px; padding-left:10px;">Tag: <span class = "name">${tag.tag}</span></p></th>
+    <th><p style="color:black; width:300px;">Grouping: <span class = "name">${tag.grouping}</span></p></th>
+    <th><p style="color:black; width:300px;">Category: <span class = "name">${tag.category}</span></p></th>
+    <th><p style="color:black; width:300px;">Point Value: <span class = "name">${tag.pointValue}</span></p></th>
   </tr>
 </table>
 </div>
-<div id="${tag}-tag-div"  style = "display:none;">
+<div id="${tag}-tag-div"  style = "display:none">
 <table class="tagTable"  id="${tag}-tag-table">
    <tr>
    <th>Overall Score</th>
@@ -307,7 +322,8 @@ $(document).ready(function(){
     </tr>
    </#list>
 </table>
-</div>
+</div> 
+<hr class = "style1">
 </#list>
 </body>
 </html>

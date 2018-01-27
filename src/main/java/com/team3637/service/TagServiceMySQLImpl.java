@@ -68,8 +68,7 @@ public class TagServiceMySQLImpl implements TagService {
 		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, is_ranking_point, year "
 				+ "FROM scoutingtags.tags "
 				+ "WHERE type='matches' and year = (select year from scoutingtags.competition_year where active = 1)"
-				+ "ORDER BY grouping, category, tag";
-		//@formatter:on
+				+ "ORDER BY category, grouping, tag";
 		return jdbcTemplateObject.query(SQL, new TagMapper());
 	}
 
