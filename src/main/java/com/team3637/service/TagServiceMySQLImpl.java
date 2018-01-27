@@ -83,7 +83,7 @@ public class TagServiceMySQLImpl implements TagService {
 
 	@Override
 	public List<Tag> getMatchTags() {
-		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value FROM scoutingtags.tags WHERE type='matches' ORDER BY grouping, category, tag";
+		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value FROM scoutingtags.tags WHERE type='matches' ORDER BY category, grouping, tag";
 		return jdbcTemplateObject.query(SQL, new TagMapper());
 	}
 

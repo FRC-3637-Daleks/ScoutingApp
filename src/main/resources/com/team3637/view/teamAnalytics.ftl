@@ -107,6 +107,9 @@ body {
 .columnTitle {
      text-align: center
 }
+
+span.name { color:#545454; }
+
 </style>
 <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
 <link href="../css/bootstrap-tokenfield.css" rel="stylesheet"/>
@@ -243,12 +246,12 @@ $(document).ready(function(){
 <div onclick="toggle('${team}-team')">
 <table class = "teamHeader" cellspacing = "0">
   <tr>
-    <th><p style="color:black; width:100px;">Team: ${team.team}</p></th>
-    <th><p style="color:black; width:140px;">Matches Played: ${team.matches}</p></th>
-    <th><p style="color:black; width:130px;">Avg. Score: ${team.avgScore}</p></th>
-    <th><p style="color:black; width:130px;">Our Score: ${team.ourScore!}</p></th>
-    <th><p style="color:black; width:120px;">W/L/T: ${team.wins}/${team.losses}/${team.ties}</p></th>
-    <th><p style="color:black; width:150px;">Ranking Points: ${team.rankingpoints}</p></th>
+    <th><p style="color:black; width:100px;">Team: <span class = "name">${team.team}</span></p></th>
+    <th><p style="color:black; width:140px;">Matches Played: <span class = "name">${team.matches}</span></p></th>
+    <th><p style="color:black; width:130px;">Avg. Score: <span class = "name">${team.avgScore}</span></p></th>
+    <th><p style="color:black; width:130px;">Our Score: <span class = "name">${team.ourScore!}</span></p></th>
+    <th><p style="color:black; width:120px;">W/L/T: <span class = "name">${team.wins}/${team.losses}/${team.ties}</span></p></th>
+    <th><p style="color:black; width:150px;">Ranking Points: <span class = "name">${team.rankingpoints}</span></p></th>
   </tr>
 </table>
 </div>

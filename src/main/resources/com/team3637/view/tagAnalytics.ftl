@@ -154,7 +154,9 @@ hr.style1 {
     padding-right:0px;
     margin-top:5px;
     margin-bottom:5px;
-{
+}
+
+span.name { color:#545454; }
 
 </style>
 <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
@@ -268,13 +270,23 @@ $(document).ready(function(){
                              <option value="${event}">${event}</option>
                         </#if>
                      </#list> 
-                   </select>        
+                   	 </select>        
                     <label for"hideComments" style="color:#9d9d9d;">Hide Comments:</label>  
                     <#if hideComments>                     
                    <input type"checkbox" type="checkbox" id="hideComments" value="hide" class="form-control input-sm" onchange="toggleComments(this.checked);"  checked/> 
                    <#else>
                    <input type"checkbox" type="checkbox" id="hideComments" value="hide" class="form-control input-sm" onchange="toggleComments(this.checked);" /> 
                    </#if>
+                   <label for"reportSelector" style="color:#9d9d9d;">Category:</label>  
+                     <select class="form-control input-sm"   id="reportSelector" onchange='goTo("../analytics/"+this.value)'>    
+                     <#list events as event>
+                     	<#if selectedEvent == event>
+                            <option value="${event}" selected>${event}</option>   
+                        <#else>
+                             <option value="${event}">${event}</option>
+                        </#if>
+                     </#list>
+                   	 </select>
                    </div>
                    </form> 
                  </li>  
@@ -290,10 +302,10 @@ $(document).ready(function(){
 <div class="${dataImportStyle}" onclick="toggle('${tag}-tag-div')">
 <table class = "tagHeader" cellspacing = "0">
   <tr>
-    <th><p style="color:black; width:300px; padding-left:10px;"><u>Tag: ${tag.tag}</u></p></th>
-    <th><p style="color:black; width:300px;"><u>Grouping: ${tag.grouping}</u></p></th>
-    <th><p style="color:black; width:300px;"><u>Category: ${tag.category}</u></p></th>
-    <th><p style="color:black; width:300px;"><u>Point Value: ${tag.pointValue}</u></p></th>
+    <th><p style="color:black; width:300px; padding-left:10px;">Tag: <span class = "name">${tag.tag}</span></p></th>
+    <th><p style="color:black; width:300px;">Grouping: <span class = "name">${tag.grouping}</span></p></th>
+    <th><p style="color:black; width:300px;">Category: <span class = "name">${tag.category}</span></p></th>
+    <th><p style="color:black; width:300px;">Point Value: <span class = "name">${tag.pointValue}</span></p></th>
   </tr>
 </table>
 </div>
