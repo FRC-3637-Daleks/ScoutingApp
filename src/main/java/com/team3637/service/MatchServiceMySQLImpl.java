@@ -305,11 +305,13 @@ public class MatchServiceMySQLImpl implements MatchService {
 				while (!matchTeams.getHasData() && teamIt.hasNext()) {
 					Team nextTeam = teamIt.next();
 
-					Iterator<MatchStatistics> matchStatsIt = nextTeam.getMatchStatistics().iterator();
-					while (!matchTeams.getHasData() && matchStatsIt.hasNext()) {
-						MatchStatistics matchStatistics = matchStatsIt.next();
-						if (matchStatistics.getTotalOccurrences() > 0)
-							matchTeams.setHasData(true);
+					if (nextTeam.getMatchStatistics() != null) {
+						Iterator<MatchStatistics> matchStatsIt = nextTeam.getMatchStatistics().iterator();
+						while (!matchTeams.getHasData() && matchStatsIt.hasNext()) {
+							MatchStatistics matchStatistics = matchStatsIt.next();
+							if (matchStatistics.getTotalOccurrences() > 0)
+								matchTeams.setHasData(true);
+						}
 					}
 				}
 				return matchTeams;
