@@ -87,34 +87,6 @@
 			</table>
 		</form:form>
 	</div>
-	<script>
-		$(document).ready(function() {
-			$("#team-list").tablesorter({
-				headers : {
-					3 : {
-						sorter : false
-					}
-				},
-				sortList : [ [ 0, 0, 0 ] ]
-			});
-		});
-
-		function isInt(value) {
-			return !isNaN(value) && parseInt(Number(value)) == value
-					&& !isNaN(parseInt(value, 10));
-		}
-
-		function addTeam() {
-			var teamNum = $('input[name=teamNum]').val();
-			if (teamNum != null && teamNum != "")
-				if (isInt(teamNum))
-					window.location = '${pageContext.request.contextPath}/t/add/'
-							+ teamNum;
-				else
-					alert("Team number must be unique.")
-			else
-				alert("Please enter a new team number and try again.")
-		}
-	</script>
+	
 </body>
 </html>

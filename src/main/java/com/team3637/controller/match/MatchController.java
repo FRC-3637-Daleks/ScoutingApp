@@ -170,13 +170,6 @@ public class MatchController {
 		response.setStatus(200);
 	}
 
-	@RequestMapping(value = "/saveMatchRankingPoints", method = RequestMethod.GET)
-	public void saveMatchRankingPoints(@RequestParam("team") Integer team, @RequestParam("match") Integer match,
-			@RequestParam("rankingPoints") String rankingPoints, HttpServletResponse response) {
-		matchService.saveMatchRankingPoints(team, match, rankingPoints);
-		response.setStatus(200);
-	}
-
 	@RequestMapping(value = "/saveMatchStartPosition", method = RequestMethod.GET)
 	public void saveMatchStartPosition(@RequestParam("team") Integer team, @RequestParam("match") Integer match,
 			@RequestParam("startPosition") String startPosition, HttpServletResponse response) {

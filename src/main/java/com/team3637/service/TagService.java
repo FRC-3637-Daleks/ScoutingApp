@@ -26,21 +26,9 @@ import com.team3637.model.TagAnalyticsTeamData;
 public interface TagService extends Service {
 	void setDataSource(DataSource dataSource);
 
-	Tag getTag(Integer id);
-
-	Tag getTagByName(String name);
-
 	List<Tag> getTags();
 
-	void deleteTagById(Integer id);
-
 	void deleteTag(String name);
-
-	boolean checkTagForId(Integer id);
-
-	boolean checkForTag(Tag tag);
-
-	void mergeTags(Tag oldTag, Tag newTag);
 
 	void createTag(Tag tag);
 
@@ -60,4 +48,5 @@ public interface TagService extends Service {
 			Float pointValue, Integer isRankingPoint);
 
 	List<TagAnalyticsTeamData> getTopTenTeamsForTag(Tag tag, String eventId);
+
 }

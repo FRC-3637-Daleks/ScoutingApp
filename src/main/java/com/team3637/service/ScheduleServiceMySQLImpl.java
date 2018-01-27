@@ -29,46 +29,39 @@ import java.util.Scanner;
 
 import javax.sql.DataSource;
 
-import com.team3637.bluealliance.api.model.Match;
-import com.team3637.mapper.ScheduleMapper;
-import com.team3637.model.Schedule;
-
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-public class ScheduleServiceMySQLImpl implements ScheduleService
-{
+import com.team3637.bluealliance.api.model.Match;
+import com.team3637.mapper.ScheduleMapper;
+import com.team3637.model.Schedule;
+
+public class ScheduleServiceMySQLImpl implements ScheduleService {
 
 	private JdbcTemplate jdbcTemplateObject;
 
 	@Override
-	public void setDataSource(DataSource dataSource)
-	{
+	public void setDataSource(DataSource dataSource) {
 		this.jdbcTemplateObject = new JdbcTemplate(dataSource);
 	}
 
 	@Override
-	public void initDB(String initScript)
-	{
+	public void initDB(String initScript) {
 		String script = "";
-		try
-		{
+		try {
 			Scanner sc = new Scanner(new File(initScript));
 			while (sc.hasNext())
 				script += sc.nextLine();
-		}
-		catch (FileNotFoundException e)
-		{
+		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 		jdbcTemplateObject.execute(script);
 	}
 
-	public void create(Schedule schedule)
-	{
+	public void create(Schedule schedule) {
 		if (schedule.getEventId() == null)
 			schedule.setEventId(getDefaultEvent());
 		String SQL = "INSERT INTO schedule (matchNum, b1, b2, b3, r1, r2, r3, event_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
@@ -77,23 +70,20 @@ public class ScheduleServiceMySQLImpl implements ScheduleService
 	}
 
 	@Override
-	public Schedule getMatch(Integer matchNum)
-	{
+	public Schedule getMatch(Integer matchNum) {
 		String SQL = "SELECT * FROM schedule WHERE matchNum = ?";
 		return jdbcTemplateObject.queryForObject(SQL, new Object[] { matchNum }, new ScheduleMapper());
 	}
 
 	@Override
-	public List<Schedule> getSchedule()
-	{
+	public List<Schedule> getSchedule() {
 		String SQL = "select id, matchNum, event_id, b1, b2, b3, r1, r2, r3, event_id from schedule where event_id = (select event_id from event where active = 1) order by matchNum";
 		List<Schedule> schedule = jdbcTemplateObject.query(SQL, new ScheduleMapper());
 		return schedule;
 	}
 
 	@Override
-	public int update(Schedule schedule)
-	{
+	public int update(Schedule schedule) {
 		if (schedule.getEventId() == null)
 			schedule.setEventId(getDefaultEvent());
 		String updateSQL = "update scoutingtags.schedule set b1 =?, b2 =?, b3 = ?, r1 =?, r2 = ?, r3 =? where matchNum = ? and event_id = ?";
@@ -102,69 +92,52 @@ public class ScheduleServiceMySQLImpl implements ScheduleService
 	}
 
 	@Override
-	public void delete(Integer matchNum)
-	{
+	public void delete(Integer matchNum) {
 		String SQL = "DELETE FROM schedule WHERE matchNum = ? and event_id = (select event_id from event where active = 1)";
 		jdbcTemplateObject.update(SQL, matchNum);
 	}
 
 	@Override
-	public void exportCSV(String outputFile)
-	{
+	public void exportCSV(String outputFile) {
 		List<Schedule> data = getSchedule();
 		FileWriter fileWriter = null;
 		CSVPrinter csvFilePrinter = null;
-		try
-		{
+		try {
 			fileWriter = new FileWriter(outputFile);
 			csvFilePrinter = new CSVPrinter(fileWriter, CSVFormat.DEFAULT.withRecordSeparator("\n"));
-			for (int i = 0; i < data.size(); i++)
-			{
+			for (int i = 0; i < data.size(); i++) {
 				List<Object> line = new ArrayList<>();
-				for (Field field : Schedule.class.getDeclaredFields())
-				{
+				for (Field field : Schedule.class.getDeclaredFields()) {
 					field.setAccessible(true);
 					Object value = field.get(data.get(i));
 					line.add(value);
 				}
 				csvFilePrinter.printRecord(line);
 			}
-		}
-		catch (IOException | IllegalAccessException e)
-		{
+		} catch (IOException | IllegalAccessException e) {
 			e.printStackTrace();
-		}
-		finally
-		{
-			try
-			{
-				if (fileWriter != null)
-				{
+		} finally {
+			try {
+				if (fileWriter != null) {
 					fileWriter.flush();
 					fileWriter.close();
 				}
-				if (csvFilePrinter != null)
-				{
+				if (csvFilePrinter != null) {
 					csvFilePrinter.close();
 				}
-			}
-			catch (IOException e)
-			{
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
 	@Override
-	public void importCSV(String inputFile, Boolean delete)
-	{
-		try
-		{
+	public void importCSV(String inputFile, Boolean delete) {
+		try {
 			String csvData = new String(Files.readAllBytes(FileSystems.getDefault().getPath(inputFile)));
 			csvData = csvData.replaceAll("\\r", "");
 			CSVParser parser = CSVParser.parse(csvData, CSVFormat.DEFAULT.withRecordSeparator("\n"));
-			for (CSVRecord record : parser)
-			{
+			for (CSVRecord record : parser) {
 				Schedule schedule = new Schedule();
 				schedule.setId(Integer.parseInt(record.get(0)));
 				schedule.setMatchNum(Integer.parseInt(record.get(1)));
@@ -179,16 +152,13 @@ public class ScheduleServiceMySQLImpl implements ScheduleService
 				if (recordsUpdated < 1)
 					create(schedule);
 			}
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	@Override
-	public void addNewMatch()
-	{
+	public void addNewMatch() {
 		Integer nextMatchNum = jdbcTemplateObject.queryForObject("select max(matchNum) from scoutingtags.schedule",
 				Integer.class);
 		String sql = "insert into scoutingtags.schedule (matchNum, event_id) values (?,  (select event_id from event where active = 1))";
@@ -197,8 +167,7 @@ public class ScheduleServiceMySQLImpl implements ScheduleService
 	}
 
 	@Override
-	public void updateInsertMatch(Match match)
-	{
+	public void updateInsertMatch(Match match) {
 		Schedule schedule = new Schedule();
 		Integer matchNum = match.getMatch_number();
 		Integer setNum = match.getSet_number();
@@ -236,16 +205,14 @@ public class ScheduleServiceMySQLImpl implements ScheduleService
 	}
 
 	@Override
-	public String getDefaultEvent()
-	{
+	public String getDefaultEvent() {
 		return jdbcTemplateObject.queryForObject("select event_id from scoutingtags.event where active = 1",
 				String.class);
 	}
 
 	@Override
-	public List<String> getEventList()
-	{
+	public List<String> getEventList() {
 		return jdbcTemplateObject.queryForList(
-				"select event_id from scoutingtags.event order by active desc, event_id asc", String.class);
+				"select event_id from scoutingtags.event order by active desc, event_date desc", String.class);
 	}
 }

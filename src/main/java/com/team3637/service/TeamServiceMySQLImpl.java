@@ -31,13 +31,6 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import com.team3637.mapper.TagStringMapper;
-import com.team3637.mapper.TeamMapper;
-import com.team3637.model.Team;
-import com.team3637.model.TeamExportModel;
-import com.team3637.model.TeamTag;
-import com.team3637.model.TeamTagExportModel;
-
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -46,20 +39,24 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
-public class TeamServiceMySQLImpl implements TeamService
-{
+import com.team3637.mapper.TagStringMapper;
+import com.team3637.mapper.TeamMapper;
+import com.team3637.model.Team;
+import com.team3637.model.TeamExportModel;
+import com.team3637.model.TeamTag;
+import com.team3637.model.TeamTagExportModel;
+
+public class TeamServiceMySQLImpl implements TeamService {
 
 	private JdbcTemplate jdbcTemplateObject;
 
 	@Override
-	public void setDataSource(DataSource dataSource)
-	{
+	public void setDataSource(DataSource dataSource) {
 		this.jdbcTemplateObject = new JdbcTemplate(dataSource);
 	}
 
 	@Override
-	public Team getTeam(Integer team)
-	{
+	public Team getTeam(Integer team) {
 		//@formatter:off
         String SQL = 
         		    "SELECT t.team," + 
@@ -89,8 +86,7 @@ public class TeamServiceMySQLImpl implements TeamService
 	}
 
 	@Override
-	public List<Team> getTeams()
-	{
+	public List<Team> getTeams() {
 		//@formatter:off
         String SQL = 
         		    "SELECT t.team," + 
@@ -121,29 +117,24 @@ public class TeamServiceMySQLImpl implements TeamService
 	}
 
 	@Override
-	public void delete(Team team)
-	{
+	public void delete(Team team) {
 		String SQL = "DELETE FROM teams WHERE id = ? and event_id = (select event_id from scoutingtags.event where active = 1)";
 		jdbcTemplateObject.update(SQL, team.getId());
 	}
 
 	@Override
-	public List<String> getTags()
-	{
-		String SQL = "SELECT tag FROM tags WHERE type = 'teams' ORDER BY tag";
+	public List<String> getTags() {
+		String SQL = "SELECT tag FROM tags WHERE type = 'teams' ORDER BY tag ";
 		return jdbcTemplateObject.query(SQL, new TagStringMapper());
 	}
 
 	@Override
-	public List<TeamTagExportModel> getTeamTagsForExport()
-	{
+	public List<TeamTagExportModel> getTeamTagsForExport() {
 		String SQL = "select team, tag, occurrences, modified_timestamp, event_id from teamtags order by team, tag";
-		return jdbcTemplateObject.query(SQL, new RowMapper<TeamTagExportModel>()
-		{
+		return jdbcTemplateObject.query(SQL, new RowMapper<TeamTagExportModel>() {
 
 			@Override
-			public TeamTagExportModel mapRow(ResultSet resultSet, int rowNum) throws SQLException
-			{
+			public TeamTagExportModel mapRow(ResultSet resultSet, int rowNum) throws SQLException {
 
 				TeamTagExportModel teamTagExportModel = new TeamTagExportModel();
 				teamTagExportModel.setTeam(resultSet.getInt("team"));
@@ -157,15 +148,12 @@ public class TeamServiceMySQLImpl implements TeamService
 	}
 
 	@Override
-	public List<TeamExportModel> getTeamsForExport()
-	{
+	public List<TeamExportModel> getTeamsForExport() {
 		String SQL = "select * from scoutingtags.teams";
-		return jdbcTemplateObject.query(SQL, new RowMapper<TeamExportModel>()
-		{
+		return jdbcTemplateObject.query(SQL, new RowMapper<TeamExportModel>() {
 
 			@Override
-			public TeamExportModel mapRow(ResultSet resultSet, int rowNum) throws SQLException
-			{
+			public TeamExportModel mapRow(ResultSet resultSet, int rowNum) throws SQLException {
 
 				TeamExportModel teamExportModel = new TeamExportModel();
 				teamExportModel.setTeam(resultSet.getInt("team"));
@@ -179,134 +167,102 @@ public class TeamServiceMySQLImpl implements TeamService
 	}
 
 	@Override
-	public void exportCSV(String outputFile)
-	{
+	public void exportCSV(String outputFile) {
 		List<TeamTagExportModel> data = getTeamTagsForExport();
 		FileWriter fileWriter = null;
 		CSVPrinter csvFilePrinter = null;
-		try
-		{
+		try {
 			fileWriter = new FileWriter(outputFile);
 			csvFilePrinter = new CSVPrinter(fileWriter, CSVFormat.DEFAULT.withRecordSeparator("\n"));
-			for (TeamTagExportModel teamTag : data)
-			{
+			for (TeamTagExportModel teamTag : data) {
 				List<Object> line = new ArrayList<>();
-				for (Field field : TeamTagExportModel.class.getDeclaredFields())
-				{
+				for (Field field : TeamTagExportModel.class.getDeclaredFields()) {
 					field.setAccessible(true);
 					Object value = field.get(teamTag);
 					line.add(value);
 				}
 				csvFilePrinter.printRecord(line);
 			}
-		}
-		catch (IOException | IllegalAccessException e)
-		{
+		} catch (IOException | IllegalAccessException e) {
 			e.printStackTrace();
-		}
-		finally
-		{
-			try
-			{
-				if (fileWriter != null)
-				{
+		} finally {
+			try {
+				if (fileWriter != null) {
 					fileWriter.flush();
 					fileWriter.close();
 				}
-				if (csvFilePrinter != null)
-				{
+				if (csvFilePrinter != null) {
 					csvFilePrinter.close();
 				}
-			}
-			catch (IOException e)
-			{
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
 	@Override
-	public void exportTeamCSV(String outputFile)
-	{
+	public void exportTeamCSV(String outputFile) {
 		List<TeamExportModel> data = getTeamsForExport();
 		FileWriter fileWriter = null;
 		CSVPrinter csvFilePrinter = null;
-		try
-		{
+		try {
 			fileWriter = new FileWriter(outputFile);
 			csvFilePrinter = new CSVPrinter(fileWriter, CSVFormat.DEFAULT.withRecordSeparator("\n"));
-			for (TeamExportModel team : data)
-			{
+			for (TeamExportModel team : data) {
 				List<Object> line = new ArrayList<>();
-				for (Field field : TeamExportModel.class.getDeclaredFields())
-				{
+				for (Field field : TeamExportModel.class.getDeclaredFields()) {
 					field.setAccessible(true);
 					Object value = field.get(team);
 					line.add(value);
 				}
 				csvFilePrinter.printRecord(line);
 			}
-		}
-		catch (IOException | IllegalAccessException e)
-		{
+		} catch (IOException | IllegalAccessException e) {
 			e.printStackTrace();
-		}
-		finally
-		{
-			try
-			{
-				if (fileWriter != null)
-				{
+		} finally {
+			try {
+				if (fileWriter != null) {
 					fileWriter.flush();
 					fileWriter.close();
 				}
-				if (csvFilePrinter != null)
-				{
+				if (csvFilePrinter != null) {
 					csvFilePrinter.close();
 				}
-			}
-			catch (IOException e)
-			{
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
 	@Override
-	public void incrementTag(Integer team, String tag)
-	{
+	public void incrementTag(Integer team, String tag) {
 		String sql = "UPDATE scoutingtags.teamtags SET occurrences=occurrences+1 WHERE team=?  AND tag=? and event_id = (select event_id from scoutingtags.event where active = 1)";
 		int rowsUpdated = jdbcTemplateObject.update(sql, team, tag);
-		if (rowsUpdated < 1)
-		{
+		if (rowsUpdated < 1) {
 			String sqlInsert = "INSERT INTO scoutingtags.teamtags (team, tag, occurrences, event_id) VALUES (?,?,?, (select event_id from scoutingtags.event where active = 1))";
 			jdbcTemplateObject.update(sqlInsert, team, tag, 1);
 		}
 	}
 
 	@Override
-	public void decrementTag(Integer team, String tag)
-	{
+	public void decrementTag(Integer team, String tag) {
 		String sql = "UPDATE scoutingtags.teamtags SET occurrences=occurrences-1 WHERE team=?  AND tag=? and event_id = (select event_id from scoutingtags.event where active = 1)";
 		jdbcTemplateObject.update(sql, team, tag);
 	}
 
 	@Override
-	public List<TeamTag> getTeamTags(Integer teamNum)
-	{
+	public List<TeamTag> getTeamTags(Integer teamNum) {
 		//@formatter:off
 		String sql = 
 				   "SELECT grouping, category, t.tag, occurrences, input_type, event_id " 
 		        + "FROM scoutingtags.tags t "
 				+ "             LEFT OUTER JOIN scoutingtags.teamtags m on m.tag = t.tag and team = ? and event_id = (select event_id from scoutingtags.event where active = 1) "
-				+ " WHERE t.type = 'teams' " 
+				+ " WHERE t.type = 'teams' and t.year = (select year from scoutingtags.event where active = 1)" 
 				+ "ORDER BY grouping, category, t.tag;";
 		//@formatter:on
-		return jdbcTemplateObject.query(sql, new RowMapper<TeamTag>()
-		{
+		return jdbcTemplateObject.query(sql, new RowMapper<TeamTag>() {
 			@Override
-			public TeamTag mapRow(ResultSet resultSet, int rowNum) throws SQLException
-			{
+			public TeamTag mapRow(ResultSet resultSet, int rowNum) throws SQLException {
 				TeamTag teamTag = new TeamTag();
 				teamTag.setGrouping(resultSet.getString("grouping"));
 				teamTag.setCategory(resultSet.getString("category"));
@@ -320,18 +276,15 @@ public class TeamServiceMySQLImpl implements TeamService
 	}
 
 	@Override
-	public void importCSV(String inputFile, Boolean delete)
-	{
-		try
-		{
+	public void importCSV(String inputFile, Boolean delete) {
+		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
 			String csvData = new String(Files.readAllBytes(FileSystems.getDefault().getPath(inputFile)));
 			csvData = csvData.replaceAll("\\r", "");
 			if (delete)
 				deleteAllTeamTags();
 			CSVParser parser = CSVParser.parse(csvData, CSVFormat.DEFAULT.withRecordSeparator("\n"));
-			for (CSVRecord record : parser)
-			{
+			for (CSVRecord record : parser) {
 				TeamTagExportModel teamTagExportModel = new TeamTagExportModel();
 				teamTagExportModel.setTeam(new Integer(record.get(0)));
 				teamTagExportModel.setTag(record.get(1));
@@ -340,26 +293,21 @@ public class TeamServiceMySQLImpl implements TeamService
 				teamTagExportModel.setEventId(record.get(4));
 				updateInsertTeamTag(teamTagExportModel);
 			}
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	@Override
-	public void importTeamsCSV(String inputFile, Boolean delete)
-	{
-		try
-		{
+	public void importTeamsCSV(String inputFile, Boolean delete) {
+		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
 			String csvData = new String(Files.readAllBytes(FileSystems.getDefault().getPath(inputFile)));
 			csvData = csvData.replaceAll("\\r", "");
 			if (delete)
 				deleteAllTeams();
 			CSVParser parser = CSVParser.parse(csvData, CSVFormat.DEFAULT.withRecordSeparator("\n"));
-			for (CSVRecord record : parser)
-			{
+			for (CSVRecord record : parser) {
 				TeamExportModel teamExportModel = new TeamExportModel();
 				teamExportModel.setTeam(new Integer(record.get(0)));
 				teamExportModel.setName(record.get(1));
@@ -368,35 +316,26 @@ public class TeamServiceMySQLImpl implements TeamService
 				teamExportModel.setEventId(record.get(4));
 				updateInsertTeam(teamExportModel);
 			}
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void updateInsertTeamTag(TeamTagExportModel teamTagExportModel)
-	{
+	private void updateInsertTeamTag(TeamTagExportModel teamTagExportModel) {
 		String selectSQL = "select modified_timestamp from scoutingtags.teamtags where team = ? and tag = ? and event_id = ?";
 		Date currentModifiedDate = null;
-		try
-		{
+		try {
 			currentModifiedDate = jdbcTemplateObject.queryForObject(selectSQL, Timestamp.class,
 					teamTagExportModel.getTeam(), teamTagExportModel.getTag(), teamTagExportModel.getEventId());
-		}
-		catch (EmptyResultDataAccessException e)
-		{
+		} catch (EmptyResultDataAccessException e) {
 			// NOOP
 		}
-		if (currentModifiedDate == null)
-		{
+		if (currentModifiedDate == null) {
 			String insertSQL = "insert into scoutingtags.teamtags (team, tag, occurrences, modified_timestamp, event_id) values (?, ?, ?, ?, ?)";
 			jdbcTemplateObject.update(insertSQL, teamTagExportModel.getTeam(), teamTagExportModel.getTag(),
 					teamTagExportModel.getOccurrences(), teamTagExportModel.getModifiedTimestamp(),
 					teamTagExportModel.getEventId());
-		}
-		else if (currentModifiedDate.getTime() < teamTagExportModel.getModifiedTimestamp().getTime())
-		{
+		} else if (currentModifiedDate.getTime() < teamTagExportModel.getModifiedTimestamp().getTime()) {
 			String updateSQL = "update scoutingtags.teamtags set occurrences=?, modified_timestamp = ? where team = ? and tag = ? and event_id = ?";
 			jdbcTemplateObject.update(updateSQL, teamTagExportModel.getOccurrences(),
 					teamTagExportModel.getModifiedTimestamp(), teamTagExportModel.getTeam(),
@@ -405,56 +344,45 @@ public class TeamServiceMySQLImpl implements TeamService
 	}
 
 	@Override
-	public void updateInsertTeam(TeamExportModel teamExportModel)
-	{
+	public void updateInsertTeam(TeamExportModel teamExportModel) {
 		String selectSQL = "select modified_timestamp from scoutingtags.teams where team = ? and event_id = ?";
 		Date currentModifiedDate = null;
-		try
-		{
+		try {
 			currentModifiedDate = jdbcTemplateObject.queryForObject(selectSQL, Timestamp.class,
 					teamExportModel.getTeam(), teamExportModel.getEventId());
-		}
-		catch (EmptyResultDataAccessException e)
-		{
+		} catch (EmptyResultDataAccessException e) {
 			// NOOP
 		}
-		if (currentModifiedDate == null)
-		{
+		if (currentModifiedDate == null) {
 			String insertSQL = "insert into scoutingtags.teams (team, name, scouting_comments, modified_timestamp, event_id) values (?, ?, ?, ?, ?)";
 			jdbcTemplateObject.update(insertSQL, teamExportModel.getTeam(), teamExportModel.getName(),
 					teamExportModel.getScoutingComments(), teamExportModel.getModifiedTimestamp(),
 					teamExportModel.getEventId());
-		}
-		else if (teamExportModel.getModifiedTimestamp() == null
-				|| currentModifiedDate.getTime() < teamExportModel.getModifiedTimestamp().getTime())
-		{
+		} else if (teamExportModel.getModifiedTimestamp() == null
+				|| currentModifiedDate.getTime() < teamExportModel.getModifiedTimestamp().getTime()) {
 			String updateSQL = "update scoutingtags.teams set name=?, scouting_comments=?, modified_timestamp = ? where team = ? and event_id = ?";
 			jdbcTemplateObject.update(updateSQL, teamExportModel.getName(), teamExportModel.getScoutingComments(),
 					teamExportModel.getModifiedTimestamp(), teamExportModel.getTeam(), teamExportModel.getEventId());
 		}
 	}
 
-	private void deleteAllTeamTags()
-	{
+	private void deleteAllTeamTags() {
 		String sql = "delete from scoutingtags.teamtags";
 		jdbcTemplateObject.update(sql);
 	}
 
-	private void deleteAllTeams()
-	{
+	private void deleteAllTeams() {
 		String sql = "delete from scoutingtags.teams";
 		jdbcTemplateObject.update(sql);
 	}
 
 	@Override
-	public void saveTeamScoutingComments(Integer team, String scoutingComments)
-	{
+	public void saveTeamScoutingComments(Integer team, String scoutingComments) {
 		String insertSQL = "update scoutingtags.teams set scouting_comments = ? where team = ? and event_id = (select event_id from scoutingtags.event where active = 1)";
 		jdbcTemplateObject.update(insertSQL, scoutingComments, team);
 	}
 
-	public String getDefaultEvent()
-	{
+	public String getDefaultEvent() {
 		return jdbcTemplateObject.queryForObject("select event_id from scoutingtags.event where active = 1",
 				String.class);
 	}
