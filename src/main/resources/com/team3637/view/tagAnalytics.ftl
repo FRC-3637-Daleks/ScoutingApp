@@ -207,9 +207,9 @@ function registerPopOvers()
       });     
 } 
 
-function changeEvent(eventId)
+function updatePage()
 {
-      document.location.href = "../analytics/tagAnalytics?event="+eventId+"&hideComments="+$('#hideComments').is(':checked');
+      document.location.href = "../analytics/tagAnalytics?event="+$('#eventSelector').val()+"&selectedCategory="+$('#categorySelector').val()+"&selectedGrouping="+$('#groupingSelector').val()+"&hideComments="+$('#hideComments').is(':checked');
 }
 
 function toggleComments(hide)
@@ -222,7 +222,7 @@ $('.teamComments').show();
 
 function goTo(href)
 {
-     document.location.href =href +"?event="+$('#eventSelector').val()+"&hideComments="+$('#hideComments').is(':checked'); 
+     document.location.href =href +"?event="+$('#eventSelector').val()+"&selectedCategory="+$('#categorySelector').val()+"&selectedGrouping="+$('#groupingSelector').val()+"&hideComments="+$('#hideComments').is(':checked'); 
 }
 
 $(document).ready(function(){
@@ -262,7 +262,7 @@ $(document).ready(function(){
                          </#if>
                    	 </select> 
                      <label for"eventSelector" style="color:#9d9d9d;">Event:</label>  
-                     <select class="form-control input-sm"   id="eventSelector" onchange="changeEvent(this.value)"> 
+                     <select class="form-control input-sm"   id="eventSelector" onchange="updatePage()"> 
                      <#list events as event>
                         <#if selectedEvent == event>
                             <option value="${event}" selected>${event}</option>   
@@ -270,23 +270,33 @@ $(document).ready(function(){
                              <option value="${event}">${event}</option>
                         </#if>
                      </#list> 
-                   	 </select>        
+                   	 </select> 
+                   	 <label for"categorySelector" style="color:#9d9d9d;">Category:</label>  
+                     <select class="form-control input-sm"   id="categorySelector" onchange="updatePage()">    
+                     <#list categories as category>
+                     	<#if (selectedCategory!"") == category>
+                            <option value="${category}" selected>${category}</option>   
+                        <#else>
+                             <option value="${category}">${category}</option>
+                        </#if>
+                     </#list>
+                   	 </select>
+                   	  <label for"groupingSelector" style="color:#9d9d9d;">Grouping:</label>  
+                     <select class="form-control input-sm"   id="groupingSelector" onchange="updatePage()">    
+                     <#list groupings as grouping>
+                     	<#if (selectedGrouping!"") == grouping>
+                            <option value="${grouping}" selected>${grouping}</option>   
+                        <#else>
+                             <option value="${grouping}">${grouping}</option>
+                        </#if>
+                     </#list>
+                   	 </select>
                     <label for"hideComments" style="color:#9d9d9d;">Hide Comments:</label>  
                     <#if hideComments>                     
                    <input type"checkbox" type="checkbox" id="hideComments" value="hide" class="form-control input-sm" onchange="toggleComments(this.checked);"  checked/> 
                    <#else>
                    <input type"checkbox" type="checkbox" id="hideComments" value="hide" class="form-control input-sm" onchange="toggleComments(this.checked);" /> 
                    </#if>
-                   <label for"reportSelector" style="color:#9d9d9d;">Category:</label>  
-                     <select class="form-control input-sm"   id="reportSelector" onchange='goTo("../analytics/"+this.value)'>    
-                     <#list events as event>
-                     	<#if selectedEvent == event>
-                            <option value="${event}" selected>${event}</option>   
-                        <#else>
-                             <option value="${event}">${event}</option>
-                        </#if>
-                     </#list>
-                   	 </select>
                    </div>
                    </form> 
                  </li>  

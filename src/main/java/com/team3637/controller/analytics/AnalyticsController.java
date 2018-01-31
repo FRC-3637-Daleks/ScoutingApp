@@ -151,20 +151,30 @@ public class AnalyticsController {
 	@RequestMapping(value = "/tagAnalytics", method = RequestMethod.GET)
 	public String tagAnalytics(@RequestParam(value = "event", required = false) String eventId,
 			@RequestParam(value = "hideComments", required = false, defaultValue = "false") Boolean hideComments,
+			@RequestParam(value = "selectedCategory", defaultValue = "All", required = false) String selectedCategory,
+			@RequestParam(value = "selectedGrouping", defaultValue = "All", required = false) String selectedGrouping,
 			Model model) {
 		if (eventId == null)
 			eventId = matchService.getDefaultEvent();
 		List<TagAnalytics> tagAnalytics = new ArrayList<TagAnalytics>();
-		List<Tag> tags = tagService.getMatchTags();
+		List<Tag> tags = tagService.getMatchTags(eventId);
 		List<String> categories = new ArrayList<String>();
+		categories.add("All");
+		List<String> groupings = new ArrayList<String>();
+		groupings.add("All");
 		for (Tag tag : tags) {
 			List<TagAnalyticsTeamData> tagAnalyticsTeamData = tagService.getTopTenTeamsForTag(tag, eventId);
 			TagAnalytics nextTag = new TagAnalytics();
 			nextTag.setTag(tag);
 			nextTag.setTopScoringTeams(tagAnalyticsTeamData);
-			tagAnalytics.add(nextTag);
+			if (("All".equals(selectedCategory) || tag.getCategory().equals(selectedCategory))
+					&& ("All".equals(selectedGrouping) || tag.getGrouping().equals(selectedGrouping)))
+				tagAnalytics.add(nextTag);
 			if (!categories.contains(tag.getCategory())) {
 				categories.add(tag.getCategory());
+			}
+			if (!groupings.contains(tag.getGrouping())) {
+				groupings.add(tag.getGrouping());
 			}
 		}
 		model.addAttribute("tagAnalyticsList", tagAnalytics);
@@ -173,6 +183,9 @@ public class AnalyticsController {
 		model.addAttribute("hideComments", hideComments);
 		model.addAttribute("selectedReportType", "tagAnalytics");
 		model.addAttribute("categories", categories);
+		model.addAttribute("selectedCategory", selectedCategory);
+		model.addAttribute("groupings", groupings);
+		model.addAttribute("selectedGrouping", selectedGrouping);
 		return "tagAnalytics";
 
 	}

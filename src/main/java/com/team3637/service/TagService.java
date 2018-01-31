@@ -49,4 +49,6 @@ public interface TagService extends Service {
 
 	List<TagAnalyticsTeamData> getTopTenTeamsForTag(Tag tag, String eventId);
 
+	List<Tag> getMatchTags(String eventId);
+
 }
