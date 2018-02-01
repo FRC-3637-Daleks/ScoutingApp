@@ -245,36 +245,16 @@ public class IOController {
 		return new ResponseEntity<byte[]>(null, headers, HttpStatus.FOUND);
 	}
 
-	@RequestMapping(value = "/teamData.zip", method = RequestMethod.GET)
+	@RequestMapping(value = "/teams.csv", method = RequestMethod.GET)
 	@ResponseBody
-	public ResponseEntity<?> exportTeamData() throws IOException {
-		exportTeams();
-		exportTeamTags();
-		String zipFile = context.getRealPath("/") + "/export/teamData.zip";
-		String[] srcFiles = { context.getRealPath("/") + "/export/teams.csv",
-				context.getRealPath("/") + "/export/teamTags.csv" };
-		try {
-			byte[] buffer = new byte[1024];
-			FileOutputStream fos = new FileOutputStream(zipFile);
-			ZipOutputStream zos = new ZipOutputStream(fos);
-			for (String srcFile1 : srcFiles) {
-				File srcFile = new File(srcFile1);
-				FileInputStream fis = new FileInputStream(srcFile);
-				zos.putNextEntry(new ZipEntry(srcFile.getName()));
-				int length;
-				while ((length = fis.read(buffer)) > 0)
-					zos.write(buffer, 0, length);
-				zos.closeEntry();
-				fis.close();
-			}
-			zos.close();
-		} catch (IOException ioe) {
-			System.out.println("Error creating zip file: " + ioe);
-			return new ResponseEntity<>("Error creating zip file: " + ioe, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("Location", context.getContextPath() + "/export/teamData.zip");
-		return new ResponseEntity<byte[]>(null, headers, HttpStatus.FOUND);
+	public String exportTeams() throws IOException {
+
+		File exportDirectory = new File(context.getRealPath("/") + "/export");
+		if (!exportDirectory.exists())
+			exportDirectory.mkdir();
+		String filePath = exportDirectory.getAbsolutePath() + "/teams.csv";
+		teamService.exportTeamCSV(filePath);
+		return new String(Files.readAllBytes(FileSystems.getDefault().getPath(filePath)));
 	}
 
 	@RequestMapping(value = "/matchData.zip", method = RequestMethod.POST)
@@ -328,55 +308,28 @@ public class IOController {
 		return new ResponseEntity<byte[]>(null, headers, HttpStatus.FOUND);
 	}
 
-	@RequestMapping(value = "/teamData.zip", method = RequestMethod.POST)
-	public ResponseEntity<?> importTeamData(
+	@RequestMapping(value = "/teams.csv", method = RequestMethod.POST)
+	public ResponseEntity<?> importTeams(
 			@RequestParam(value = "delete", required = false, defaultValue = "false") Boolean delete,
-			@RequestParam("file") MultipartFile file) {
+			@RequestParam("file") MultipartFile file) throws IOException {
+
+		String fileName = "/teams.csv";
 		File inputDir = new File(context.getRealPath("/") + "/input");
 		if (!inputDir.exists()) {
 			inputDir.mkdir();
 		}
 		if (file.isEmpty())
 			return new ResponseEntity<>("File was empty", HttpStatus.INTERNAL_SERVER_ERROR);
-		try {
-			byte[] buffer = file.getBytes();
-			BufferedOutputStream stream = new BufferedOutputStream(
-					new FileOutputStream(new File(inputDir.getAbsolutePath() + "/teamData.zip")));
-			stream.write(buffer);
-			stream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		byte[] buffer = new byte[1024];
-		try {
-			ZipInputStream zis = new ZipInputStream(new FileInputStream(inputDir.getAbsolutePath() + "/teamData.zip"));
-			ZipEntry ze = zis.getNextEntry();
-			while (ze != null) {
-				String fileName = ze.getName();
-				File newFile = new File(inputDir + File.separator + fileName);
-				new File(newFile.getParent()).mkdirs();
-				FileOutputStream fos = new FileOutputStream(newFile);
-				int len;
-				while ((len = zis.read(buffer)) > 0)
-					fos.write(buffer, 0, len);
-				fos.close();
-				ze = zis.getNextEntry();
-			}
-			zis.closeEntry();
-			zis.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		teamService.importTeamsCSV(inputDir + "/teams.csv", delete);
-		teamService.importCSV(inputDir + "/teamTags.csv", delete);
+		byte[] buffer = file.getBytes();
+		BufferedOutputStream stream = new BufferedOutputStream(
+				new FileOutputStream(new File(inputDir.getAbsolutePath() + "/" + fileName)));
+		stream.write(buffer);
+		stream.close();
+		teamService.importTeamsCSV(inputDir + fileName, delete);
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Location", context.getContextPath() + "/io/");
 		return new ResponseEntity<byte[]>(null, headers, HttpStatus.FOUND);
+
 	}
 
 	@RequestMapping(value = "/matches.csv", method = RequestMethod.POST)
@@ -399,15 +352,6 @@ public class IOController {
 	@ResponseBody
 	public String exportTeamTags() throws IOException {
 		return getCSV(teamService, "teamTags.csv");
-	}
-
-	public String exportTeams() throws IOException {
-		File exportDirectory = new File(context.getRealPath("/") + "/export");
-		if (!exportDirectory.exists())
-			exportDirectory.mkdir();
-		String filePath = exportDirectory.getAbsolutePath() + "/teams.csv";
-		teamService.exportTeamCSV(filePath);
-		return new String(Files.readAllBytes(FileSystems.getDefault().getPath(filePath)));
 	}
 
 	@RequestMapping(value = "/teamTags.csv", method = RequestMethod.POST)
