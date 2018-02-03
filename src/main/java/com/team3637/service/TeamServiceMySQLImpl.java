@@ -130,7 +130,11 @@ public class TeamServiceMySQLImpl implements TeamService {
 
 	@Override
 	public List<TeamTagExportModel> getTeamTagsForExport() {
-		String SQL = "select team, tag, occurrences, modified_timestamp, event_id from teamtags order by team, tag";
+		//@formatter:off
+		String SQL = "select team, tag, occurrences, modified_timestamp, event_id from teamtags "
+					+ "where event_id = (select event_id from event where active = 1) "
+					+ "order by team, tag";
+		//@formatter:on
 		return jdbcTemplateObject.query(SQL, new RowMapper<TeamTagExportModel>() {
 
 			@Override
@@ -149,7 +153,10 @@ public class TeamServiceMySQLImpl implements TeamService {
 
 	@Override
 	public List<TeamExportModel> getTeamsForExport() {
-		String SQL = "select * from scoutingtags.teams";
+		//@formatter:off
+		String SQL = "select * from scoutingtags.teams "
+					+ "where event_id = (select event_id from event where active = 1)";
+		//@formatter:on
 		return jdbcTemplateObject.query(SQL, new RowMapper<TeamExportModel>() {
 
 			@Override

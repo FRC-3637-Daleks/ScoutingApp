@@ -17,11 +17,12 @@
 package com.team3637.model;
 
 public class Tag {
-	private int id, isRankingPoint;
+	private int id;
 	private String tag, type;
 	private String category, grouping, inputType;
 	private Float pointValue;
 	private Integer year;
+	private int isRankingPoint;
 
 	public Integer getYear() {
 		return year;

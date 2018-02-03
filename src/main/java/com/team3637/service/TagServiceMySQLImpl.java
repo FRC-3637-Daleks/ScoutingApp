@@ -95,19 +95,24 @@ public class TagServiceMySQLImpl implements TagService {
 
 	@Override
 	public List<Tag> getTags() {
-		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, is_ranking_point FROM scoutingtags.tags ORDER BY type, grouping, category";
+		//@formatter:off
+		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, year, is_ranking_point FROM scoutingtags.tags "
+					+ "where year = (select year from scoutingtags.competition_year where active = 1)"
+					+ "ORDER BY type, grouping, category";
+		//@formatter:on
 		return jdbcTemplateObject.query(SQL, new TagMapper());
 	}
 
 	@Override
 	public void updateInsertTag(Tag tag) {
-		String SQL = "UPDATE scoutingtags.tags SET tag=?, type=?, category=?, grouping=?, input_type=?, point_value=?, is_ranking_point=? WHERE id=?";
+		String SQL = "UPDATE scoutingtags.tags SET tag=?, type=?, category=?, grouping=?, input_type=?, point_value=?, year = ?, is_ranking_point=? WHERE id=?";
 		int updatedRows = jdbcTemplateObject.update(SQL, tag.getTag(), tag.getType(), tag.getCategory(),
-				tag.getGrouping(), tag.getInputType(), tag.getPointValue(), tag.getIsRankingPoint(), tag.getId());
+				tag.getGrouping(), tag.getInputType(), tag.getPointValue(), tag.getYear(), tag.getIsRankingPoint(),
+				tag.getId());
 		if (updatedRows < 1) {
-			String insertSQL = "insert into scoutingtags.tags (id, tag, type, category, grouping, input_type, point_value, is_ranking_point) values (?, ?, ?, ?, ?, ?, ?)";
+			String insertSQL = "insert into scoutingtags.tags (id, tag, type, category, grouping, input_type, point_value, year, is_ranking_point) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			jdbcTemplateObject.update(insertSQL, tag.getId(), tag.getTag(), tag.getType(), tag.getCategory(),
-					tag.getGrouping(), tag.getInputType(), tag.getPointValue(), tag.getIsRankingPoint());
+					tag.getGrouping(), tag.getInputType(), tag.getPointValue(), tag.getYear(), tag.getIsRankingPoint());
 		}
 	}
 
@@ -171,7 +176,8 @@ public class TagServiceMySQLImpl implements TagService {
 				tag.setGrouping(record.get(4));
 				tag.setInputType(record.get(5));
 				tag.setPointValue(Float.parseFloat(record.get(6)));
-				tag.setIsRankingPoint(Integer.parseInt(record.get(7)));
+				tag.setYear(Integer.parseInt(record.get(7)));
+				tag.setIsRankingPoint(Integer.parseInt(record.get(8)));
 				updateInsertTag(tag);
 			}
 		} catch (IOException e) {

@@ -21,9 +21,6 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import com.team3637.model.MatchTag;
-import com.team3637.model.MatchTagExportModel;
-
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -32,73 +29,63 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
-public class MatchTagServiceMySQLImpl implements MatchTagService
-{
+import com.team3637.model.MatchTag;
+import com.team3637.model.MatchTagExportModel;
+
+public class MatchTagServiceMySQLImpl implements MatchTagService {
 	private JdbcTemplate jdbcTemplateObject;
 
 	@Override
-	public void setDataSource(DataSource dataSource)
-	{
+	public void setDataSource(DataSource dataSource) {
 		this.jdbcTemplateObject = new JdbcTemplate(dataSource);
 	}
 
 	@Override
-	public void exportCSV(String outputFile)
-	{
+	public void exportCSV(String outputFile) {
 		List<MatchTagExportModel> data = getMatchTagsForExport();
 		FileWriter fileWriter = null;
 		CSVPrinter csvFilePrinter = null;
-		try
-		{
+		try {
 			fileWriter = new FileWriter(outputFile);
 			csvFilePrinter = new CSVPrinter(fileWriter, CSVFormat.DEFAULT.withRecordSeparator("\n"));
-			for (MatchTagExportModel teamTag : data)
-			{
+			for (MatchTagExportModel teamTag : data) {
 				List<Object> line = new ArrayList<>();
-				for (Field field : MatchTagExportModel.class.getDeclaredFields())
-				{
+				for (Field field : MatchTagExportModel.class.getDeclaredFields()) {
 					field.setAccessible(true);
 					Object value = field.get(teamTag);
 					line.add(value);
 				}
 				csvFilePrinter.printRecord(line);
 			}
-		}
-		catch (IOException | IllegalAccessException e)
-		{
+		} catch (IOException | IllegalAccessException e) {
 			e.printStackTrace();
-		}
-		finally
-		{
-			try
-			{
-				if (fileWriter != null)
-				{
+		} finally {
+			try {
+				if (fileWriter != null) {
 					fileWriter.flush();
 					fileWriter.close();
 				}
-				if (csvFilePrinter != null)
-				{
+				if (csvFilePrinter != null) {
 					csvFilePrinter.close();
 				}
-			}
-			catch (IOException e)
-			{
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
 	@Override
-	public List<MatchTagExportModel> getMatchTagsForExport()
-	{
-		String SQL = "select team, matchNum, tag, occurrences, modified_timestamp, event_id from scoutingtags.matchtags order by team, matchNum, tag";
-		return jdbcTemplateObject.query(SQL, new RowMapper<MatchTagExportModel>()
-		{
+	public List<MatchTagExportModel> getMatchTagsForExport() {
+		//@formatter:off
+		String SQL = "select team, matchNum, tag, occurrences, modified_timestamp, event_id "
+					+ "from scoutingtags.matchtags " 
+					+ "where event_id = (select event_id from event where active = 1)"
+					+ "order by team, matchNum, tag";
+		//@formatter:on
+		return jdbcTemplateObject.query(SQL, new RowMapper<MatchTagExportModel>() {
 
 			@Override
-			public MatchTagExportModel mapRow(ResultSet resultSet, int rowNum) throws SQLException
-			{
+			public MatchTagExportModel mapRow(ResultSet resultSet, int rowNum) throws SQLException {
 
 				MatchTagExportModel matchTagExportModel = new MatchTagExportModel();
 				matchTagExportModel.setTeam(resultSet.getInt("team"));
@@ -113,18 +100,15 @@ public class MatchTagServiceMySQLImpl implements MatchTagService
 	}
 
 	@Override
-	public void importCSV(String inputFile, Boolean delete)
-	{
-		try
-		{
+	public void importCSV(String inputFile, Boolean delete) {
+		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
 			String csvData = new String(Files.readAllBytes(FileSystems.getDefault().getPath(inputFile)));
 			csvData = csvData.replaceAll("\\r", "");
 			if (delete)
 				deleteAllMatchTags();
 			CSVParser parser = CSVParser.parse(csvData, CSVFormat.DEFAULT.withRecordSeparator("\n"));
-			for (CSVRecord record : parser)
-			{
+			for (CSVRecord record : parser) {
 				MatchTagExportModel matchTagExportModel = new MatchTagExportModel();
 				matchTagExportModel.setTeam(new Integer(record.get(0)));
 				matchTagExportModel.setMatch(new Integer(record.get(1)));
@@ -134,36 +118,27 @@ public class MatchTagServiceMySQLImpl implements MatchTagService
 				matchTagExportModel.setEventId(record.get(5));
 				updateInsertMatchTag(matchTagExportModel);
 			}
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void updateInsertMatchTag(MatchTagExportModel matchTagExportModel)
-	{
+	private void updateInsertMatchTag(MatchTagExportModel matchTagExportModel) {
 		String selectSQL = "select modified_timestamp from scoutingtags.matchtags where team = ? and matchNum = ? and tag = ? and event_id = ?";
 		Date currentModifiedDate = null;
-		try
-		{
+		try {
 			currentModifiedDate = jdbcTemplateObject.queryForObject(selectSQL, Timestamp.class,
 					matchTagExportModel.getTeam(), matchTagExportModel.getMatch(), matchTagExportModel.getTag(),
 					matchTagExportModel.getEventId());
-		}
-		catch (EmptyResultDataAccessException e)
-		{
+		} catch (EmptyResultDataAccessException e) {
 			// NOOP
 		}
-		if (currentModifiedDate == null)
-		{
+		if (currentModifiedDate == null) {
 			String insertSQL = "insert into scoutingtags.matchtags (team, matchNum, tag, occurrences, modified_timestamp, event_id) values (?, ?, ?, ?, ?, ?)";
 			jdbcTemplateObject.update(insertSQL, matchTagExportModel.getTeam(), matchTagExportModel.getMatch(),
 					matchTagExportModel.getTag(), matchTagExportModel.getOccurrences(),
 					matchTagExportModel.getModifiedTimestamp(), matchTagExportModel.getEventId());
-		}
-		else if (currentModifiedDate.getTime() < matchTagExportModel.getModifiedTimestamp().getTime())
-		{
+		} else if (currentModifiedDate.getTime() < matchTagExportModel.getModifiedTimestamp().getTime()) {
 			String updateSQL = "update scoutingtags.matchtags set occurrences=?, modified_timestamp = ? where team = ? and matchNum = ? and tag = ? and event_id = ?";
 			jdbcTemplateObject.update(updateSQL, matchTagExportModel.getOccurrences(),
 					matchTagExportModel.getModifiedTimestamp(), matchTagExportModel.getTeam(),
@@ -171,25 +146,21 @@ public class MatchTagServiceMySQLImpl implements MatchTagService
 		}
 	}
 
-	private void deleteAllMatchTags()
-	{
+	private void deleteAllMatchTags() {
 		String sql = "delete from scoutingtags.matchtags";
 		jdbcTemplateObject.update(sql);
 	}
 
 	@Override
-	public List<MatchTag> getMatchTags(Integer team, String tag, String eventId)
-	{
+	public List<MatchTag> getMatchTags(Integer team, String tag, String eventId) {
 		if (eventId == null)
 			eventId = getDefaultEvent();
 		String SQL = "select team, tag, matchNum, occurrences, event_id from scoutingtags.matchtags where team = ? and tag = ?  and event_id = ?"
 				+ "order by matchNum";
-		return jdbcTemplateObject.query(SQL, new RowMapper<MatchTag>()
-		{
+		return jdbcTemplateObject.query(SQL, new RowMapper<MatchTag>() {
 
 			@Override
-			public MatchTag mapRow(ResultSet resultSet, int rowNum) throws SQLException
-			{
+			public MatchTag mapRow(ResultSet resultSet, int rowNum) throws SQLException {
 
 				MatchTag matchTag = new MatchTag();
 				matchTag.setTeam(resultSet.getInt("team"));
@@ -203,8 +174,7 @@ public class MatchTagServiceMySQLImpl implements MatchTagService
 	}
 
 	@Override
-	public String getDefaultEvent()
-	{
+	public String getDefaultEvent() {
 		return jdbcTemplateObject.queryForObject("select event_id from scoutingtags.event where active = 1",
 				String.class);
 	}
