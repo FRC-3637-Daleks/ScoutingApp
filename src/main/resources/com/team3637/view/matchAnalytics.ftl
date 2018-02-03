@@ -187,9 +187,9 @@ function registerPopOvers()
       });     
 } 
 
-function changeEvent(eventId)
+function updatePage()
 {
-      document.location.href = "../analytics/teamAnalyticsByMatch?event="+eventId+"&hideComments="+$('#hideComments').is(':checked');
+      document.location.href = "../analytics/teamAnalyticsByMatch?event="+$('#eventSelector').val()+"&selectedTeam="+$('#teamSelector').val()+"&hideComments="+$('#hideComments').is(':checked');
 }
 
 function toggleComments(hide)
@@ -241,8 +241,8 @@ $(document).ready(function(){
                          	<option value="tagAnalytics">By Tag</option>
                          </#if>
                    	 </select> 
-                     <label for"eventSelector" style="color:#9d9d9d;">Event:</label>  
-                     <select class="form-control input-sm"   id="eventSelector" onchange="changeEvent(this.value)"> 
+                   	 <label for"eventSelector" style="color:#9d9d9d;">Event:</label>  
+                     <select class="form-control input-sm"   id="eventSelector" onchange="updatePage()"> 
                      <#list events as event>
                         <#if selectedEvent == event>
                             <option value="${event}" selected>${event}</option>   
@@ -250,7 +250,18 @@ $(document).ready(function(){
                              <option value="${event}">${event}</option>
                         </#if>
                      </#list> 
-                   </select>        
+                  	 </select>  
+                     <label for"teamSelector" style="color:#9d9d9d;">Team:</label>  
+                     <select class="form-control input-sm"  id="teamSelector" onchange="updatePage()">
+                     <option value="0">All</option>
+                     <#list teams as team>
+                        <#if (selectedTeam!0) == team.team>
+                            <option value="${team.team}" selected>${team.team}</option>   
+                        <#else>
+                             <option value="${team.team}">${team.team}</option>
+                        </#if>
+                     </#list> 
+                   	 </select>
                     <label for"hideComments" style="color:#9d9d9d;">Hide Comments:</label>  
                     <#if hideComments>                     
                    <input type"checkbox" type="checkbox" id="hideComments" value="hide" class="form-control input-sm" onchange="toggleComments(this.checked);"  checked/> 

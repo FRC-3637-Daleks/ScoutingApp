@@ -222,7 +222,7 @@ $('.teamComments').show();
 
 function goTo(href)
 {
-     document.location.href =href +"?event="+$('#eventSelector').val()+"&selectedCategory="+$('#categorySelector').val()+"&selectedGrouping="+$('#groupingSelector').val()+"&hideComments="+$('#hideComments').is(':checked'); 
+     document.location.href =href +"?event="+$('#eventSelector').val()+"&hideComments="+$('#hideComments').is(':checked'); 
 }
 
 $(document).ready(function(){

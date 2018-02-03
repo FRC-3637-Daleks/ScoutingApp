@@ -19,6 +19,7 @@
 package com.team3637.controller.analytics;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -84,7 +85,7 @@ public class AnalyticsController {
 	public String teamAnalyticsByMatch(@RequestParam(value = "match", required = false) Integer match,
 			@RequestParam(value = "event", required = false) String eventId,
 			@RequestParam(value = "hideComments", required = false, defaultValue = "false") Boolean hideComments,
-			Model model) {
+			@RequestParam(value = "selectedTeam", required = false) Integer selectedTeam, Model model) {
 		if (eventId == null)
 			eventId = matchService.getDefaultEvent();
 		List<Team> teams = matchService.getTeamMatchSummaryInfo(null, eventId);
@@ -102,11 +103,30 @@ public class AnalyticsController {
 			}
 		}
 		List<MatchTeams> matchTeamsList = matchService.getMatchTeams(match, teams, eventId);
-		model.addAttribute("matchTeamsList", matchTeamsList);
+		List<MatchTeams> filteredMatchTeamsList;
+		if (selectedTeam == null || selectedTeam == 0)
+			filteredMatchTeamsList = matchTeamsList;
+		else {
+			filteredMatchTeamsList = new ArrayList<MatchTeams>();
+			for (MatchTeams matchTeams : matchTeamsList) {
+				Boolean containsTeam = false;
+				Iterator<Team> teamIterator = matchTeams.getTeams().iterator();
+				while (teamIterator.hasNext() && !containsTeam) {
+					Team nextTeam = teamIterator.next();
+					containsTeam = nextTeam.getTeam().equals(selectedTeam);
+				}
+				if (containsTeam) {
+					filteredMatchTeamsList.add(matchTeams);
+				}
+			}
+		}
+		model.addAttribute("matchTeamsList", filteredMatchTeamsList);
 		model.addAttribute("events", scheduleService.getEventList());
 		model.addAttribute("selectedEvent", eventId);
 		model.addAttribute("hideComments", hideComments);
 		model.addAttribute("selectedReportType", "teamAnalyticsByMatch");
+		model.addAttribute("teams", teams);
+		model.addAttribute("selectedTeam", selectedTeam);
 		return "matchAnalytics";
 
 	}
