@@ -48,7 +48,8 @@ body {
 } 
 
 .sectionHeader {
-    background-color:#00b333;
+    background-color:#BC2132;
+    color:#E9E9E9;
     font-weight:bold; 
     text-align:center;
     padding-right:15px;
@@ -119,7 +120,7 @@ body {
 .categoryTitle {
     text-align: 
     center; height: 20px; 
-    background-color:#D4C304;
+    background-color:#ADADAD;
     font-size:13px;  
     font-weight:bold;
     padding-right:15px;
@@ -187,9 +188,12 @@ function registerPopOvers()
       });     
 } 
 
-function updatePage()
+function updatePage(clearSelectedTeam)
 {
-      document.location.href = "../analytics/teamAnalyticsByMatch?event="+$('#eventSelector').val()+"&selectedTeam="+$('#teamSelector').val()+"&hideComments="+$('#hideComments').is(':checked');
+      if(clearSelectedTeam)
+      	document.location.href = "../analytics/teamAnalyticsByMatch?event="+$('#eventSelector').val()+"&hideComments="+$('#hideComments').is(':checked');
+	  else
+	  	document.location.href = "../analytics/teamAnalyticsByMatch?event="+$('#eventSelector').val()+"&selectedTeam="+$('#teamSelector').val()+"&hideComments="+$('#hideComments').is(':checked');
 }
 
 function toggleComments(hide)
@@ -242,7 +246,7 @@ $(document).ready(function(){
                          </#if>
                    	 </select> 
                    	 <label for"eventSelector" style="color:#9d9d9d;">Event:</label>  
-                     <select class="form-control input-sm"   id="eventSelector" onchange="updatePage()"> 
+                     <select class="form-control input-sm"   id="eventSelector" onchange="updatePage(true)"> 
                      <#list events as event>
                         <#if selectedEvent == event>
                             <option value="${event}" selected>${event}</option>   
@@ -252,7 +256,7 @@ $(document).ready(function(){
                      </#list> 
                   	 </select>  
                      <label for"teamSelector" style="color:#9d9d9d;">Team:</label>  
-                     <select class="form-control input-sm"  id="teamSelector" onchange="updatePage()">
+                     <select class="form-control input-sm"  id="teamSelector" onchange="updatePage(false)">
                      <option value="0">All</option>
                      <#list teams as team>
                         <#if (selectedTeam!0) == team.team>

@@ -49,8 +49,9 @@ body {
 } 
 
 .sectionHeader {
-    background-color:#00b333;
+    background-color:#BC2132;
     font-weight:bold; 
+    color:#E9E9E9;
     text-align:center;
     padding-right:15px;
     padding-left:15px;    
@@ -96,7 +97,7 @@ body {
 .categoryTitle {
     text-align: 
     center; height: 20px; 
-    background-color:#D4C304;
+    background-color:#ADADAD;
     font-size:13px;  
     font-weight:bold;
     padding-right:15px;

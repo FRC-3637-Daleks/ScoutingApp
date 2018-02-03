@@ -32,7 +32,8 @@ body {
     padding-right:25px;
     border-collapse:collapse;
     border: 1px solid gray !important;
-    background-color:#D4C304;
+    background-color:#BC2132;
+    color:#E9E9E9
 }
 
 .tagTable td{
@@ -323,7 +324,7 @@ $(document).ready(function(){
 <table class="tagTable"  id="${tag}-tag-table">
    <tr>
    <th>Occurrences</th>
-   <th>Overall Score</th>
+   <th style="background-color:#ADADAD; color:#333">Overall Score</th>
    <th>Team</th>
    </tr>
    <#list tagAnalytics.topScoringTeams as nextTeam>
