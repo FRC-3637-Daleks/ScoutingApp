@@ -4,6 +4,7 @@ public class TagAnalyticsTeamData {
 
 	private Integer score;
 	private Integer team;
+	private Integer occurrences;
 
 	public Integer getScore() {
 		return score;
@@ -19,6 +20,14 @@ public class TagAnalyticsTeamData {
 
 	public void setTeam(Integer team) {
 		this.team = team;
+	}
+
+	public void setOccurrences(Integer occurrences) {
+		this.occurrences = occurrences;
+	}
+
+	public Integer getOccurrences() {
+		return occurrences;
 	}
 
 }

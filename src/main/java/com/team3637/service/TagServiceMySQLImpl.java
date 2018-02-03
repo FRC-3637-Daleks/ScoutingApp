@@ -224,11 +224,11 @@ public class TagServiceMySQLImpl implements TagService {
 	public List<TagAnalyticsTeamData> getTopTenTeamsForTag(Tag tag, String eventId) {
 
 		//@formatter:off
-		String sql = "SELECT sum(occurrences) * t.point_value as score, team "
+		String sql = "SELECT sum(occurrences) * t.point_value as score, team, sum(occurrences) as occurrences "
 					+	"FROM scoutingtags.matchtags m "
 					+	"		inner join scoutingtags.tags t on t.tag = m.tag "
 					+	"where event_id = ? and m.tag = ? "
-					+	"group by team order by 1 desc limit 10";
+					+	"group by team order by 3 desc limit 10";
 		
 		//@formatter:on
 		return jdbcTemplateObject.query(sql, new RowMapper<TagAnalyticsTeamData>() {
@@ -237,6 +237,7 @@ public class TagServiceMySQLImpl implements TagService {
 				TagAnalyticsTeamData tagAnalyticsTeamData = new TagAnalyticsTeamData();
 				tagAnalyticsTeamData.setTeam(resultSet.getInt("team"));
 				tagAnalyticsTeamData.setScore(resultSet.getInt("score"));
+				tagAnalyticsTeamData.setOccurrences(resultSet.getInt("occurrences"));
 				return tagAnalyticsTeamData;
 			}
 		}, eventId, tag.getTag());

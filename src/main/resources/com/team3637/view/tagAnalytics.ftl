@@ -322,11 +322,13 @@ $(document).ready(function(){
 <div id="${tag}-tag-div"  style = "display:none">
 <table class="tagTable"  id="${tag}-tag-table">
    <tr>
+   <th>Occurrences</th>
    <th>Overall Score</th>
    <th>Team</th>
    </tr>
    <#list tagAnalytics.topScoringTeams as nextTeam>
    <tr>
+   <td>${nextTeam.occurrences}</td>
    <td>${nextTeam.score}</td>
    <td>${nextTeam.team}</td>
     </tr>
