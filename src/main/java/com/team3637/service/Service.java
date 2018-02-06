@@ -16,9 +16,8 @@
  */
 package com.team3637.service;
 
-public interface Service
-{
+public interface Service {
 	void exportCSV(String outputFile);
 
-	void importCSV(String inputFile, Boolean deleteValues);
+	void importCSV(String inputFile) throws Exception;
 }

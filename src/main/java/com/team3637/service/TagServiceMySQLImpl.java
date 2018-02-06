@@ -160,12 +160,10 @@ public class TagServiceMySQLImpl implements TagService {
 	}
 
 	@Override
-	public void importCSV(String inputFile, Boolean delete) {
+	public void importCSV(String inputFile) {
 		try {
 			String csvData = new String(Files.readAllBytes(FileSystems.getDefault().getPath(inputFile)));
 			csvData = csvData.replaceAll("\\r", "");
-			if (delete)
-				deleteAllTags();
 			CSVParser parser = CSVParser.parse(csvData, CSVFormat.DEFAULT.withRecordSeparator("\n"));
 			for (CSVRecord record : parser) {
 				Tag tag = new Tag();

@@ -108,7 +108,7 @@ public class IOController {
 	@RequestMapping(value = "/bundle.zip", method = RequestMethod.POST)
 	public ResponseEntity<?> importBundle(
 			@RequestParam(value = "delete", required = false, defaultValue = "false") Boolean delete,
-			@RequestParam("file") MultipartFile file) {
+			@RequestParam("file") MultipartFile file) throws Exception {
 		File inputDir = new File(context.getRealPath("/") + "/input");
 		if (!inputDir.exists()) {
 			inputDir.mkdir();
@@ -149,11 +149,11 @@ public class IOController {
 			e.printStackTrace();
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		scheduleService.importCSV(inputDir + "/schedule.csv", delete);
-		matchService.importCSV(inputDir + "/matches.csv", delete);
-		matchTagService.importCSV(inputDir + "/matchTags.csv", delete);
-		teamService.importCSV(inputDir + "/teams.csv", delete);
-		tagService.importCSV(inputDir + "/tags.csv", delete);
+		tagService.importCSV(inputDir + "/tags.csv");
+		scheduleService.importCSV(inputDir + "/schedule.csv");
+		matchService.importCSV(inputDir + "/matches.csv");
+		matchTagService.importCSV(inputDir + "/matchTags.csv");
+		teamService.importCSV(inputDir + "/teamTags.csv");
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Location", context.getContextPath() + "/io/");
 		return new ResponseEntity<byte[]>(null, headers, HttpStatus.FOUND);
@@ -169,7 +169,7 @@ public class IOController {
 	}
 
 	private ResponseEntity<?> importCSV(Service service, String fileName, MultipartFile file, Boolean deleteValues)
-			throws IOException {
+			throws Exception {
 		File inputDir = new File(context.getRealPath("/") + "/input");
 		if (!inputDir.exists()) {
 			inputDir.mkdir();
@@ -181,7 +181,7 @@ public class IOController {
 				new FileOutputStream(new File(inputDir.getAbsolutePath() + "/" + fileName)));
 		stream.write(buffer);
 		stream.close();
-		service.importCSV(inputDir + fileName, deleteValues);
+		service.importCSV(inputDir + fileName);
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Location", context.getContextPath() + "/io/");
 		return new ResponseEntity<byte[]>(null, headers, HttpStatus.FOUND);
@@ -197,7 +197,7 @@ public class IOController {
 	@ResponseBody
 	public ResponseEntity<?> importSchedule(
 			@RequestParam(value = "delete", required = false, defaultValue = "false") Boolean delete,
-			@RequestParam("file") MultipartFile file) throws IOException {
+			@RequestParam("file") MultipartFile file) throws Exception {
 		return importCSV(scheduleService, "/schedule.csv", file, delete);
 	}
 
@@ -260,7 +260,7 @@ public class IOController {
 	@RequestMapping(value = "/matchData.zip", method = RequestMethod.POST)
 	public ResponseEntity<?> importMatchData(
 			@RequestParam(value = "delete", required = false, defaultValue = "false") Boolean delete,
-			@RequestParam("file") MultipartFile file) {
+			@RequestParam("file") MultipartFile file) throws Exception {
 		File inputDir = new File(context.getRealPath("/") + "/input");
 		if (!inputDir.exists()) {
 			inputDir.mkdir();
@@ -301,8 +301,8 @@ public class IOController {
 			e.printStackTrace();
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		matchService.importCSV(inputDir + "/matches.csv", delete);
-		matchTagService.importCSV(inputDir + "/matchTags.csv", delete);
+		matchService.importCSV(inputDir + "/matches.csv");
+		matchTagService.importCSV(inputDir + "/matchTags.csv");
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Location", context.getContextPath() + "/io/");
 		return new ResponseEntity<byte[]>(null, headers, HttpStatus.FOUND);
@@ -336,7 +336,7 @@ public class IOController {
 	@ResponseBody
 	public ResponseEntity<?> importMatches(
 			@RequestParam(value = "delete", required = false, defaultValue = "false") Boolean delete,
-			@RequestParam("file") MultipartFile file) throws IOException {
+			@RequestParam("file") MultipartFile file) throws Exception {
 		return importCSV(matchService, "/matches.csv", file, delete);
 	}
 
@@ -344,7 +344,7 @@ public class IOController {
 	@ResponseBody
 	public ResponseEntity<?> importMatchTags(
 			@RequestParam(value = "delete", required = false, defaultValue = "false") Boolean delete,
-			@RequestParam("file") MultipartFile file) throws IOException {
+			@RequestParam("file") MultipartFile file) throws Exception {
 		return importCSV(matchTagService, "/matchTags.csv", file, delete);
 	}
 
@@ -358,7 +358,7 @@ public class IOController {
 	@ResponseBody
 	public ResponseEntity<?> importTeamTags(
 			@RequestParam(value = "delete", required = false, defaultValue = "false") Boolean delete,
-			@RequestParam("file") MultipartFile file) throws IOException {
+			@RequestParam("file") MultipartFile file) throws Exception {
 		return importCSV(teamService, "/teamTags.csv", file, delete);
 	}
 
@@ -372,7 +372,7 @@ public class IOController {
 	@ResponseBody
 	public ResponseEntity<?> importTags(
 			@RequestParam(value = "delete", required = false, defaultValue = "false") Boolean delete,
-			@RequestParam("file") MultipartFile file) throws IOException {
+			@RequestParam("file") MultipartFile file) throws Exception {
 		return importCSV(tagService, "/tags.csv", file, delete);
 	}
 }

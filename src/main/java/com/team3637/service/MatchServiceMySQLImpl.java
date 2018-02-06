@@ -60,7 +60,11 @@ public class MatchServiceMySQLImpl implements MatchService {
 
 	@Override
 	public List<Match> getMatches() {
-		String SQL = "SELECT * FROM scoutingtags.match ORDER BY team ASC ";
+		//@formatter:off
+		String SQL = "SELECT * FROM scoutingtags.match "
+					+ "where event_id = (select event_id from event where active = 1) "
+					+ "ORDER BY team ASC";
+		//@formatter:on
 		return jdbcTemplateObject.query(SQL, new MatchMapper());
 	}
 
@@ -105,38 +109,27 @@ public class MatchServiceMySQLImpl implements MatchService {
 	}
 
 	@Override
-	public void importCSV(String inputFile, Boolean delete) {
-		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
-			String csvData = new String(Files.readAllBytes(FileSystems.getDefault().getPath(inputFile)));
-			csvData = csvData.replaceAll("\\r", "");
-			if (delete)
-				deleteAllMatches();
-			CSVParser parser = CSVParser.parse(csvData, CSVFormat.DEFAULT.withRecordSeparator(""));
-			for (CSVRecord record : parser) {
-				Match match = new Match();
-				match.setId(Integer.parseInt(record.get(0)));
-				match.setMatchNum(Integer.parseInt(record.get(1)));
-				match.setTeam(Integer.parseInt(record.get(2)));
-				match.setScore(Integer.parseInt(record.get(3)));
-				match.setWin(Integer.parseInt(record.get(4)));
-				match.setLoss(Integer.parseInt(record.get(5)));
-				match.setTie(Integer.parseInt(record.get(6)));
-				match.setRankingPoints(Integer.parseInt(record.get(7)));
-				match.setPenalty(Integer.parseInt(record.get(8)));
-				match.setModifiedTimestamp(sdf.parse(record.get(9)));
-				match.setStartPosition(Integer.parseInt(record.get(10)));
-				match.setEventId(record.get(11));
-				updateInsertMatch(match);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+	public void importCSV(String inputFile) throws Exception {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+		String csvData = new String(Files.readAllBytes(FileSystems.getDefault().getPath(inputFile)));
+		csvData = csvData.replaceAll("\\r", "");
+		CSVParser parser = CSVParser.parse(csvData, CSVFormat.DEFAULT.withRecordSeparator(""));
+		for (CSVRecord record : parser) {
+			Match match = new Match();
+			match.setId(Integer.parseInt(record.get(0)));
+			match.setMatchNum(Integer.parseInt(record.get(1)));
+			match.setTeam(Integer.parseInt(record.get(2)));
+			match.setScore(Integer.parseInt(record.get(3)));
+			match.setWin(Integer.parseInt(record.get(4)));
+			match.setLoss(Integer.parseInt(record.get(5)));
+			match.setTie(Integer.parseInt(record.get(6)));
+			match.setRankingPoints(Integer.parseInt(record.get(7)));
+			match.setPenalty(Integer.parseInt(record.get(8)));
+			match.setModifiedTimestamp(sdf.parse(record.get(9)));
+			match.setStartPosition(Integer.parseInt(record.get(10)));
+			match.setEventId(record.get(11));
+			updateInsertMatch(match);
 		}
-	}
-
-	private void deleteAllMatches() {
-		String sql = "delete from scoutingtags.match";
-		jdbcTemplateObject.update(sql);
 	}
 
 	private void updateInsertMatch(Match match) {

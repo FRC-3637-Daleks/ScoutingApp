@@ -131,7 +131,7 @@ public class TeamServiceMySQLImpl implements TeamService {
 	@Override
 	public List<TeamTagExportModel> getTeamTagsForExport() {
 		//@formatter:off
-		String SQL = "select team, tag, occurrences, modified_timestamp, event_id from teamtags "
+		String SQL = "select * from scoutingtags.teamtags "
 					+ "where event_id = (select event_id from event where active = 1) "
 					+ "order by team, tag";
 		//@formatter:on
@@ -283,26 +283,26 @@ public class TeamServiceMySQLImpl implements TeamService {
 	}
 
 	@Override
-	public void importCSV(String inputFile, Boolean delete) {
-		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
-			String csvData = new String(Files.readAllBytes(FileSystems.getDefault().getPath(inputFile)));
-			csvData = csvData.replaceAll("\\r", "");
-			if (delete)
-				deleteAllTeamTags();
-			CSVParser parser = CSVParser.parse(csvData, CSVFormat.DEFAULT.withRecordSeparator("\n"));
-			for (CSVRecord record : parser) {
-				TeamTagExportModel teamTagExportModel = new TeamTagExportModel();
-				teamTagExportModel.setTeam(new Integer(record.get(0)));
-				teamTagExportModel.setTag(record.get(1));
+	public void importCSV(String inputFile) throws Exception {
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+		String csvData = new String(Files.readAllBytes(FileSystems.getDefault().getPath(inputFile)));
+		csvData = csvData.replaceAll("\\r", "");
+		CSVParser parser = CSVParser.parse(csvData, CSVFormat.DEFAULT.withRecordSeparator("\n"));
+		for (CSVRecord record : parser) {
+			TeamTagExportModel teamTagExportModel = new TeamTagExportModel();
+			teamTagExportModel.setTeam(new Integer(record.get(0)));
+			teamTagExportModel.setTag(record.get(1));
+			try {
 				teamTagExportModel.setOccurrences(new Integer(record.get(2)));
-				teamTagExportModel.setModifiedTimestamp(sdf.parse(record.get(3)));
-				teamTagExportModel.setEventId(record.get(4));
-				updateInsertTeamTag(teamTagExportModel);
+			} catch (Exception e) {
+				// It's okay that the value of occurrences is null
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+			teamTagExportModel.setModifiedTimestamp(sdf.parse(record.get(3)));
+			teamTagExportModel.setEventId(record.get(4));
+			updateInsertTeamTag(teamTagExportModel);
 		}
+
 	}
 
 	@Override
@@ -339,9 +339,14 @@ public class TeamServiceMySQLImpl implements TeamService {
 		}
 		if (currentModifiedDate == null) {
 			String insertSQL = "insert into scoutingtags.teamtags (team, tag, occurrences, modified_timestamp, event_id) values (?, ?, ?, ?, ?)";
-			jdbcTemplateObject.update(insertSQL, teamTagExportModel.getTeam(), teamTagExportModel.getTag(),
-					teamTagExportModel.getOccurrences(), teamTagExportModel.getModifiedTimestamp(),
-					teamTagExportModel.getEventId());
+			try {
+				jdbcTemplateObject.update(insertSQL, teamTagExportModel.getTeam(), teamTagExportModel.getTag(),
+						teamTagExportModel.getOccurrences(), teamTagExportModel.getModifiedTimestamp(),
+						teamTagExportModel.getEventId());
+			} catch (Exception e) {
+				int i = 0;
+			}
+
 		} else if (currentModifiedDate.getTime() < teamTagExportModel.getModifiedTimestamp().getTime()) {
 			String updateSQL = "update scoutingtags.teamtags set occurrences=?, modified_timestamp = ? where team = ? and tag = ? and event_id = ?";
 			jdbcTemplateObject.update(updateSQL, teamTagExportModel.getOccurrences(),

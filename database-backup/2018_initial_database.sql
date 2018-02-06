@@ -66,7 +66,7 @@ CREATE TABLE `event` (
 
 LOCK TABLES `event` WRITE;
 /*!40000 ALTER TABLE `event` DISABLE KEYS */;
-INSERT INTO `event` VALUES (1,'2017njbri',0,2017,'2017-03-17'),(2,'2017njski',0,2017,'2017-04-02'),(3,'2017mrcmp',1,2017,'2017-04-05'),(4,'2018njfla',0,2018,'2018-03-11'),(5,'2018njski',0,2018,'2018-03-25');
+INSERT INTO `event` VALUES (1,'2017njbri',0,2017,'2017-03-17'),(2,'2017njski',0,2017,'2017-04-02'),(3,'2017mrcmp',0,2017,'2017-04-05'),(4,'2018njfla',1,2018,'2018-03-11'),(5,'2018njski',0,2018,'2018-03-25');
 /*!40000 ALTER TABLE `event` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -121,11 +121,7 @@ CREATE TABLE `matchtags` (
   `modified_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `event_id` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `index4` (`matchNum`,`team`,`tag`),
-  KEY `fk_matchtags_1_idx` (`tag`),
-  KEY `fk_matchtags_2_idx` (`matchNum`),
-  CONSTRAINT `fk_matchtags_1` FOREIGN KEY (`tag`) REFERENCES `tags` (`tag`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_matchtags_2` FOREIGN KEY (`matchNum`) REFERENCES `match` (`matchNum`) ON DELETE CASCADE ON UPDATE CASCADE
+  KEY `fk_matchtags_2_idx` (`matchNum`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13329 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -279,9 +275,7 @@ CREATE TABLE `teamtags` (
   `modified_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `event_id` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `index2` (`team`,`tag`,`event_id`),
-  KEY `fk_teamtags_1_idx` (`tag`),
-  CONSTRAINT `fk_teamtags_1` FOREIGN KEY (`tag`) REFERENCES `tags` (`tag`) ON DELETE CASCADE ON UPDATE CASCADE
+  UNIQUE KEY `index2` (`team`,`tag`,`event_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=962 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -304,4 +298,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-01-27 11:56:22
+-- Dump completed on 2018-02-03 11:58:17

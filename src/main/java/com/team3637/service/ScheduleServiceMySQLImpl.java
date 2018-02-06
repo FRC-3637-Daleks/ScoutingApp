@@ -132,7 +132,7 @@ public class ScheduleServiceMySQLImpl implements ScheduleService {
 	}
 
 	@Override
-	public void importCSV(String inputFile, Boolean delete) {
+	public void importCSV(String inputFile) {
 		try {
 			String csvData = new String(Files.readAllBytes(FileSystems.getDefault().getPath(inputFile)));
 			csvData = csvData.replaceAll("\\r", "");

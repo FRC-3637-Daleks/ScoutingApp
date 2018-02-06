@@ -100,26 +100,26 @@ public class MatchTagServiceMySQLImpl implements MatchTagService {
 	}
 
 	@Override
-	public void importCSV(String inputFile, Boolean delete) {
-		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
-			String csvData = new String(Files.readAllBytes(FileSystems.getDefault().getPath(inputFile)));
-			csvData = csvData.replaceAll("\\r", "");
-			if (delete)
-				deleteAllMatchTags();
-			CSVParser parser = CSVParser.parse(csvData, CSVFormat.DEFAULT.withRecordSeparator("\n"));
-			for (CSVRecord record : parser) {
-				MatchTagExportModel matchTagExportModel = new MatchTagExportModel();
-				matchTagExportModel.setTeam(new Integer(record.get(0)));
-				matchTagExportModel.setMatch(new Integer(record.get(1)));
-				matchTagExportModel.setTag(record.get(2));
+	public void importCSV(String inputFile) throws Exception {
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+		String csvData = new String(Files.readAllBytes(FileSystems.getDefault().getPath(inputFile)));
+		csvData = csvData.replaceAll("\\r", "");
+
+		CSVParser parser = CSVParser.parse(csvData, CSVFormat.DEFAULT.withRecordSeparator("\n"));
+		for (CSVRecord record : parser) {
+			MatchTagExportModel matchTagExportModel = new MatchTagExportModel();
+			matchTagExportModel.setTeam(new Integer(record.get(0)));
+			matchTagExportModel.setMatch(new Integer(record.get(1)));
+			matchTagExportModel.setTag(record.get(2));
+			try {
 				matchTagExportModel.setOccurrences(new Integer(record.get(3)));
-				matchTagExportModel.setModifiedTimestamp(sdf.parse(record.get(4)));
-				matchTagExportModel.setEventId(record.get(5));
-				updateInsertMatchTag(matchTagExportModel);
+			} catch (Exception e) {
+				// It's okay that the value of occurrences is null
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+			matchTagExportModel.setModifiedTimestamp(sdf.parse(record.get(4)));
+			matchTagExportModel.setEventId(record.get(5));
+			updateInsertMatchTag(matchTagExportModel);
 		}
 	}
 
@@ -146,17 +146,15 @@ public class MatchTagServiceMySQLImpl implements MatchTagService {
 		}
 	}
 
-	private void deleteAllMatchTags() {
-		String sql = "delete from scoutingtags.matchtags";
-		jdbcTemplateObject.update(sql);
-	}
-
 	@Override
 	public List<MatchTag> getMatchTags(Integer team, String tag, String eventId) {
 		if (eventId == null)
 			eventId = getDefaultEvent();
-		String SQL = "select team, tag, matchNum, occurrences, event_id from scoutingtags.matchtags where team = ? and tag = ?  and event_id = ?"
-				+ "order by matchNum";
+		//@formatter:off
+		String SQL = "select team, tag, matchNum, occurrences, event_id from scoutingtags.matchtags "
+					+ "where team = ? and tag = ?  and event_id = ?"
+					+ "order by matchNum";
+		//@formatter:on
 		return jdbcTemplateObject.query(SQL, new RowMapper<MatchTag>() {
 
 			@Override
