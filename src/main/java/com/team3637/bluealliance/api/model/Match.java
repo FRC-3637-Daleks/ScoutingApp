@@ -9,87 +9,71 @@ package com.team3637.bluealliance.api.model;
 import java.util.HashMap;
 import java.util.List;
 
-public class Match
-{
+public class Match {
 	private String comp_level;
 	private Integer match_number;
 	private Integer set_number;
 	private String eventId;
 	private HashMap<String, Alliance> alliances = new HashMap<String, Alliance>();
 
-	public class Alliance
-	{
+	public class Alliance {
 		private Integer score;
-		private List<String> teams;
+		private List<String> team_keys;
 
-		public Integer getScore()
-		{
+		public List<String> getTeam_keys() {
+			return team_keys;
+		}
+
+		public void setTeam_keys(List<String> team_keys) {
+			this.team_keys = team_keys;
+		}
+
+		public Integer getScore() {
 			return score;
 		}
 
-		public void setScore(Integer score)
-		{
+		public void setScore(Integer score) {
 			this.score = score;
-		}
-
-		public List<String> getTeams()
-		{
-			return teams;
-		}
-
-		public void setTeams(List<String> teams)
-		{
-			this.teams = teams;
 		}
 	}
 
-	public String getComp_level()
-	{
+	public String getComp_level() {
 		return comp_level;
 	}
 
-	public void setComp_level(String comp_level)
-	{
+	public void setComp_level(String comp_level) {
 		this.comp_level = comp_level;
 	}
 
-	public Integer getMatch_number()
-	{
+	public Integer getMatch_number() {
 		return match_number;
 	}
 
-	public void setMatch_number(Integer match_number)
-	{
+	public void setMatch_number(Integer match_number) {
 		this.match_number = match_number;
 	}
 
-	public HashMap<String, Alliance> getAlliances()
-	{
+	public HashMap<String, Alliance> getAlliances() {
 		return alliances;
 	}
 
-	public void setAlliances(HashMap<String, Alliance> alliances)
-	{
+	public void setAlliances(HashMap<String, Alliance> alliances) {
 		this.alliances = alliances;
 	}
 
-	public Integer getSet_number()
-	{
+	public Integer getSet_number() {
 		return set_number;
 	}
 
-	public void setSet_number(Integer set_number)
-	{
+	public void setSet_number(Integer set_number) {
 		this.set_number = set_number;
 	}
 
-	public String getEventId()
-	{
+	public String getEventId() {
 		return eventId;
 	}
 
-	public void setEventId(String eventId)
-	{
+	public void setEventId(String eventId) {
 		this.eventId = eventId;
 	}
 

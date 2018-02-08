@@ -184,14 +184,14 @@ public class ScheduleServiceMySQLImpl implements ScheduleService {
 		if (adder > 0)
 			adder += setNum * 100;
 		schedule.setMatchNum(matchNum + adder);
-		List<String> blueTeamStrings = match.getAlliances().get("blue").getTeams();
+		List<String> blueTeamStrings = match.getAlliances().get("blue").getTeam_keys();
 		if (blueTeamStrings.size() > 0)
 			schedule.setB1(Integer.parseInt(blueTeamStrings.get(0).substring(3)));
 		if (blueTeamStrings.size() > 1)
 			schedule.setB2(Integer.parseInt(blueTeamStrings.get(1).substring(3)));
 		if (blueTeamStrings.size() > 2)
 			schedule.setB3(Integer.parseInt(blueTeamStrings.get(2).substring(3)));
-		List<String> redTeamStrings = match.getAlliances().get("red").getTeams();
+		List<String> redTeamStrings = match.getAlliances().get("red").getTeam_keys();
 		if (redTeamStrings.size() > 0)
 			schedule.setR1(Integer.parseInt(redTeamStrings.get(0).substring(3)));
 		if (redTeamStrings.size() > 1)
