@@ -74,7 +74,7 @@ public class EventMatchesService {
 			TeamExportModel teamExportModel = new TeamExportModel();
 			teamExportModel.setEventId(event);
 			teamExportModel.setTeam(team.getTeam_number());
-			teamExportModel.setName(team.getNickname());
+			teamExportModel.setName(team.getName());
 			teamService.updateInsertTeam(teamExportModel);
 		}
 	}

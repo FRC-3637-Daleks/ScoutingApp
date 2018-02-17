@@ -16,8 +16,6 @@
  */
 package com.team3637.service;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -25,7 +23,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import javax.sql.DataSource;
 
@@ -43,22 +40,8 @@ public class ScheduleServiceMySQLImpl implements ScheduleService {
 
 	private JdbcTemplate jdbcTemplateObject;
 
-	@Override
 	public void setDataSource(DataSource dataSource) {
 		this.jdbcTemplateObject = new JdbcTemplate(dataSource);
-	}
-
-	@Override
-	public void initDB(String initScript) {
-		String script = "";
-		try {
-			Scanner sc = new Scanner(new File(initScript));
-			while (sc.hasNext())
-				script += sc.nextLine();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		jdbcTemplateObject.execute(script);
 	}
 
 	public void create(Schedule schedule) {

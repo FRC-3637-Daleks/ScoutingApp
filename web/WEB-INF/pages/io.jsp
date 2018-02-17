@@ -172,7 +172,29 @@
             <input class="btn btn-default" type="submit" value="Load Event Schedule">
         </form>
         </td>
-    </tr>      
+    </tr>
+    <tr>
+        <th>
+           Award Data
+        </th>
+        <td>          
+        <form action="${pageContext.request.contextPath}/io/loadAwardsFromBlueAlliance" method="post" class="form-inline"
+              enctype="multipart/form-data">    
+            <input class="btn btn-default" type="submit" value="Load Award Data">
+        </form>
+        </td>
+    </tr>
+    <tr>
+        <th>
+           Team List
+        </th>
+        <td>          
+        <form action="${pageContext.request.contextPath}/io/loadTeamsFromBlueAlliance" method="post" class="form-inline"
+              enctype="multipart/form-data">    
+            <input class="btn btn-default" type="submit" value="Load Team List">
+        </form>
+        </td>
+    </tr>
     </table>
 </div>
 </body>

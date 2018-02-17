@@ -35,12 +35,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.team3637.bluealliance.api.AwardsService;
+import com.team3637.bluealliance.api.TeamListService;
 import com.team3637.service.MatchService;
 import com.team3637.service.MatchTagService;
 import com.team3637.service.ScheduleService;
@@ -63,6 +66,10 @@ public class IOController {
 	private TagService tagService;
 	@Autowired
 	private ServletContext context;
+	@Autowired
+	private AwardsService awardsService;
+	@Autowired
+	private TeamListService teamListService;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String io() {
@@ -310,7 +317,7 @@ public class IOController {
 
 	@RequestMapping(value = "/teams.csv", method = RequestMethod.POST)
 	public ResponseEntity<?> importTeams(
-			@RequestParam(value = "delete", required = false, defaultValue = "false") Boolean delete,
+
 			@RequestParam("file") MultipartFile file) throws IOException {
 
 		String fileName = "/teams.csv";
@@ -325,7 +332,7 @@ public class IOController {
 				new FileOutputStream(new File(inputDir.getAbsolutePath() + "/" + fileName)));
 		stream.write(buffer);
 		stream.close();
-		teamService.importTeamsCSV(inputDir + fileName, delete);
+		teamService.importTeamsCSV(inputDir + fileName);
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Location", context.getContextPath() + "/io/");
 		return new ResponseEntity<byte[]>(null, headers, HttpStatus.FOUND);
@@ -375,4 +382,23 @@ public class IOController {
 			@RequestParam("file") MultipartFile file) throws Exception {
 		return importCSV(tagService, "/tags.csv", file, delete);
 	}
+
+	@RequestMapping("/loadAwardsFromBlueAlliance")
+	@ResponseBody
+	public ResponseEntity<?> loadAwardsFromBlueAlliance(Model model) {
+		awardsService.loadAwards();
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Location", context.getContextPath() + "/io/");
+		return new ResponseEntity<byte[]>(null, headers, HttpStatus.FOUND);
+	}
+
+	@RequestMapping("/loadTeamsFromBlueAlliance")
+	@ResponseBody
+	public ResponseEntity<?> loadTeamsFromBlueAlliance(Model model) {
+		teamListService.loadTeamList();
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Location", context.getContextPath() + "/io/");
+		return new ResponseEntity<byte[]>(null, headers, HttpStatus.FOUND);
+	}
+
 }

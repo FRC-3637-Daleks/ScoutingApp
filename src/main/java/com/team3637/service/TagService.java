@@ -18,17 +18,12 @@ package com.team3637.service;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import com.team3637.model.Tag;
 import com.team3637.model.TagAnalyticsTeamData;
 
 public interface TagService extends Service {
-	void setDataSource(DataSource dataSource);
 
 	List<Tag> getTags();
-
-	void deleteTag(String name);
 
 	void createTag(Tag tag);
 

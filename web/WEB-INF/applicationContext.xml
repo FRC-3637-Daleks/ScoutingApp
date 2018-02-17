@@ -63,6 +63,14 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
+  <bean id="awardDaoImpl" class="com.team3637.bluealliance.api.dataaccess.AwardsDaoImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    
+     <bean id="teamDaoImpl" class="com.team3637.bluealliance.api.dataaccess.TeamDaoImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
     <bean id="tagsService" class="com.team3637.service.TagServiceMySQLImpl">
         <property name="dataSource" ref="dataSource"/>
     </bean>

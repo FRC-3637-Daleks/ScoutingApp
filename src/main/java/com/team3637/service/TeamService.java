@@ -18,16 +18,12 @@ package com.team3637.service;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import com.team3637.model.Team;
 import com.team3637.model.TeamExportModel;
 import com.team3637.model.TeamTag;
 import com.team3637.model.TeamTagExportModel;
 
-public interface TeamService extends Service
-{
-	void setDataSource(DataSource dataSource);
+public interface TeamService extends Service {
 
 	Team getTeam(Integer id);
 
@@ -51,7 +47,11 @@ public interface TeamService extends Service
 
 	List<TeamExportModel> getTeamsForExport();
 
-	void importTeamsCSV(String string, Boolean delete);
+	void importTeamsCSV(String string);
 
 	void updateInsertTeam(TeamExportModel teamExportModel);
+
+	List<Integer> getTeamsforActiveEvent();
+
+	List<Integer> getAllTeams();
 }

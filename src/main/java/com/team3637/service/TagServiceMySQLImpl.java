@@ -34,9 +34,6 @@ import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
 import com.team3637.mapper.TagMapper;
 import com.team3637.model.Tag;
@@ -45,14 +42,9 @@ import com.team3637.model.TagAnalyticsTeamData;
 public class TagServiceMySQLImpl implements TagService {
 
 	private JdbcTemplate jdbcTemplateObject;
-	private SimpleJdbcCall mergeTags;
-	private SimpleJdbcCall deleteTag;
 
-	@Override
 	public void setDataSource(DataSource dataSource) {
 		this.jdbcTemplateObject = new JdbcTemplate(dataSource);
-		this.mergeTags = new SimpleJdbcCall(dataSource).withProcedureName("mergeTags");
-		this.deleteTag = new SimpleJdbcCall(dataSource).withProcedureName("deleteTag");
 	}
 
 	@Override
@@ -117,15 +109,6 @@ public class TagServiceMySQLImpl implements TagService {
 	}
 
 	@Override
-	public void deleteTag(String name) {
-		SqlParameterSource args = new MapSqlParameterSource().addValue("tagName", name);
-		deleteTag.execute(args);
-		String SQL = "DELETE FROM tags WHERE tag = ?"
-				+ "and year = (select year from scoutingtags.competition_year where active = 1)";
-		jdbcTemplateObject.update(SQL, name);
-	}
-
-	@Override
 	public void exportCSV(String outputFile) {
 		List<Tag> data = getTags();
 		FileWriter fileWriter = null;
@@ -183,14 +166,16 @@ public class TagServiceMySQLImpl implements TagService {
 		}
 	}
 
-	private void deleteAllTags() {
-		String sql = "DELETE FROM scoutingtags.tags";
-		jdbcTemplateObject.update(sql);
-	}
-
 	@Override
 	public void deleteTag(Integer id) {
-		String sql = "DELETE FROM scoutingtags.tags WHERE id=?";
+		//@formatter:off
+		String sql = "DELETE FROM scoutingtags.tags WHERE id=?"
+					+ " and not exists (select 1 from scoutingtags.teamtags tt "
+					+ "					where tt.tag = tags.tag and tags.year = (select year from scoutingtags.event e where e.event_id = tt.event_id))"
+					+ " and not exists (select 1 from scoutingtags.matchtags mt"
+					+ "				   where mt.tag = tags.tag and tags.year = (select year from scoutingtags.event e where e.event_id = mt.event_id))";
+		//@formatter:on
+
 		jdbcTemplateObject.update(sql, id);
 
 	}
