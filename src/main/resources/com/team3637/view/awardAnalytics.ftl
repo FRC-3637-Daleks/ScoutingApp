@@ -3,12 +3,22 @@
 <head>
 <style>
 
+
 body {
 	background-color: #ebebe0;
 }
 
+.dataNotImported {
+    background-color: #cecec4;
+}
+
+.dataImported {
+    background-color:#ebebe0 ; 
+}
+
 .categoryTable{
-    border-spacing: 0px;  
+    border-spacing: 0px;
+    font-size:15px;
 }
 
 .categoryTable table{
@@ -17,25 +27,28 @@ body {
     border-collapse:collapse;
 }
 
+.tagTable th{
+    font-size:15px;
+    padding-left:25px;
+    padding-right:25px;
+    border-collapse:collapse;
+    border: 1px solid gray !important;
+    background-color:#BC2132;
+    color:#E9E9E9
+}
+
 .tagTable td{
     font-size: 12px;
     border-collapse: collapse;  
     border: 1px solid gray !important; 
     padding-right: 5px;
-    padding-left: 5px;
-}
-
-.tagTableGray tr{
-   background-color:#ebebe0;
-}
-  
-  
-.tagTableWhite tr{
-   background-color:#ffffff;
+    padding-left: 5px;  
+    text-align: center;
 }
   
 .categoryTable td{ 
     border: 0px solid gray; 
+    border: 1px solid gray !important; 
     vertical-align:top;
 }
 
@@ -50,31 +63,13 @@ body {
 
 .sectionHeader {
     background-color:#BC2132;
-    font-weight:bold; 
     color:#E9E9E9;
+    font-weight:bold; 
     text-align:center;
     padding-right:15px;
     padding-left:15px;    
     border: 1px solid gray;            
 } 
-
-.teamHeader { 
-    width:100%;
-    border-spacing: 0px;
-}
-
-.teamHeader th{
-    background-color:#ebebe0; 
-    font-weight:bold;
-    font-size:15px;
-    margin-left: 10px;
-    margin-right: 10px;
-    padding-left:3px;  
-    padding-right:25px;
-    border-collapse:collapse;
-    color:white;     
-    text-align:left;
-}
 
 .teamHeader label{
     background-color:#005EFF;
@@ -83,7 +78,7 @@ body {
     padding-left:0px;
     padding-right:0px; 
     border-collapse:collapse; 
-    color:black; 
+    color:white; 
 } 
 
 .teamInput {
@@ -97,9 +92,8 @@ body {
 .categoryTitle {
     text-align: 
     center; height: 20px; 
-    background-color:#ADADAD;
-    font-size:13px;  
-    font-weight:bold;
+    background-color:#CFA600; 
+    font-size:13px;
     padding-right:15px;
     padding-left:15px;    
     border: 1px solid gray;        
@@ -107,6 +101,20 @@ body {
 
 .columnTitle {
      text-align: center
+}
+
+.tagHeader th{
+    font-size:15px;
+    background-color:#ebebe0;
+    width:1%;
+    border-spacing: 0px;
+}
+
+hr.style1 {
+	border-color:#000000;
+    padding-right:0px;
+    margin-top:5px;
+    margin-bottom:5px;
 }
 
 span.name { color:#545454; }
@@ -118,7 +126,7 @@ span.name { color:#545454; }
 <link href="../css/bootstrap-slider.css" rel="stylesheet"/> 
 <link href="../css/chosen.css" rel="stylesheet"/>
 <link href="../css/main.css" rel="stylesheet"/>
-<script src="../js/jquery.min.js"></script> 
+<script src="../js/jquery.min.js"></script>
 <script src="../bootstrap/js/bootstrap.min.js"></script> 
 <script>
 function show(target) {
@@ -151,22 +159,22 @@ function registerPopOvers()
                                         popoverHTML+='<tr><td>' + val.match+'</td><td>'+val.occurrences+'</td></tr>';    
                               }); 
                              popoverHTML += '</table>';  
-                             $(context).html(popoverHTML) ; 
+                             $(context).html(popoverHTML) ;  
                     });
               },
               content: "loading",
               html:true   
            });   
       });     
-}
+} 
 
-function changeEvent(eventId)
+function updatePage()
 {
-      document.location.href = "../analytics/teamAnalytics?event="+eventId+"&hideComments="+$('#hideComments').is(':checked');  
+      document.location.href = "../analytics/tagAnalytics?event="+$('#eventSelector').val()+"&selectedCategory="+$('#categorySelector').val()+"&selectedGrouping="+$('#groupingSelector').val()+"&hideComments="+$('#hideComments').is(':checked');
 }
 
 function toggleComments(hide)
-{    
+{  
 if (hide)
 $('.teamComments').hide();
 else  
@@ -175,7 +183,7 @@ $('.teamComments').show();
 
 function goTo(href)
 {
-     document.location.href =href +"?event="+$('#eventSelector').val()+"&hideComments="+$('#hideComments').is(':checked');
+     document.location.href =href +"?event="+$('#eventSelector').val()+"&hideComments="+$('#hideComments').is(':checked'); 
 }
 
 $(document).ready(function(){
@@ -229,12 +237,6 @@ $(document).ready(function(){
                         </#if>    
                      </#list> 
                    </select>   
-                    <label for"hideComments" style="color:#9d9d9d;">Hide Comments:</label>  
-                    <#if hideComments>                     
-                   <input type"checkbox" type="checkbox" id="hideComments" value="hide" class="form-control input-sm" onchange="toggleComments(this.checked);"  checked/> 
-                   <#else>
-                   <input type"checkbox" type="checkbox" id="hideComments" value="hide" class="form-control input-sm" onchange="toggleComments(this.checked);" /> 
-                   </#if>
                    </div>
                    </form> 
                  </li>  
@@ -243,93 +245,32 @@ $(document).ready(function(){
     </div>
 </nav>
 </#if>
-<#assign teamNum = -1>
-<#list teams as team>
-<#if teamNum == -1 || teamNum != team.team>
-<#if teamNum != -1>
-</div>
-</#if>
-<div onclick="toggle('${team}-team')">
-<table class = "teamHeader" cellspacing = "0">
+<#list teamAwardsList as teamAward>
+<#-- <#assign award = teamAward.name> -->
+<div onclick="toggle('${teamAward.team}-team')">
+<table class = "tagHeader" cellspacing = "0">
   <tr>
-    <th><p style="color:black; width:100px;">Team: <span class = "name">${team.team}</span></p></th>
-    <th><p style="color:black; width:140px;">Matches Played: <span class = "name">${team.matches}</span></p></th>
-    <th><p style="color:black; width:130px;">Avg. Score: <span class = "name">${team.avgScore}</span></p></th>
-    <th><p style="color:black; width:130px;">Our Score: <span class = "name">${team.ourScore!}</span></p></th>
-    <th><p style="color:black; width:120px;">W/L/T: <span class = "name">${team.wins}/${team.losses}/${team.ties}</span></p></th>
-    <th><p style="color:black; width:150px;">Ranking Points: <span class = "name">${team.rankingpoints}</span></p></th>
+    <th><p style="color:black; width:100px;">Team: <span class = "name">${teamAward.team}</span></p></th>
   </tr>
 </table>
 </div>
-<div id="${team}-team" style = "display:none;">
-</#if>
-<#assign grouping = ""> 
-<#assign category = "">  
-<#list team.matchStatistics as matchStatistic>
-<#if grouping == "" || grouping != matchStatistic.grouping> 
-   <#if category != "">
-   </tr>
-   </table>	
-   </td>
-   </#if>
-  <#if grouping != "">
-     </tr>
-  </table>   
-  </div>
-  </div>
-  <br>
-  </#if>
-   <#assign grouping = matchStatistic.grouping> 
-   <#assign tableId = team.team + "-" + grouping> 
-  <div class="sectionWrapper">
-  <div class="sectionParent">
-  <div class="sectionHeader" onclick="toggle('${team}-${grouping}')">${grouping}</div>
-  <table class="categoryTable" id="${team}-${grouping}">
-    <tr>
-    <#assign category = ""> 
-</#if>
-<#if category == "" || category != matchStatistic.category>
-   <#if category != "">
-   </tr>
-   </table>	
-   </td>
-   </#if> 
-   <#assign category =  matchStatistic.category>
-   <td>
-   <div class="categoryTitle" onclick="toggle('${team}-${grouping}-${category}-table')">${category}</div>
-   <table class="tagTable"  id="${team}-${grouping}-${category}-table">
+<div id="${teamAward.team}-team" style = "display:none;">
+  <div class="sectionHeader" onclick="toggle('${teamAward.team}-award')">Awards</div>
+  <table class="categoryTable" border = 1px id="${teamAward.team}-">
    <tr>
-   <td> ${matchStatistic.tag} </td>
-   <td><a href="javascript:void(0);"  data-title="${matchStatistic.tag}" data-template='<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content"></div></div>' data-url="/ScoutingApp/m/getMatchTags?team=${team}&tag=${matchStatistic.tag}&event=${selectedEvent}" class="total-occurrences-popover-ajax">${matchStatistic.totalOccurrences}</a> </td>
+   <th width = 500px style="background-color:#ADADAD; color:#333; text-align:center;">Award</th>
+   <th width = 200px style="background-color:#ADADAD; color:#333; text-align:center;">Event</th>
+   <th width = 200px style="background-color:#ADADAD; color:#333; text-align:center;">Year</th>
    </tr>
-<#else> 
-   <tr>       
-   <td> ${matchStatistic.tag} </td>  
-   <td><a href="javascript:void(0);"  data-title="${matchStatistic.tag}"  data-template='<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content"></div></div>' data-url="/ScoutingApp/m/getMatchTags?team=${team}&tag=${matchStatistic.tag}&event=${selectedEvent}" class="total-occurrences-popover-ajax">${matchStatistic.totalOccurrences}</a> </td>
-   </tr>   
-</#if>
-</#list>   
- <#if category != ""> 
-   </tr>
-   </table>	
-   </td>
-   </#if>  
-  <#if grouping != "">
-     </tr>
-  </table>   
- <#if hideComments>     
- <div class="teamComments" style="display:none;">
- <#else>
-  <div class="teamComments">
- </#if>
- <div class="sectionHeader">Scouting Comments</div>
- <textarea disabled  rows="3" cols="100" >${team.scoutingComments!}</textarea>
- </div>   
- </div>
-  </div>
-  </div>
-  </#if>
- <#assign teamNum =  team.team>
+    <#list teamAward.awards as nextAward>
+   <tr>
+   <td>${nextAward.name}</td>
+   <td>${nextAward.eventId}</td>
+   <td>${nextAward.year}</td>
+   </#list>
+   </table>
+   </div>
+   </div>
  </#list>
  </div>
 </body>

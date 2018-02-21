@@ -74,6 +74,11 @@
     <bean id="tagsService" class="com.team3637.service.TagServiceMySQLImpl">
         <property name="dataSource" ref="dataSource"/>
     </bean>
+    
+    <bean id="awardsDao" class="com.team3637.service.AwardsDaoImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    
 
         <!-- FreeMarker configuration -->
     <bean id="freemarkerConfig"

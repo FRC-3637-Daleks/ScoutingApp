@@ -38,9 +38,12 @@ import com.team3637.model.Tag;
 import com.team3637.model.TagAnalytics;
 import com.team3637.model.TagAnalyticsTeamData;
 import com.team3637.model.Team;
+import com.team3637.model.TeamAwards;
+import com.team3637.service.AwardsDao;
 import com.team3637.service.MatchService;
 import com.team3637.service.ScheduleService;
 import com.team3637.service.TagService;
+import com.team3637.service.TeamService;
 
 @Controller
 public class AnalyticsController {
@@ -52,6 +55,10 @@ public class AnalyticsController {
 	private ServletContext context;
 	@Autowired
 	private TagService tagService;
+	@Autowired
+	private TeamService teamService;
+	@Autowired
+	private AwardsDao awardsDao;
 
 	@RequestMapping(value = "/teamAnalytics", method = RequestMethod.GET)
 	public String teamAnalytics(@RequestParam(value = "team", required = false) Integer teamNum,
@@ -207,6 +214,26 @@ public class AnalyticsController {
 		model.addAttribute("groupings", groupings);
 		model.addAttribute("selectedGrouping", selectedGrouping);
 		return "tagAnalytics";
+
+	}
+
+	@RequestMapping(value = "/awardAnalytics", method = RequestMethod.GET)
+	public String awardAnalytics(@RequestParam(value = "event", required = false) String eventId, Model model) {
+		List<Integer> teams = teamService.getTeamsForEvent(eventId);
+		if (eventId == null)
+			eventId = matchService.getDefaultEvent();
+		List<TeamAwards> teamAwardsList = new ArrayList<TeamAwards>();
+		for (Integer team : teams) {
+			TeamAwards teamAwards = new TeamAwards();
+			teamAwards.setTeam(team);
+			teamAwards.setAwards(awardsDao.getAwardsForTeam(team));
+			teamAwardsList.add(teamAwards);
+		}
+		model.addAttribute("teamAwardsList", teamAwardsList);
+		model.addAttribute("events", scheduleService.getEventList());
+		model.addAttribute("selectedEvent", eventId);
+		model.addAttribute("selectedReportType", "awardAnalytics");
+		return "awardAnalytics";
 
 	}
 }

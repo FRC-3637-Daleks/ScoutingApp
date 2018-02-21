@@ -54,4 +54,6 @@ public interface TeamService extends Service {
 	List<Integer> getTeamsforActiveEvent();
 
 	List<Integer> getAllTeams();
+
+	List<Integer> getTeamsForEvent(String event);
 }

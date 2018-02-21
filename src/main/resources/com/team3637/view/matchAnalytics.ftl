@@ -244,6 +244,11 @@ $(document).ready(function(){
                          <#else>   
                          	<option value="tagAnalytics">By Tag</option>
                          </#if>
+                          <#if selectedReportType == "awardAnalytics">
+                            <option value="awardAnalytics" selected>Awards</option>
+                         <#else>   
+                         	<option value="awardAnalytics">Awards</option>
+                         </#if>
                    	 </select> 
                    	 <label for"eventSelector" style="color:#9d9d9d;">Event:</label>  
                      <select class="form-control input-sm"   id="eventSelector" onchange="updatePage(true)"> 

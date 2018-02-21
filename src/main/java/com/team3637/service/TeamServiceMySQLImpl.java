@@ -127,6 +127,17 @@ public class TeamServiceMySQLImpl implements TeamService {
 	}
 
 	@Override
+	public List<Integer> getTeamsForEvent(String event) {
+		//@formatter:off
+        String SQL = 
+        		    "SELECT t.team " 
+        		    + "from scoutingtags.teams t " 
+        		    + "where t.event_id = ?";
+        //@formatter:on
+		return jdbcTemplateObject.queryForList(SQL, new Object[] { event }, Integer.class);
+	}
+
+	@Override
 	public List<Integer> getAllTeams() {
 		//@formatter:off
         String SQL = 
