@@ -22,7 +22,8 @@ public class AwardsDaoImpl implements AwardsDao {
 	public List<Award> getAwardsForTeam(Integer team) {
 		//@formatter:off
 		String SQL = "select name, event_key, year from scoutingtags.blue_alliance_awards "
-					+ "where team = ?";
+					+ "where team = ? "
+					+ "order by year desc";
 		//@formatter:on
 		return jdbcTemplateObject.query(SQL, new Object[] { team }, new RowMapper<Award>() {
 

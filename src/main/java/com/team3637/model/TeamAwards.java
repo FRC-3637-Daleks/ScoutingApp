@@ -5,6 +5,15 @@ import java.util.List;
 public class TeamAwards {
 	Integer team;
 	List<Award> awards;
+	Integer awardCount;
+
+	public Integer getAwardCount() {
+		return awardCount;
+	}
+
+	public void setAwardCount(Integer awardCount) {
+		this.awardCount = awardCount;
+	}
 
 	public Integer getTeam() {
 		return team;
@@ -20,5 +29,6 @@ public class TeamAwards {
 
 	public void setAwards(List<Award> awards) {
 		this.awards = awards;
+		awardCount = awards.size();
 	}
 }

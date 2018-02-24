@@ -82,6 +82,7 @@
         <td>
         <a class="btn btn-default" href="${pageContext.request.contextPath}/io/schedule.csv" download>Export
             Schedule</a>
+        	 <a class="btn btn-default" href="${pageContext.request.contextPath}/s/edit">Manually Input Schedule</a>
         </td>
         <td>            
         <form action="${pageContext.request.contextPath}/io/schedule.csv" method="post" class="form-inline"

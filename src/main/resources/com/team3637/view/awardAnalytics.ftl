@@ -108,6 +108,7 @@ body {
     background-color:#ebebe0;
     width:1%;
     border-spacing: 0px;
+    font-color:black;
 }
 
 hr.style1 {
@@ -236,7 +237,9 @@ $(document).ready(function(){
                              <option value="${event}">${event}</option> 
                         </#if>    
                      </#list> 
-                   </select>   
+                   </select>
+                   	 </select>
+                   	 </select>   
                    </div>
                    </form> 
                  </li>  
@@ -245,12 +248,12 @@ $(document).ready(function(){
     </div>
 </nav>
 </#if>
-<#list teamAwardsList as teamAward>
-<#-- <#assign award = teamAward.name> -->
+<#list teamAwardsList as teamAward> 
 <div onclick="toggle('${teamAward.team}-team')">
 <table class = "tagHeader" cellspacing = "0">
   <tr>
-    <th><p style="color:black; width:100px;">Team: <span class = "name">${teamAward.team}</span></p></th>
+    <th><p>Team: <span class = "name">${teamAward.team}</span></p></th>
+    <th><p>Total Awards: <span class = "name">${teamAward.awardCount}</span></p></th>
   </tr>
 </table>
 </div>
