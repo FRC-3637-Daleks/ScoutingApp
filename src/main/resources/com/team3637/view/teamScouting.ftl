@@ -35,7 +35,8 @@
 } 
 
 .sectionHeader {
-    background-color:#00A22E;
+    background-color:#BC2132;
+    color:#E9E9E9;
     font-weight:bold; 
     text-align:center;
     padding-right:15px;
@@ -61,7 +62,7 @@
 }
 
 .teamHeader label{
-    background-color:#8F0000;
+    background-color:#005EFF;
     font-weight:bold;
     font-size:20px;
     padding-left:0px;
@@ -92,6 +93,24 @@
 .columnTitle {
      text-align: center
 }
+
+.tagHeader th{
+    font-size:15px;
+    background-color:#ebebe0;
+    width:1%;
+    border-spacing: 0px;
+    font-color:black;
+}
+
+hr.style1 {
+	border-color:#000000;
+    padding-right:0px;
+    margin-top:5px;
+    margin-bottom:5px;
+}
+
+span.name { color:#545454; }
+
 </style> 
 <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
 <link href="../css/bootstrap-tokenfield.css" rel="stylesheet"/>
@@ -229,7 +248,7 @@ ${team.scoutingComments!}
    </#if>
    <#assign category =  teamTag.category>
    <td>
-   <div class="categoryTitle" onclick="toggle('${grouping}-${category}-table')">${category}</div>
+   <div class="categoryTitle" onclick="toggle('${grouping}-${category}-table')" style="background-color:#ADADAD; color:#333;">${category}</div>
    <table class="tagTable"  id="${grouping}-${category}-table">
 </#if> 
    <tr>

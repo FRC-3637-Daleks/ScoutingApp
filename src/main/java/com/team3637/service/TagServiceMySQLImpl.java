@@ -70,7 +70,7 @@ public class TagServiceMySQLImpl implements TagService {
 		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, is_ranking_point, year "
 				+ "FROM scoutingtags.tags "
 				+ "WHERE type='matches' and year = (select year from scoutingtags.competition_year where active = 1)"
-				+ "ORDER BY category, grouping, tag";
+				+ "ORDER BY grouping, category, tag";
 		return jdbcTemplateObject.query(SQL, new TagMapper());
 	}
 
@@ -203,8 +203,9 @@ public class TagServiceMySQLImpl implements TagService {
 		if (rowsUpdated < 1) {
 			String sqlInsert = "INSERT INTO scoutingtags.tags (tag, type, category, grouping, input_type, point_value, is_ranking_point, year) VALUES (?,?,?,?,?,?,?,(select year from scoutingtags.competition_year where active = 1))";
 			jdbcTemplateObject.update(sqlInsert, tag, type, category, grouping, inputType, pointValue, isRankingPoint);
-			id = jdbcTemplateObject.queryForObject("select id from scoutingtags.tags where tag = ?", Integer.class,
-					tag);
+			id = jdbcTemplateObject.queryForObject(
+					"select id from scoutingtags.tags where tag = ? and year = (select year from scoutingtags.competition_year where active = 1) and type = ?",
+					Integer.class, tag, type);
 		}
 		return id;
 	}

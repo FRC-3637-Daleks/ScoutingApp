@@ -18,8 +18,7 @@ public class AwardsDaoImpl implements AwardsDao {
 	public void updateInsertAward(Award award) {
 		//@formatter:off
 		String sql = "select count(*) from scoutingtags.blue_alliance_awards "
-				+ "where name = ? and event_key = ? and year = ? and team = ?"
-				+ "order by year desc, team asc";
+				+ "where name = ? and event_key = ? and year = ? and team = ?";
 		//@formatter:on
 		Integer count = jdbcTemplateObject.queryForObject(sql,
 				new Object[] { award.getName(), award.getEvent(), award.getYear(), award.getTeam() }, Integer.class);
