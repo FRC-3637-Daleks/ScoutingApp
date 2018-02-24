@@ -66,6 +66,10 @@
     <bean id="tagsService" class="com.team3637.service.TagServiceMySQLImpl">
         <property name="dataSource" ref="dataSource"/>
     </bean>
+    
+    <bean id="teamRankingDao" class="com.team3637.bluealliance.api.dataaccess.TeamRankingDaoImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
 
         <!-- FreeMarker configuration -->
     <bean id="freemarkerConfig"

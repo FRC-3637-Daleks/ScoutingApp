@@ -35,6 +35,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -375,4 +376,14 @@ public class IOController {
 			@RequestParam("file") MultipartFile file) throws Exception {
 		return importCSV(tagService, "/tags.csv", file, delete);
 	}
+
+	@RequestMapping(value = "/loadRankingsFromBlueAlliance")
+	@ResponseBody
+	public ResponseEntity<?> loadRankingsFromBlueAlliance(Model model) {
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Location", context.getContextPath() + "/iso/");
+		return new ResponseEntity<byte[]>(null, headers, HttpStatus.FOUND);
+	}
+
 }
