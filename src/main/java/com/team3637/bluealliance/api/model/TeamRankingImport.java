@@ -43,7 +43,7 @@ public class TeamRankingImport {
 		private Integer qual_average;
 		private Integer rank;
 		private String team_key;
-		private List<Record> record;
+		private Record record;
 
 		public Integer getDq() {
 			return dq;
@@ -85,11 +85,11 @@ public class TeamRankingImport {
 			this.team_key = team_key;
 		}
 
-		public List<Record> getRecord() {
+		public Record getRecord() {
 			return record;
 		}
 
-		public void setRecord(List<Record> record) {
+		public void setRecord(Record record) {
 			this.record = record;
 		}
 

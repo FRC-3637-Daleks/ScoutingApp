@@ -18,16 +18,10 @@ package com.team3637.service;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import com.team3637.bluealliance.api.model.Match;
 import com.team3637.model.Schedule;
 
-public interface ScheduleService extends Service
-{
-	void setDataSource(DataSource dataSource);
-
-	void initDB(String initScript);
+public interface ScheduleService extends Service {
 
 	Schedule getMatch(Integer matchNum);
 

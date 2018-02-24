@@ -82,6 +82,7 @@
         <td>
         <a class="btn btn-default" href="${pageContext.request.contextPath}/io/schedule.csv" download>Export
             Schedule</a>
+        	 <a class="btn btn-default" href="${pageContext.request.contextPath}/s/edit">Manually Input Schedule</a>
         </td>
         <td>            
         <form action="${pageContext.request.contextPath}/io/schedule.csv" method="post" class="form-inline"
@@ -172,7 +173,42 @@
             <input class="btn btn-default" type="submit" value="Load Event Schedule">
         </form>
         </td>
-    </tr>      
+    </tr>
+    <tr>
+        <th>
+           Team Rankings Data
+        </th>
+        <td>          
+        <form action="${pageContext.request.contextPath}/io/loadRankingsFromBlueAlliance" method="post" class="form-inline"
+              enctype="multipart/form-data">
+             <label for="event">Event Id:</label>
+            <input type="text"  name="event" id="event"  />         
+            <input class="btn btn-default" type="submit" value="Load Team Rankings">
+        </form>
+        </td>
+    </tr>
+    <tr>
+        <th>
+           Award Data
+        </th>
+        <td>          
+        <form action="${pageContext.request.contextPath}/io/loadAwardsFromBlueAlliance" method="post" class="form-inline"
+              enctype="multipart/form-data">    
+            <input class="btn btn-default" type="submit" value="Load Award Data">
+        </form>
+        </td>
+    </tr>
+    <tr>
+        <th>
+           Team List
+        </th>
+        <td>          
+        <form action="${pageContext.request.contextPath}/io/loadTeamsFromBlueAlliance" method="post" class="form-inline"
+              enctype="multipart/form-data">    
+            <input class="btn btn-default" type="submit" value="Load Team List">
+        </form>
+        </td>
+    </tr>
     </table>
 </div>
 </body>

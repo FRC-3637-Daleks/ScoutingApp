@@ -267,8 +267,10 @@ public class MatchServiceMySQLImpl implements MatchService {
 	@Override
 	public List<MatchTeams> getMatchTeams(Integer match, final List<Team> teams, String eventId) {
 		// @formatter:off
-		String sql = "SELECT matchNum, b1, b2, b3, r1, r2, r3, event_id " + "FROM scoutingtags.schedule "
-				+ "WHERE (? is null or matchNum = ?)  and event_id = ?" + "ORDER BY matchNum";
+		String sql = "SELECT matchNum, b1, b2, b3, r1, r2, r3, event_id " 
+					  + "FROM scoutingtags.schedule "
+				      + "WHERE (? is null or matchNum = ?)  and event_id = ?" 
+					  + "ORDER BY matchNum";
 		// @formatter:on
 		return jdbcTemplateObject.query(sql, new RowMapper<MatchTeams>() {
 			@Override

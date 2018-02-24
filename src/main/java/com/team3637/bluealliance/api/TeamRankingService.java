@@ -36,7 +36,7 @@ public class TeamRankingService {
 		this.restTemplate = restTemplate;
 	}
 
-	public void loadEventMatches(String event) {
+	public void loadTeamRankings(String event) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("X-TBA-Auth-Key", "RomsUyhrgfr6IYGj0YNKlY0PzmtASoIcZG5eKnZ1h3pU1H0DmdXrgQWVMPfgoD29");
 		headers.add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
@@ -49,11 +49,15 @@ public class TeamRankingService {
 		TeamRankingImport teamRankingImports = teamRankingResponse.getBody();
 		for (Rankings ranking : teamRankingImports.getRankings()) {
 			TeamRanking teamRanking = new TeamRanking();
+			teamRanking.setTeam(Integer.parseInt(ranking.getTeam_key().substring(3)));
 			teamRanking.setEventId(event);
 			teamRanking.setDisqualifications(ranking.getDq());
 			teamRanking.setMatchesPlayed(ranking.getMatches_played());
 			teamRanking.setQualAverage(ranking.getQual_average());
 			teamRanking.setRank(ranking.getRank());
+			teamRanking.setWins(ranking.getRecord().getWins());
+			teamRanking.setTies(ranking.getRecord().getTies());
+			teamRanking.setLosses(ranking.getRecord().getLosses());
 			teamRankingDao.updateInsertTeamRanking(teamRanking);
 		}
 	}
