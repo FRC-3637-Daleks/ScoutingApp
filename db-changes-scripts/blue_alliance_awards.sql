@@ -12,4 +12,3 @@ CHANGE COLUMN `team` `team` INT NOT NULL ;
 
 ALTER TABLE `scoutingtags`.`blue_alliance_awards` 
 CHANGE COLUMN `id` `id` INT(11) NOT NULL AUTO_INCREMENT ;
-
