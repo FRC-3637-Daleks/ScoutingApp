@@ -182,13 +182,13 @@ function editTag(tagId, type) {
       $( "#category-" + tagId )[0].style.display =  'none'; 
       $( "#grouping-" + tagId )[0].style.display =  'none';  
       $( "#inputType-" + tagId )[0].style.display =  'none'; 
-      $( "#pointValue-" + tagId )[0].style.display =  'none';      
+      $( "#pointValue-" + tagId )[0].style.display =  'none';    
       $( "#saveIcon-" + tagId )[0].style.display =  'block'; 
       $( "#tag-edit-" + tagId )[0].style.display =  'block'; 
       $( "#category-edit-" + tagId )[0].style.display =  'block'; 
       $( "#grouping-edit-" + tagId )[0].style.display =  'block';   
       $( "#inputType-edit-" + tagId )[0].style.display =  'block';      
-      $( "#pointValue-edit-" + tagId )[0].style.display =  'block';        
+      $( "#pointValue-edit-" + tagId )[0].style.display =  'block';     
       var inputTypeSelect = $( "#inputType-edit-input-" + tagId )[0];
       $(inputTypeSelect).empty();
       $(inputTypeOptions).each(function(i, v){
@@ -201,6 +201,8 @@ function editTag(tagId, type) {
       {
        	 $( "#isRankingPoint-" + tagId )[0].style.display =  'none'; 
        	 $( "#isRankingPoint-edit-" + tagId )[0].style.display =  'block';  
+       	 $( "#maxValue-" + tagId )[0].style.display =  'none';
+       	 $( "#maxValue-edit-" + tagId )[0].style.display =  'block';   
          $(matchTagGroupingOptions).each(function(i, v){
              $(groupingSelect).append($("<option>", { value: v, html: v }));
          });
@@ -221,6 +223,7 @@ function saveTag(tagId, type) {
          var category = $( "#category-edit-input-" + tagId )[0].value;
          var inputType = $( "#inputType-edit-input-" + tagId )[0].value;
          var pointValue = $( "#pointValue-edit-input-" + tagId )[0].value;
+         var maxValue = $( "#maxValue-edit-input-" + tagId )[0].value;
          var isRankingPoint = 0;
          var isRankingPointValue = "No";
          if (type == 'matches')
@@ -230,7 +233,7 @@ function saveTag(tagId, type) {
          		isRankingPointValue = "Yes";	}
          }
          $.ajax({
-              url: "../m/saveTag?id="+tagId+"&tag="+tag+"&grouping="+grouping+"&category="+category+"&inputType="+inputType+"&type="+type+"&pointValue="+pointValue+"&isRankingPoint="+isRankingPoint,
+              url: "../m/saveTag?id="+tagId+"&tag="+tag+"&grouping="+grouping+"&category="+category+"&inputType="+inputType+"&type="+type+"&pointValue="+pointValue+"&isRankingPoint="+isRankingPoint+"&maxValue="+maxValue,
               type: 'GET',
               cache: false,
               success: function (result) {
@@ -249,6 +252,7 @@ function saveTag(tagId, type) {
                        $( "#category-" + tagId ).attr("id", "category-"+newTagId);   
                        $( "#inputType-" + tagId ).attr("id", "inputType-"+newTagId);
                        $( "#pointValue-" + tagId ).attr("id", "pointValue-"+newTagId);
+                       $( "#maxValue-" + tagId ).attr("id", "maxValue-"+newTagId);
                        $( "#isRankingPoint-" + tagId ).attr("id", "isRankingPoint-"+newTagId)
                        $( "#tag-edit-" + tagId ).attr("id", "tag-edit-"+newTagId);
                        $( "#grouping-edit-" + tagId ).attr("id", "grouping-edit-"+newTagId); 
@@ -261,6 +265,7 @@ function saveTag(tagId, type) {
                        $( "#category-edit-input-" + tagId ).attr("id", "category-edit-input-"+newTagId);
                        $( "#inputType-edit-input-" + tagId ).attr("id", "inputType-edit-input-"+newTagId);
                        $( "#pointValue-edit-input-" + tagId ).attr("id", "pointValue-edit-input-"+newTagId);
+                       $( "#maxValue-edit-input-" + tagId ).attr("id", "maxValue-edit-input-"+newTagId);
                        $( "#isRankingPoint-edit-input-" + tagId ).attr("id", "isRankingPoint-edit-input-"+newTagId);                   
                        tagId = newTagId;
                    }             
@@ -270,7 +275,8 @@ function saveTag(tagId, type) {
                    $( "#inputType-" + tagId )[0].innerHTML = inputType;                 
                    $( "#pointValue-" + tagId )[0].innerHTML = pointValue; 
                    if (type == 'matches')     
-                   	 $( "#isRankingPoint-" + tagId )[0].innerHTML = isRankingPointValue;                                          
+                   	 $( "#isRankingPoint-" + tagId )[0].innerHTML = isRankingPointValue;
+                   	 $( "#maxValue-" + tagId )[0].innerHTML = maxValue;                                          
                    cancelEditTag(tagId, type);  
               },
               error: function () { 
@@ -288,13 +294,15 @@ function cancelEditTag(tagId, type) {
       $( "#category-" + tagId )[0].style.display =  'block'; 
       $( "#grouping-" + tagId )[0].style.display =  'block'; 
       $( "#inputType-" + tagId )[0].style.display =  'block'; 
-      $( "#pointValue-" + tagId )[0].style.display =  'block';        
+      $( "#pointValue-" + tagId )[0].style.display =  'block';
+      $( "#maxValue-" + tagId )[0].style.display =  'block';           
       $( "#saveIcon-" + tagId )[0].style.display =  'none'; 
       $( "#tag-edit-" + tagId )[0].style.display =  'none'; 
       $( "#category-edit-" + tagId )[0].style.display =  'none'; 
       $( "#grouping-edit-" + tagId )[0].style.display =  'none'; 
       $( "#inputType-edit-" + tagId )[0].style.display =  'none';        
       $( "#pointValue-edit-" + tagId )[0].style.display =  'none';
+      $( "#maxValue-edit-" + tagId )[0].style.display =  'none';
       if(type == 'matches') 
       {   
       	$( "#isRankingPoint-" + tagId )[0].style.display =  'block';   
@@ -364,7 +372,8 @@ function createNewTeamTag() {
     <th>Tag</th>
     <th>Grouping</th>
     <th>Category</th> 
-    <th>Input Type</th>  
+    <th>Input Type</th> 
+    <th>Max Value</th> 
     <th>Point Value</th>   
     <th>Is Ranking Point</th>   
     <th  class="icon"></th>       
@@ -380,6 +389,13 @@ function createNewTeamTag() {
   <td><div id="grouping-${matchTag.id}">${matchTag.grouping}</div><div id="grouping-edit-${matchTag.id}" style="display:none;"><select  id="grouping-edit-input-${matchTag.id}"></select></div></td>
   <td><div id="category-${matchTag.id}">${matchTag.category}</div><div id="category-edit-${matchTag.id}" style="display:none;"><input  id="category-edit-input-${matchTag.id}"  type="text" value="${matchTag.category}"></input></div></td>
   <td><div id="inputType-${matchTag.id}">${matchTag.inputType}</div><div id="inputType-edit-${matchTag.id}" style="display:none;"><select  id="inputType-edit-input-${matchTag.id}"></select></div></td> 
+  <td><div id="maxValue-${matchTag.id}">
+  	<#if matchTag.maxValue?? && (matchTag.maxValue > 0)>
+ 		 ${matchTag.maxValue}
+	<#else>
+ 		 -
+	</#if>
+	</div><div id="maxValue-edit-${matchTag.id}" style="display:none;"><input  id="maxValue-edit-input-${matchTag.id}"  type="text" value="${matchTag.maxValue}"></input></div></td>
   <td><div id="pointValue-${matchTag.id}">${matchTag.pointValue?string["0.#"]}</div><div id="pointValue-edit-${matchTag.id}" style="display:none;"><input  id="pointValue-edit-input-${matchTag.id}"  type="text" value="${matchTag.pointValue?string["0.#"]}"></input></div></td>  
   <td><div id="isRankingPoint-${matchTag.id}">${isRankingPoint}</div><div id="isRankingPoint-edit-${matchTag.id}" style="display:none;">
   <#if matchTag.isRankingPoint == 1>
@@ -405,7 +421,7 @@ function createNewTeamTag() {
     <th>Tag</th>
     <th>Grouping</th>
     <th>Category</th>
-    <th>Input Type</th> 
+    <th>Input Type</th>
     <th>Point Value</th>          
     <th  class="icon"></th>         
   </tr> 

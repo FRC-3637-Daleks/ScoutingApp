@@ -49,15 +49,15 @@ public class TagServiceMySQLImpl implements TagService {
 
 	@Override
 	public void createTag(Tag tag) {
-		String SQL = "INSERT INTO tags (tag, category, grouping, type, input_type, is_ranking_point) VALUES (?, ?, ?, ?, ?, ?);";
+		String SQL = "INSERT INTO tags (tag, category, grouping, type, input_type, is_ranking_point, max_value) VALUES (?, ?, ?, ?, ?, ?, ?);";
 		jdbcTemplateObject.update(SQL, tag.getTag(), tag.getCategory(), tag.getGrouping(), tag.getType(),
-				tag.getInputType(), tag.getIsRankingPoint());
+				tag.getInputType(), tag.getIsRankingPoint(), tag.getMaxValue());
 	}
 
 	@Override
 	public List<Tag> getMatchTags(String eventId) {
 		//@formatter:off
-		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, is_ranking_point, year "
+		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, is_ranking_point, year, max_value "
 				+ "FROM scoutingtags.tags "
 				+ "WHERE type='matches' and year = (select year from scoutingtags.event where event_Id = ?)"
 				+ "ORDER BY category, grouping, tag";
@@ -67,7 +67,7 @@ public class TagServiceMySQLImpl implements TagService {
 	@Override
 	public List<Tag> getMatchTags() {
 		//@formatter:off
-		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, is_ranking_point, year "
+		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, is_ranking_point, year, max_value "
 				+ "FROM scoutingtags.tags "
 				+ "WHERE type='matches' and year = (select year from scoutingtags.competition_year where active = 1)"
 				+ "ORDER BY grouping, category, tag";
@@ -77,7 +77,7 @@ public class TagServiceMySQLImpl implements TagService {
 	@Override
 	public List<Tag> getTeamTags() {
 		//@formatter:off
-		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, is_ranking_point, year "
+		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, is_ranking_point, year, max_value "
 				+ "FROM scoutingtags.tags "
 				+ "WHERE type='teams' and year = (select year from scoutingtags.competition_year where active = 1)"
 				+ "ORDER BY grouping, category, tag";
@@ -88,7 +88,7 @@ public class TagServiceMySQLImpl implements TagService {
 	@Override
 	public List<Tag> getTags() {
 		//@formatter:off
-		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, year, is_ranking_point FROM scoutingtags.tags "
+		String SQL = "SELECT id, tag, category, grouping, type, input_type, point_value, year, is_ranking_point, max_value FROM scoutingtags.tags "
 					+ "where year = (select year from scoutingtags.competition_year where active = 1)"
 					+ "ORDER BY type, grouping, category";
 		//@formatter:on
@@ -97,14 +97,15 @@ public class TagServiceMySQLImpl implements TagService {
 
 	@Override
 	public void updateInsertTag(Tag tag) {
-		String SQL = "UPDATE scoutingtags.tags SET tag=?, type=?, category=?, grouping=?, input_type=?, point_value=?, year = ?, is_ranking_point=? WHERE id=?";
+		String SQL = "UPDATE scoutingtags.tags SET tag=?, type=?, category=?, grouping=?, input_type=?, point_value=?, year = ?, is_ranking_point=?, max_value = ? WHERE id=?";
 		int updatedRows = jdbcTemplateObject.update(SQL, tag.getTag(), tag.getType(), tag.getCategory(),
 				tag.getGrouping(), tag.getInputType(), tag.getPointValue(), tag.getYear(), tag.getIsRankingPoint(),
-				tag.getId());
+				tag.getMaxValue(), tag.getId());
 		if (updatedRows < 1) {
-			String insertSQL = "insert into scoutingtags.tags (id, tag, type, category, grouping, input_type, point_value, year, is_ranking_point) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			String insertSQL = "insert into scoutingtags.tags (id, tag, type, category, grouping, input_type, point_value, year, is_ranking_point, max_value) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			jdbcTemplateObject.update(insertSQL, tag.getId(), tag.getTag(), tag.getType(), tag.getCategory(),
-					tag.getGrouping(), tag.getInputType(), tag.getPointValue(), tag.getYear(), tag.getIsRankingPoint());
+					tag.getGrouping(), tag.getInputType(), tag.getPointValue(), tag.getYear(), tag.getIsRankingPoint(),
+					tag.getMaxValue());
 		}
 	}
 
@@ -196,13 +197,14 @@ public class TagServiceMySQLImpl implements TagService {
 
 	@Override
 	public Integer saveTag(Integer id, String tag, String type, String category, String grouping, String inputType,
-			Float pointValue, Integer isRankingPoint) {
-		String sql = "UPDATE scoutingtags.tags SET tag=?, type=?, category=?, grouping=?, input_type=?, point_value=?, is_ranking_point=? WHERE id=?";
+			Float pointValue, Integer isRankingPoint, Integer maxValue) {
+		String sql = "UPDATE scoutingtags.tags SET tag=?, type=?, category=?, grouping=?, input_type=?, point_value=?, is_ranking_point=?, max_value = ? WHERE id=?";
 		int rowsUpdated = jdbcTemplateObject.update(sql, tag, type, category, grouping, inputType, pointValue,
-				isRankingPoint, id);
+				isRankingPoint, maxValue, id);
 		if (rowsUpdated < 1) {
-			String sqlInsert = "INSERT INTO scoutingtags.tags (tag, type, category, grouping, input_type, point_value, is_ranking_point, year) VALUES (?,?,?,?,?,?,?,(select year from scoutingtags.competition_year where active = 1))";
-			jdbcTemplateObject.update(sqlInsert, tag, type, category, grouping, inputType, pointValue, isRankingPoint);
+			String sqlInsert = "INSERT INTO scoutingtags.tags (tag, type, category, grouping, input_type, point_value, is_ranking_point, year, max_value) VALUES (?,?,?,?,?,?,?,?,(select year from scoutingtags.competition_year where active = 1))";
+			jdbcTemplateObject.update(sqlInsert, tag, type, category, grouping, inputType, pointValue, isRankingPoint,
+					maxValue);
 			id = jdbcTemplateObject.queryForObject(
 					"select id from scoutingtags.tags where tag = ? and year = (select year from scoutingtags.competition_year where active = 1) and type = ?",
 					Integer.class, tag, type);

@@ -81,8 +81,8 @@ public class MatchController {
 			@RequestParam("type") String type, @RequestParam("category") String category,
 			@RequestParam("grouping") String grouping, @RequestParam("inputType") String inputType,
 			@RequestParam("pointValue") Float pointValue, @RequestParam("isRankingPoint") Integer isRankingPoint,
-			HttpServletResponse response) {
-		return tagService.saveTag(id, tag, type, category, grouping, inputType, pointValue, isRankingPoint);
+			@RequestParam("maxValue") Integer maxValue, HttpServletResponse response) {
+		return tagService.saveTag(id, tag, type, category, grouping, inputType, pointValue, isRankingPoint, maxValue);
 	}
 
 	@RequestMapping("/export/csv")

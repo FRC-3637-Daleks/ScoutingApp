@@ -127,16 +127,17 @@ function toggleTag(target, value) {
 		$.get("../m/decrementTag?tag="+target+"&team="+team+"&match="+match);
 }
 
-function incrementTag(target) {
+function incrementTag(target, maxValue) {
 	var incrementElement=document.getElementById(target+"-counter");
 	var currentValue=incrementElement.value;
 	if (!currentValue) {
 		currentValue="1";
 	}
-	else
+	else if(currentValue < maxValue){ 
 		currentValue=Number(currentValue)+1;
-	incrementElement.value=currentValue;
-	$.get("../m/incrementTag?tag="+target+"&team="+team+"&match="+match);
+		incrementElement.value=currentValue;
+		$.get("../m/incrementTag?tag="+target+"&team="+team+"&match="+match);
+	}
 }
 
 function decrementTag(target) {
@@ -263,7 +264,7 @@ function isInt(value) {
    		</#if> 
    <#elseif matchTag.inputType == "incremental">
    		<input type="text" style="width: 20px;" id="${matchTag.tag}-counter" value="${matchTag.occurrences}" disabled />
-   		<img src="../images/SmallPlus.png" onclick="incrementTag('${matchTag.tag}');" >
+   		<img src="../images/SmallPlus.png" onclick="incrementTag('${matchTag.tag}', ${matchTag.maxValue!});" >
    		<img src="../images/SmallMinus.png" onclick="decrementTag('${matchTag.tag}');" >
    </#if>
    </td>

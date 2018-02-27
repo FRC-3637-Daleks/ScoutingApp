@@ -36,6 +36,7 @@ public class TagMapper implements RowMapper<Tag> {
 		tag.setPointValue(resultSet.getFloat("point_value"));
 		tag.setIsRankingPoint(resultSet.getInt("is_ranking_point"));
 		tag.setYear(resultSet.getInt("year"));
+		tag.setMaxValue(resultSet.getInt("max_value"));
 		return tag;
 	}
 }

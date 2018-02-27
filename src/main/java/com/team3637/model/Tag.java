@@ -23,6 +23,15 @@ public class Tag {
 	private Float pointValue;
 	private Integer year;
 	private int isRankingPoint;
+	private int maxValue;
+
+	public int getMaxValue() {
+		return maxValue;
+	}
+
+	public void setMaxValue(int maxValue) {
+		this.maxValue = maxValue;
+	}
 
 	public Integer getYear() {
 		return year;

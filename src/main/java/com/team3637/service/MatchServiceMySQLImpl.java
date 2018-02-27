@@ -242,7 +242,7 @@ public class MatchServiceMySQLImpl implements MatchService {
 	@Override
 	public List<TeamMatchTag> getTeamMatchTags(Integer teamNum, Integer matchNum) {
 		// @formatter:off
-		String sql = "SELECT grouping, category, t.tag, occurrences, input_type, m.event_id "
+		String sql = "SELECT grouping, category, t.tag, occurrences, input_type, m.event_id, max_value "
 				+ "FROM scoutingtags.tags t "
 				+ "		 inner join scoutingtags.event e on e.year = t.year and active = 1"
 				+ "             LEFT OUTER JOIN scoutingtags.matchtags m on m.tag = t.tag and team = ? AND matchNum = ?  and m.event_id = (select event_id from scoutingtags.event where active = 1)"
@@ -259,6 +259,7 @@ public class MatchServiceMySQLImpl implements MatchService {
 				teamMatchTag.setTag(resultSet.getString("tag"));
 				teamMatchTag.setInputType(resultSet.getString("input_type"));
 				teamMatchTag.setEventId(resultSet.getString("event_id"));
+				teamMatchTag.setMaxValue(resultSet.getInt("max_value"));
 				return teamMatchTag;
 			}
 		}, teamNum, matchNum);
