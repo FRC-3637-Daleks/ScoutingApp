@@ -249,6 +249,11 @@ $(document).ready(function(){
                          <#else>   
                          	<option value="awardAnalytics">Awards</option>
                          </#if>
+                         <#if selectedReportType == "blueAllianceRankings">
+                            <option value="blueAllianceRankings" selected>Blue Alliance Rankings</option>
+                         <#else>   
+                         	<option value="blueAllianceRankings">Blue Alliance Rankings</option>
+                         </#if>
                    	 </select> 
                    	 <label for"eventSelector" style="color:#9d9d9d;">Event:</label>  
                      <select class="form-control input-sm"   id="eventSelector" onchange="updatePage(true)"> 

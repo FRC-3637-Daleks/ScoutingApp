@@ -32,6 +32,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.team3637.bluealliance.api.dataaccess.TeamRankingDao;
+import com.team3637.bluealliance.api.model.TeamRanking;
 import com.team3637.model.MatchStatistics;
 import com.team3637.model.MatchTeams;
 import com.team3637.model.Tag;
@@ -59,6 +61,8 @@ public class AnalyticsController {
 	private TeamService teamService;
 	@Autowired
 	private AwardsDao awardsDao;
+	@Autowired
+	private TeamRankingDao teamRankingDao;
 
 	@RequestMapping(value = "/teamAnalytics", method = RequestMethod.GET)
 	public String teamAnalytics(@RequestParam(value = "team", required = false) Integer teamNum,
@@ -236,4 +240,18 @@ public class AnalyticsController {
 		return "awardAnalytics";
 
 	}
+
+	@RequestMapping(value = "/blueAllianceRankings", method = RequestMethod.GET)
+	public String blueAllianceRankings(@RequestParam(value = "event", required = false) String eventId, Model model) {
+		if (eventId == null)
+			eventId = matchService.getDefaultEvent();
+		List<TeamRanking> teamRankingsList = teamRankingDao.getTeamRankings(eventId);
+		model.addAttribute("teamRankingsList", teamRankingsList);
+		model.addAttribute("events", scheduleService.getEventList());
+		model.addAttribute("selectedEvent", eventId);
+		model.addAttribute("selectedReportType", "blueAllianceRankings");
+		return "blueAllianceRankings";
+
+	}
+
 }

@@ -171,7 +171,7 @@ function registerPopOvers()
 
 function updatePage()
 {
-      document.location.href = "../analytics/tagAnalytics?event="+$('#eventSelector').val()+"&selectedCategory="+$('#categorySelector').val()+"&selectedGrouping="+$('#groupingSelector').val()+"&hideComments="+$('#hideComments').is(':checked');
+      document.location.href = "../analytics/awardAnalytics?event="+$('#eventSelector').val();
 }
 
 function toggleComments(hide)
@@ -184,7 +184,7 @@ $('.teamComments').show();
 
 function goTo(href)
 {
-     document.location.href =href +"?event="+$('#eventSelector').val()+"&hideComments="+$('#hideComments').is(':checked'); 
+     document.location.href =href +"?event="+$('#eventSelector').val(); 
 }
 
 $(document).ready(function(){
@@ -227,9 +227,14 @@ $(document).ready(function(){
                          <#else>   
                          	<option value="awardAnalytics">Awards</option>
                          </#if>
+                         <#if selectedReportType == "blueAllianceRankings">
+                            <option value="blueAllianceRankings" selected>Blue Alliance Rankings</option>
+                         <#else>   
+                         	<option value="blueAllianceRankings">Blue Alliance Rankings</option>
+                         </#if>
                   	 </select>
                      <label for"eventSelector" style="color:#9d9d9d;">Event:</label>  
-                     <select class="form-control input-sm"   id="eventSelector" onchange="changeEvent(this.value)"> 
+                     <select class="form-control input-sm"   id="eventSelector" onchange="updatePage()"> 
                      <#list events as event>
                         <#if selectedEvent == event>   
                             <option value="${event}" selected>${event}</option>     

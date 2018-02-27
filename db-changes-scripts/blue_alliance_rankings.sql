@@ -12,3 +12,6 @@ CREATE TABLE `blue_alliance_rankings` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `team_event_uq` (`team`,`event_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=utf8;
+
+ALTER TABLE `scoutingtags`.`event` 
+ADD COLUMN `ba_rankings_load_time` TIMESTAMP NULL AFTER `event_date`;

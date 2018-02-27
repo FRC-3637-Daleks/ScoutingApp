@@ -60,5 +60,6 @@ public class TeamRankingService {
 			teamRanking.setLosses(ranking.getRecord().getLosses());
 			teamRankingDao.updateInsertTeamRanking(teamRanking);
 		}
+		teamRankingDao.updateLastLoadTime(event);
 	}
 }
