@@ -133,7 +133,7 @@ function incrementTag(target, maxValue) {
 	if (!currentValue) {
 		currentValue="1";
 	}
-	else if(currentValue < maxValue){ 
+	else if(currentValue < maxValue || maxValue < 1){ 
 		currentValue=Number(currentValue)+1;
 		incrementElement.value=currentValue;
 		$.get("../m/incrementTag?tag="+target+"&team="+team+"&match="+match);
