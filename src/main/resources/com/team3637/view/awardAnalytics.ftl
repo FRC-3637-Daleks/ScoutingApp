@@ -263,12 +263,11 @@ $(document).ready(function(){
 </table>
 </div>
 <div id="${teamAward.team}-team" style = "display:none;">
-  <div class="sectionHeader" onclick="toggle('${teamAward.team}-award')">Awards</div>
   <table class="categoryTable" border = 1px id="${teamAward.team}-">
    <tr>
-   <th width = 500px style="background-color:#ADADAD; color:#333; text-align:center;">Award</th>
+   <th width = 500px style="background-color:#BC2132; color:#E9E9E9; text-align:center;">Award</th>
    <th width = 200px style="background-color:#ADADAD; color:#333; text-align:center;">Event</th>
-   <th width = 200px style="background-color:#ADADAD; color:#333; text-align:center;">Year</th>
+   <th width = 200px style="background-color:#BC2132; color:#E9E9E9; text-align:center;">Year</th>
    </tr>
     <#list teamAward.awards as nextAward>
    <tr>
