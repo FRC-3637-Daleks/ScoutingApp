@@ -414,4 +414,19 @@ public class TeamServiceMySQLImpl implements TeamService {
 		return jdbcTemplateObject.queryForObject("select event_id from scoutingtags.event where active = 1",
 				String.class);
 	}
+
+	@Override
+	public void saveAllianceSelection(String eventId, Integer team, Integer alliance, Integer order) {
+
+		//@formatter:off
+		String sql = "update scoutingtags.teams set alliance = null, alliance_selection_order = null  " 
+					+ "where alliance = ? and alliance_selection_order = ? and event_id = (select event_id from scoutingtags.event where active = 1)";	
+		//@formatter:on
+		jdbcTemplateObject.update(sql, alliance, order);
+		//@formatter:off
+			String updateSql = "update scoutingtags.teams set alliance = ?, alliance_selection_order = ?  " 
+							+ "where team = ? and event_id = (select event_id from scoutingtags.event where active = 1)";	
+			//@formatter:on
+		jdbcTemplateObject.update(updateSql, alliance, order, team);
+	}
 }

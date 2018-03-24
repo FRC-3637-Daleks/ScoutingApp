@@ -167,16 +167,12 @@ public class MatchServiceMySQLImpl implements MatchService {
 				+ "				        inner join scoutingtags.tags t on mt.tag = t.tag "
 				+ "  					inner join scoutingtags.event e on e.event_id = mt.event_id and e.year = t.year"
 				+ "                where mt.team = m.team  and m.event_id = mt.event_id) as ourscore, "
-				+ "               (SELECT sum(ranking_points) " 
-				+ "                FROM scoutingtags.match m3 "
-				+ "                where m3.team = m.team  and m.event_id = m3.event_id) as rankingpoints, "
 				+ "                scouting_comments, " 
-				+ "               t.event_id " 
+				+ "               t.event_id, t.alliance, t.alliance_selection_order " 
 				+ "FROM scoutingtags.teams t"
 				+ "             left outer join scoutingtags.match m on m.team = t.team and t.event_id = m.event_id "
 				+ "WHERE (? is null or t.team = ?)  and t.event_id = ?" 
-				+ "GROUP BY t.team";
-		
+				+ "GROUP BY t.team order by team";
 		// @formatter:on
 
 		if (eventId == null)
@@ -192,9 +188,10 @@ public class MatchServiceMySQLImpl implements MatchService {
 				team.setTies(resultSet.getInt("ties"));
 				team.setLosses(resultSet.getInt("losses"));
 				team.setOurScore(resultSet.getDouble("ourscore"));
-				team.setRankingpoints(resultSet.getInt("rankingpoints"));
 				team.setScoutingComments(resultSet.getString("scouting_comments"));
 				team.setEventId(resultSet.getString("event_id"));
+				team.setAlliance(resultSet.getInt("alliance"));
+				team.setAllianceOrder(resultSet.getInt("alliance_selection_order"));
 				return team;
 			}
 		}, teamNum, teamNum, eventId);
@@ -385,7 +382,7 @@ public class MatchServiceMySQLImpl implements MatchService {
 	public TeamMatchResult getTeamMatchResult(Integer team, Integer match) {
 		// @formatter:off
 		String sql = "SELECT team, matchNum, score, win, tie, loss, ranking_points, penalty, start_position, event_id "
-				+ "FROM scoutingtags.match m " + "WHERE  team = ? and matchNum = ?";
+				+ "FROM scoutingtags.match m " + "WHERE  team = ? and matchNum = ? and event_id = (select event_id from scoutingtags.event where active = 1)";
 		// @formatter:on
 		TeamMatchResult teamMatchResult;
 		try {
@@ -451,4 +448,5 @@ public class MatchServiceMySQLImpl implements MatchService {
 		return jdbcTemplateObject.queryForObject("select event_id from scoutingtags.event where active = 1",
 				String.class);
 	}
+
 }

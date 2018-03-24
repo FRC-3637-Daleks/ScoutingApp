@@ -18,8 +18,7 @@ package com.team3637.model;
 
 import java.util.List;
 
-public class Team
-{
+public class Team {
 	private Integer id;
 	private Integer team;
 	private Double avgScore;
@@ -35,161 +34,148 @@ public class Team
 	private String scoutingComments;
 	private Integer startPosition;
 	private String eventId;
+	private Integer alliance;
+	private Integer allianceOrder;
 
-	public Integer getTagsEntered()
-	{
+	public Integer getAlliance() {
+		return alliance;
+	}
+
+	public void setAlliance(Integer alliance) {
+		this.alliance = alliance;
+	}
+
+	public Integer getAllianceOrder() {
+		return allianceOrder;
+	}
+
+	public void setAllianceOrder(Integer allianceOrder) {
+		this.allianceOrder = allianceOrder;
+	}
+
+	public Integer getTagsEntered() {
 		return tagsEntered;
 	}
 
-	public void setTagsEntered(Integer tagsEntered)
-	{
+	public void setTagsEntered(Integer tagsEntered) {
 		this.tagsEntered = tagsEntered;
 	}
 
-	public Integer getRankingpoints()
-	{
+	public Integer getRankingpoints() {
 		return rankingpoints;
 	}
 
-	public void setRankingpoints(Integer rankingpoints)
-	{
+	public void setRankingpoints(Integer rankingpoints) {
 		this.rankingpoints = rankingpoints;
 	}
 
-	public Integer getId()
-	{
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Integer id)
-	{
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	public Integer getTeam()
-	{
+	public Integer getTeam() {
 		return team;
 	}
 
-	public void setTeam(Integer team)
-	{
+	public void setTeam(Integer team) {
 		this.team = team;
 	}
 
-	public Double getAvgScore()
-	{
+	public Double getAvgScore() {
 		return avgScore;
 	}
 
-	public void setAvgScore(Double avgScore)
-	{
+	public void setAvgScore(Double avgScore) {
 		this.avgScore = avgScore;
 	}
 
-	public Double getOurScore()
-	{
+	public Double getOurScore() {
 		return ourScore;
 	}
 
-	public void setOurScore(Double ourScore)
-	{
+	public void setOurScore(Double ourScore) {
 		this.ourScore = ourScore;
 	}
 
-	public Integer getMatches()
-	{
+	public Integer getMatches() {
 		return matches;
 	}
 
-	public void setMatches(Integer matches)
-	{
+	public void setMatches(Integer matches) {
 		this.matches = matches;
 	}
 
-	public Integer getWins()
-	{
+	public Integer getWins() {
 		return wins;
 	}
 
-	public void setWins(Integer wins)
-	{
+	public void setWins(Integer wins) {
 		this.wins = wins;
 	}
 
-	public Integer getLosses()
-	{
+	public Integer getLosses() {
 		return losses;
 	}
 
-	public void setLosses(Integer losses)
-	{
+	public void setLosses(Integer losses) {
 		this.losses = losses;
 	}
 
-	public List<MatchStatistics> getMatchStatistics()
-	{
+	public List<MatchStatistics> getMatchStatistics() {
 		return matchStatistics;
 	}
 
-	public void setMatchStatistics(List<MatchStatistics> matchStatistics)
-	{
+	public void setMatchStatistics(List<MatchStatistics> matchStatistics) {
 		this.matchStatistics = matchStatistics;
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return Integer.toString(getTeam());
 	}
 
-	public Integer getTies()
-	{
+	public Integer getTies() {
 		return ties;
 	}
 
-	public void setTies(Integer ties)
-	{
+	public void setTies(Integer ties) {
 		this.ties = ties;
 	}
 
-	public List<TeamTag> getTeamTags()
-	{
+	public List<TeamTag> getTeamTags() {
 		return teamTags;
 	}
 
-	public void setTeamTags(List<TeamTag> teamTags)
-	{
+	public void setTeamTags(List<TeamTag> teamTags) {
 		this.teamTags = teamTags;
 	}
 
-	public String getScoutingComments()
-	{
+	public String getScoutingComments() {
 		return scoutingComments;
 	}
 
-	public void setScoutingComments(String scoutingComments)
-	{
+	public void setScoutingComments(String scoutingComments) {
 		this.scoutingComments = scoutingComments;
 	}
 
-	public Integer getStartPosition()
-	{
+	public Integer getStartPosition() {
 		return startPosition;
 	}
 
-	public void setStartPosition(Integer startPosition)
-	{
+	public void setStartPosition(Integer startPosition) {
 		this.startPosition = startPosition;
 
 	}
 
-	public String getEventId()
-	{
+	public String getEventId() {
 		return eventId;
 	}
 
-	public void setEventId(String eventId)
-	{
+	public void setEventId(String eventId) {
 		this.eventId = eventId;
 	}
 }

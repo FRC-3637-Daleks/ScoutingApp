@@ -19,6 +19,8 @@
 package com.team3637.controller.analytics;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -31,9 +33,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.team3637.bluealliance.api.dataaccess.TeamRankingDao;
 import com.team3637.bluealliance.api.model.TeamRanking;
+import com.team3637.model.Alliance;
 import com.team3637.model.MatchStatistics;
 import com.team3637.model.MatchTeams;
 import com.team3637.model.Tag;
@@ -254,4 +258,79 @@ public class AnalyticsController {
 
 	}
 
+	@RequestMapping(value = "/allianceSelection", method = RequestMethod.GET)
+	public String allianceSelection(@RequestParam(value = "event", required = false) String eventId,
+			@RequestParam(value = "hideComments", required = false, defaultValue = "false") Boolean hideComments,
+			Model model) {
+
+		List<Team> teams = matchService.getTeamMatchSummaryInfo(null, eventId);
+
+		HashMap<Integer, Alliance> allianceSelection = new HashMap<Integer, Alliance>();
+		allianceSelection.put(new Integer(1), new Alliance());
+		allianceSelection.put(new Integer(2), new Alliance());
+		allianceSelection.put(new Integer(3), new Alliance());
+		allianceSelection.put(new Integer(4), new Alliance());
+		allianceSelection.put(new Integer(5), new Alliance());
+		allianceSelection.put(new Integer(6), new Alliance());
+		allianceSelection.put(new Integer(7), new Alliance());
+		allianceSelection.put(new Integer(8), new Alliance());
+		for (Team team : teams) {
+			team.setRankingpoints(0);
+			List<MatchStatistics> matchStatistics = matchService.getTeamMatchStatistics(team.getTeam(), eventId);
+			team.setMatchStatistics(matchStatistics);
+			if (team.getRankingpoints() == null || team.getRankingpoints() == 0) {
+				int rankingPoints = team.getTies() + (team.getWins() * 2);
+				for (MatchStatistics matchStatistic : matchStatistics) {
+					if (matchStatistic.isRankingPoint()) {
+						rankingPoints += matchStatistic.getTotalOccurrences();
+					}
+					team.setRankingpoints(rankingPoints);
+				}
+			}
+			if (team.getAlliance() != null && team.getAllianceOrder() != null) {
+				Alliance matchingAlliance = allianceSelection.get(team.getAlliance());
+				if (matchingAlliance == null) {
+					matchingAlliance = new Alliance();
+					allianceSelection.put(team.getAlliance(), matchingAlliance);
+				}
+				if (team.getAllianceOrder().equals(1))
+					matchingAlliance.setTeam1(team.getTeam());
+				if (team.getAllianceOrder().equals(2))
+					matchingAlliance.setTeam2(team.getTeam());
+				if (team.getAllianceOrder().equals(3))
+					matchingAlliance.setTeam3(team.getTeam());
+			}
+		}
+		teams.sort(new Comparator<Team>() {
+
+			@Override
+			public int compare(Team t1, Team t2) {
+				if (t2.getRankingpoints() > t1.getRankingpoints())
+					return 1;
+				else if (t2.getRankingpoints() == t1.getRankingpoints()) {
+					if (t1.getTeam() > t2.getTeam())
+						return 1;
+					else
+						return -1;
+				} else
+					return -1;
+			}
+		});
+		model.addAttribute("teams", teams);
+		model.addAttribute("events", scheduleService.getEventList());
+		model.addAttribute("selectedEvent", eventId);
+		model.addAttribute("hideComments", hideComments);
+		model.addAttribute("allianceSelection", allianceSelection);
+		model.addAttribute("selectedReportType", "allianceSelection");
+		return "allianceSelection";
+
+	}
+
+	@RequestMapping(value = "/saveAllianceSelection", method = RequestMethod.GET)
+	@ResponseBody
+	public void saveAllianceSelection(@RequestParam(value = "event") String eventId,
+			@RequestParam(value = "team") Integer team, @RequestParam(value = "alliance") Integer alliance,
+			@RequestParam(value = "order") Integer order, Model model) {
+		teamService.saveAllianceSelection(eventId, team, alliance, order);
+	}
 }

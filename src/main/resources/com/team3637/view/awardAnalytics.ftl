@@ -232,6 +232,11 @@ $(document).ready(function(){
                          <#else>   
                          	<option value="blueAllianceRankings">Blue Alliance Rankings</option>
                          </#if>
+                         <#if selectedReportType == "allianceSelection">
+                            <option value="allianceSelection" selected>Alliance Selection</option>
+                         <#else>   
+                         	<option value="allianceSelection">Alliance Selection</option>
+                         </#if>
                   	 </select>
                      <label for"eventSelector" style="color:#9d9d9d;">Event:</label>  
                      <select class="form-control input-sm"   id="eventSelector" onchange="updatePage()"> 

@@ -18,36 +18,9 @@ package com.team3637.service;
 
 import java.util.List;
 
-import com.team3637.model.Team;
 import com.team3637.model.TeamExportModel;
-import com.team3637.model.TeamTag;
-import com.team3637.model.TeamTagExportModel;
 
-public interface TeamService extends Service {
-
-	Team getTeam(Integer id);
-
-	List<Team> getTeams();
-
-	void delete(Team team);
-
-	List<String> getTags();
-
-	void incrementTag(Integer team, String tag);
-
-	void decrementTag(Integer team, String tag);
-
-	List<TeamTag> getTeamTags(Integer teamNum);
-
-	List<TeamTagExportModel> getTeamTagsForExport();
-
-	void saveTeamScoutingComments(Integer team, String scoutingComments);
-
-	void exportTeamCSV(String filePath);
-
-	List<TeamExportModel> getTeamsForExport();
-
-	void importTeamsCSV(String string);
+public interface AllianceSelectionService {
 
 	void updateInsertTeam(TeamExportModel teamExportModel);
 
@@ -56,6 +29,4 @@ public interface TeamService extends Service {
 	List<Integer> getAllTeams();
 
 	List<Integer> getTeamsForEvent(String event);
-
-	void saveAllianceSelection(String eventId, Integer team, Integer alliance, Integer order);
 }

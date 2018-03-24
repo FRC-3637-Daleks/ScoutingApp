@@ -82,6 +82,10 @@
     <bean id="awardsDao" class="com.team3637.service.AwardsDaoImpl">
         <property name="dataSource" ref="dataSource"/>
     </bean>
+    
+    <bean id="allianceSelection" class="com.team3637.service.AllianceSelectionMySQLImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
 
         <!-- FreeMarker configuration -->
     <bean id="freemarkerConfig"

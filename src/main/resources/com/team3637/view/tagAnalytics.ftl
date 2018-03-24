@@ -300,6 +300,11 @@ $(document).ready(function(){
                         <#else>
                              <option value="${grouping}">${grouping}</option>
                         </#if>
+                        <#if selectedReportType == "allianceSelection">
+                            <option value="allianceSelection" selected>Alliance Selection</option>
+                         <#else>   
+                         	<option value="allianceSelection">Alliance Selection</option>
+                         </#if>
                      </#list>
                    	 </select>
                     <label for"hideComments" style="color:#9d9d9d;">Hide Comments:</label>  

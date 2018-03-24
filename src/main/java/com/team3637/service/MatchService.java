@@ -34,8 +34,6 @@ public interface MatchService extends Service {
 
 	List<String> getTags();
 
-	List<Team> getTeamMatchSummaryInfo(Integer teamNum, String eventId);
-
 	List<MatchStatistics> getTeamMatchStatistics(Integer teamNum, String eventId);
 
 	List<TeamMatchTag> getTeamMatchTags(Integer teamNum, Integer matchNum);
@@ -57,4 +55,6 @@ public interface MatchService extends Service {
 	void saveMatchStartPosition(Integer team, Integer match, String startPosition);
 
 	String getDefaultEvent();
+
+	List<Team> getTeamMatchSummaryInfo(Integer teamNum, String eventId);
 }
