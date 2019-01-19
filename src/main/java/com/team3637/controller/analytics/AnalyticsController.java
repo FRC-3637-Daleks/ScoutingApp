@@ -78,14 +78,15 @@ public class AnalyticsController {
 		for (Team team : teams) {
 			List<MatchStatistics> matchStatistics = matchService.getTeamMatchStatistics(team.getTeam(), eventId);
 			team.setMatchStatistics(matchStatistics);
-			if (team.getRankingpoints() == null || team.getRankingpoints() == 0) {
-				int rankingPoints = team.getTies() + (team.getWins() * 2);
+			if (team.getRankingPoints() == null || team.getRankingPoints() == 0) {
+				Integer rankingPoints = team.getTies() + (team.getWins() * 2);
 				for (MatchStatistics matchStatistic : matchStatistics) {
 					if (matchStatistic.isRankingPoint()) {
 						rankingPoints += matchStatistic.getTotalOccurrences();
 					}
-					team.setRankingpoints(rankingPoints);
 				}
+				team.setRankingPoints(rankingPoints);
+				team.setRankingScore(rankingPoints.floatValue() / team.getMatches());
 			}
 		}
 		model.addAttribute("events", scheduleService.getEventList());
@@ -107,14 +108,15 @@ public class AnalyticsController {
 		for (Team team : teams) {
 			List<MatchStatistics> matchStatistics = matchService.getTeamMatchStatistics(team.getTeam(), eventId);
 			team.setMatchStatistics(matchStatistics);
-			if (team.getRankingpoints() == null || team.getRankingpoints() == 0) {
-				int rankingPoints = team.getTies() + (team.getWins() * 2);
+			if (team.getRankingPoints() == null || team.getRankingPoints() == 0) {
+				Integer rankingPoints = team.getTies() + (team.getWins() * 2);
 				for (MatchStatistics matchStatistic : matchStatistics) {
 					if (matchStatistic.isRankingPoint()) {
 						rankingPoints += matchStatistic.getTotalOccurrences();
 					}
-					team.setRankingpoints(rankingPoints);
 				}
+				team.setRankingPoints(rankingPoints);
+				team.setRankingScore(rankingPoints.floatValue() / team.getMatches());
 			}
 		}
 		List<MatchTeams> matchTeamsList = matchService.getMatchTeams(match, teams, eventId);
@@ -275,17 +277,19 @@ public class AnalyticsController {
 		allianceSelection.put(new Integer(7), new Alliance());
 		allianceSelection.put(new Integer(8), new Alliance());
 		for (Team team : teams) {
-			team.setRankingpoints(0);
+			team.setRankingPoints(0);
+			team.setRankingScore(0.0f);
 			List<MatchStatistics> matchStatistics = matchService.getTeamMatchStatistics(team.getTeam(), eventId);
 			team.setMatchStatistics(matchStatistics);
-			if (team.getRankingpoints() == null || team.getRankingpoints() == 0) {
-				int rankingPoints = team.getTies() + (team.getWins() * 2);
+			if (team.getRankingPoints() == null || team.getRankingPoints() == 0) {
+				Integer rankingPoints = team.getTies() + (team.getWins() * 2);
 				for (MatchStatistics matchStatistic : matchStatistics) {
 					if (matchStatistic.isRankingPoint()) {
 						rankingPoints += matchStatistic.getTotalOccurrences();
 					}
-					team.setRankingpoints(rankingPoints);
 				}
+				team.setRankingPoints(rankingPoints);
+				team.setRankingScore(rankingPoints.floatValue() / team.getMatches());
 			}
 			if (team.getAlliance() != null && team.getAllianceOrder() != null) {
 				Alliance matchingAlliance = allianceSelection.get(team.getAlliance());
@@ -305,9 +309,9 @@ public class AnalyticsController {
 
 			@Override
 			public int compare(Team t1, Team t2) {
-				if (t2.getRankingpoints() > t1.getRankingpoints())
+				if (t2.getRankingPoints() > t1.getRankingPoints())
 					return 1;
-				else if (t2.getRankingpoints() == t1.getRankingpoints()) {
+				else if (t2.getRankingPoints() == t1.getRankingPoints()) {
 					if (t1.getTeam() > t2.getTeam())
 						return 1;
 					else

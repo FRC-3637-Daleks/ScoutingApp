@@ -9,6 +9,15 @@ public class MatchStatistics {
 	private String tag;
 	private Integer team;
 	private String eventId;
+	private float averageOccurrences;
+
+	public float getAverageOccurrences() {
+		return averageOccurrences;
+	}
+
+	public void setAverageOccurrences(float averageOccurences) {
+		this.averageOccurrences = averageOccurences;
+	}
 
 	public Integer getTeam() {
 		return team;

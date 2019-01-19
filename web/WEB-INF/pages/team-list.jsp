@@ -78,8 +78,8 @@
 							<td class="block"><fmt:formatNumber type="number"
 									maxFractionDigits="1" value="${team.avgScore}" /></td>
 							<td class="block"><fmt:formatNumber type="number"
-									maxFractionDigits="1" value="${team.ourScore}" /></td>
-							<td class="block">${team.rankingpoints}</td>
+									maxFractionDigits="1" value="${team.avgTagScore}" /></td>
+							<td class="block">${team.rankingScore}</td>
 							<td class="block">${team.wins}/${team.ties}/${team.losses}</td>
 						</tr>
 					</c:forEach>

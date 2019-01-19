@@ -158,7 +158,7 @@ public class MatchServiceMySQLImpl implements MatchService {
 	@Override
 	public List<Team> getTeamMatchSummaryInfo(Integer teamNum, String eventId) {
 		// @formatter:off
-		String sql = "SELECT t.team, sum(score)/count(m.team) as avgscore, count(m.team) as matches,"
+		String sql = "SELECT t.team, sum(score)/count(m.team) as avg_score, count(m.team) as matches,"
 				+ "               (SELECT count(*) FROM scoutingtags.match m2 WHERE m2.team = m.team and m2.win = 1 and m.event_id = m2.event_id) as wins,"
 				+ "               (SELECT count(*) FROM scoutingtags.match m2 WHERE m2.team = m.team and m2.tie = 1 and m.event_id = m2.event_id) as ties, "
 				+ "               (SELECT count(*) FROM scoutingtags.match m2  WHERE m2.team = m.team and m2.loss = 1 and m.event_id = m2.event_id) as losses, "
@@ -166,7 +166,7 @@ public class MatchServiceMySQLImpl implements MatchService {
 				+ "                FROM scoutingtags.matchtags mt "
 				+ "				        inner join scoutingtags.tags t on mt.tag = t.tag "
 				+ "  					inner join scoutingtags.event e on e.event_id = mt.event_id and e.year = t.year"
-				+ "                where mt.team = m.team  and m.event_id = mt.event_id) as ourscore, "
+				+ "                where mt.team = m.team  and m.event_id = mt.event_id) / count(m.team) as avg_tag_score, "
 				+ "                scouting_comments, " 
 				+ "               t.event_id, t.alliance, t.alliance_selection_order " 
 				+ "FROM scoutingtags.teams t"
@@ -183,11 +183,11 @@ public class MatchServiceMySQLImpl implements MatchService {
 				Team team = new Team();
 				team.setTeam(resultSet.getInt("team"));
 				team.setMatches(resultSet.getInt("matches"));
-				team.setAvgScore(resultSet.getDouble("avgscore"));
+				team.setAvgScore(resultSet.getDouble("avg_score"));
 				team.setWins(resultSet.getInt("wins"));
 				team.setTies(resultSet.getInt("ties"));
 				team.setLosses(resultSet.getInt("losses"));
-				team.setOurScore(resultSet.getDouble("ourscore"));
+				team.setAvgTagScore(resultSet.getDouble("avg_tag_score"));
 				team.setScoutingComments(resultSet.getString("scouting_comments"));
 				team.setEventId(resultSet.getString("event_id"));
 				team.setAlliance(resultSet.getInt("alliance"));
@@ -200,7 +200,7 @@ public class MatchServiceMySQLImpl implements MatchService {
 	@Override
 	public List<MatchStatistics> getTeamMatchStatistics(Integer teamNum, String eventId) {
 		// @formatter:off
-		String sql = "SELECT team, t.grouping, category, m.tag, tg.sequence, t.is_ranking_point, sum(occurrences) as occurrences, m.event_id "
+		String sql = "SELECT team, t.grouping, category, m.tag, tg.sequence, t.is_ranking_point, sum(occurrences) as occurrences, m.event_id, count(*) as matchCount "
 				+ " FROM scoutingtags.matchtags m " 
 				+ "      inner join scoutingtags.tags t on m.tag = t.tag "
 				+ "		 inner join scoutingtags.event e on e.event_id = m.event_id and e.year = t.year"
@@ -208,7 +208,7 @@ public class MatchServiceMySQLImpl implements MatchService {
 				+ "WHERE (? is null or team = ?)  and m.event_id = ? "
 				+ "GROUP BY team, t.grouping,sequence, category, m.tag, m.event_id " 
 				+ "union "
-				+ "SELECT team, t.grouping, category, m.tag, tg.sequence, t.is_ranking_point, sum(occurrences) as occurrences, m.event_id "
+				+ "SELECT team, t.grouping, category, m.tag, tg.sequence, t.is_ranking_point, sum(occurrences) as occurrences, m.event_id, count(*) as matchCount "
 				+ " FROM scoutingtags.teamtags m " 
 				+ "      inner join scoutingtags.tags t on m.tag = t.tag "
 				+ "		 inner join scoutingtags.event e on e.event_id = m.event_id and e.year = t.year"
@@ -228,6 +228,8 @@ public class MatchServiceMySQLImpl implements MatchService {
 				matchStatistics.setGrouping(resultSet.getString("grouping"));
 				matchStatistics.setCategory(resultSet.getString("category"));
 				matchStatistics.setTotalOccurrences(resultSet.getInt("occurrences"));
+				matchStatistics.setAverageOccurrences(
+						matchStatistics.getTotalOccurrences() / resultSet.getFloat("matchCount"));
 				matchStatistics.setTag(resultSet.getString("tag"));
 				matchStatistics.setEventId(resultSet.getString("event_id"));
 				matchStatistics.setRankingPoint(resultSet.getInt("is_ranking_point") == 1);

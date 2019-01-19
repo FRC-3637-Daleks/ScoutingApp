@@ -22,20 +22,37 @@ public class Team {
 	private Integer id;
 	private Integer team;
 	private Double avgScore;
-	private Double ourScore;
+	private Double avgTagScore;
 	private Integer matches;
 	private Integer wins;
 	private Integer ties;
 	private Integer losses;
 	private List<MatchStatistics> matchStatistics;
 	private List<TeamTag> teamTags;
-	private Integer rankingpoints;
+	private Integer rankingPoints;
+	private Float rankingScore;
 	private Integer tagsEntered;
 	private String scoutingComments;
 	private Integer startPosition;
 	private String eventId;
 	private Integer alliance;
 	private Integer allianceOrder;
+
+	public Float getRankingScore() {
+		return rankingScore;
+	}
+
+	public void setRankingScore(Float rankingScore) {
+		this.rankingScore = rankingScore;
+	}
+
+	public Double getAvgTagScore() {
+		return avgTagScore;
+	}
+
+	public void setAvgTagScore(Double avgTagScore) {
+		this.avgTagScore = avgTagScore;
+	}
 
 	public Integer getAlliance() {
 		return alliance;
@@ -61,12 +78,12 @@ public class Team {
 		this.tagsEntered = tagsEntered;
 	}
 
-	public Integer getRankingpoints() {
-		return rankingpoints;
+	public Integer getRankingPoints() {
+		return rankingPoints;
 	}
 
-	public void setRankingpoints(Integer rankingpoints) {
-		this.rankingpoints = rankingpoints;
+	public void setRankingPoints(Integer rankingPoints) {
+		this.rankingPoints = rankingPoints;
 	}
 
 	public Integer getId() {
@@ -91,14 +108,6 @@ public class Team {
 
 	public void setAvgScore(Double avgScore) {
 		this.avgScore = avgScore;
-	}
-
-	public Double getOurScore() {
-		return ourScore;
-	}
-
-	public void setOurScore(Double ourScore) {
-		this.ourScore = ourScore;
 	}
 
 	public Integer getMatches() {

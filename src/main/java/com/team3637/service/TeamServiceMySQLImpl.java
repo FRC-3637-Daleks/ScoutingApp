@@ -67,7 +67,7 @@ public class TeamServiceMySQLImpl implements TeamService {
         		    "	             (SELECT sum(occurrences * t.point_value) " + 
         		    "				     FROM scoutingtags.matchtags mt " + 
         		    "			                      inner join scoutingtags.tags t on mt.tag = t.tag " + 
-        		    "                 WHERE mt.team = t.team  and event_id = (select event_id from scoutingtags.event where active = 1)) as ourscore, " + 
+        		    "                 WHERE mt.team = t.team  and event_id = (select event_id from scoutingtags.event where active = 1)) / count(m.team) as avgtagscore, " + 
         		    "	             (SELECT count(*) " + 
         		    "				     FROM scoutingtags.teamtags mt " + 
         		    "			                      inner join scoutingtags.tags tg on mt.tag = tg.tag " + 
@@ -97,7 +97,7 @@ public class TeamServiceMySQLImpl implements TeamService {
         		    "	             (SELECT sum(occurrences * tg.point_value) " + 
         		    "				     FROM scoutingtags.matchtags mt " + 
         		    "			                      inner join scoutingtags.tags tg on mt.tag = tg.tag " + 
-        		    "                 WHERE mt.team = t.team  and event_id = (select event_id from scoutingtags.event where active = 1)) as ourscore, " +
+        		    "                 WHERE mt.team = t.team  and event_id = (select event_id from scoutingtags.event where active = 1)) / count(m.team) as avgtagscore, " +
         		    "	             (SELECT count(*) " + 
         		    "				     FROM scoutingtags.teamtags mt " + 
         		    "			                      inner join scoutingtags.tags tg on mt.tag = tg.tag " + 

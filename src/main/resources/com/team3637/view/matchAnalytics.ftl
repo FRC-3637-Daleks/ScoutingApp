@@ -328,9 +328,9 @@ $(document).ready(function(){
     <th><p style="color:white; width:100px;">Team: ${team.team}</p></th>
     <th><p style="color:white; width:140px;">Matches Played: ${team.matches}</p></th>
     <th><p style="color:white; width:130px;">Avg. Score: ${team.avgScore}</p></th>
-    <th><p style="color:white; width:130px;">Our Score: ${team.ourScore!}</p></th>
+    <th><p style="color:white; width:150px;">Avg. Tag Score: ${team.avgTagScore!}</p></th>
     <th><p style="color:white; width:120px;">W/L/T: ${team.wins}/${team.losses}/${team.ties}</p></th>
-    <th><p style="color:white; width:150px;">Ranking Points: ${team.rankingpoints}</p></th>
+    <th><p style="color:white; width:150px;">Ranking Score: ${team.rankingScore?string(",##0.00")}</p></th>
   </tr>
 </table>  
 </div>
@@ -373,12 +373,12 @@ $(document).ready(function(){
    <table class="tagTable"  id="${matchTeams.match}-match-${team}-${grouping}-${category}-table">
    <tr>
    <td> ${matchStatistic.tag} </td>
-   <td><a href="javascript:void(0);"  data-title="${matchStatistic.tag}" data-template='<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content"></div></div>' data-url="/ScoutingApp/m/getMatchTags?team=${team}&tag=${matchStatistic.tag}&event=${selectedEvent}" class="total-occurrences-popover-ajax">${matchStatistic.totalOccurrences}</a> </td>
+   <td><a href="javascript:void(0);"  data-title="${matchStatistic.tag}" data-template='<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content"></div></div>' data-url="/ScoutingApp/m/getMatchTags?team=${team}&tag=${matchStatistic.tag}&event=${selectedEvent}" class="total-occurrences-popover-ajax">${matchStatistic.averageOccurrences?string(",##0.0")}</a> </td>
     </tr>
 <#else>
    <tr>
    <td> ${matchStatistic.tag} </td>
-   <td><a href="javascript:void(0);"  data-title="${matchStatistic.tag}"  data-template='<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content"></div></div>' data-url="/ScoutingApp/m/getMatchTags?team=${team}&tag=${matchStatistic.tag}&event=${selectedEvent}" class="total-occurrences-popover-ajax">${matchStatistic.totalOccurrences}</a> </td>
+   <td><a href="javascript:void(0);"  data-title="${matchStatistic.tag}"  data-template='<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content"></div></div>' data-url="/ScoutingApp/m/getMatchTags?team=${team}&tag=${matchStatistic.tag}&event=${selectedEvent}" class="total-occurrences-popover-ajax">${matchStatistic.averageOccurrences?string(",##0.0")}</a> </td>
    </tr>
 </#if>
 </#list>
