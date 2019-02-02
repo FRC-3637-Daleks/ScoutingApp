@@ -90,7 +90,7 @@ public class EventServiceMySQLImpl implements EventService {
 				Event event = new Event();
 				event.setId(Integer.parseInt(record.get(0)));
 				event.setEventId(record.get(1));
-				event.setActive(Boolean.parseBoolean(record.get(2)));
+				event.setActive(Integer.parseInt(record.get(2)));
 				event.setYear(Integer.parseInt(record.get(3)));
 				event.setEventDate(format.parse(record.get(4)));
 				updateInsertEvent(event);
@@ -103,7 +103,7 @@ public class EventServiceMySQLImpl implements EventService {
 	@Override
 	public List<Event> getEvents() {
 		String SQL = "SELECT id, event_id, active, year, event_date " + "FROM scoutingtags.event "
-				+ "ORDER BY event_date";
+				+ "ORDER BY event_date desc";
 		return jdbcTemplateObject.query(SQL, new EventMapper());
 	}
 

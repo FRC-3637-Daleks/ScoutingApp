@@ -59,6 +59,10 @@
 .tagTable tr:nth-child(even){
         background: #ffffff;
     }
+    
+ .tagTable active{
+        background: #25ff05;
+ }
  
  .tagTable td{
     font-size: 12px;
@@ -142,9 +146,15 @@ var neweventId = 0;
  
 function editEvent(eventId) {
       $( "#editIcon-" + eventId )[0].style.display =  'none';  
-      $( "#event-" + eventId )[0].style.display =  'none';  
+      $( "#event-" + eventId )[0].style.display =  'none';
+      $( "#eventDate-" + eventId )[0].style.display =  'none';
+      $( "#year-" + eventId )[0].style.display =  'none';
+      $( "#active-" + eventId )[0].style.display =  'none';
       $( "#saveIcon-" + eventId )[0].style.display =  'block'; 
-      $( "#event-edit-" + eventId )[0].style.display =  'block'; 
+      $( "#event-edit-" + eventId )[0].style.display =  'block';
+      $( "#eventDate-" + eventId )[0].style.display =  'block';
+      $( "#year-" + eventId )[0].style.display =  'block';
+      
 } 
 
 function saveEvent(eventId) {
@@ -246,15 +256,25 @@ function createNewEvent() {
     <th>Event</th>
     <th>Event Date</th>
     <th>Year</th> 
-    <th>Active Type</th> 
+    <th>Active</th>
+    <th class="icon"></th> 
   </tr> 
   <#list events as event>
-  <tr id="row-${event.id}">
-  <td><img id="editIcon-${event.id}" src="../images/pencil.png" style="width:24px;height:24px;" onClick="editTag(${event.id},'events');"><img id="saveIcon-${event.id}" src="../images/save.png" style="width:24px;height:24px;display:none;" onClick="saveTag(${event.id},'events');"></td>
-  <td><div id="event-${event.id}">${event.eventId}</div><div id="tag-edit-${event.id}" style="display:none;"><input  id="tag-edit-input-${event.id}"  type="text" value="${event.id}"></input></div></td>
-  <td><div id="eventDate-${event.id}">${event.eventDate}</div><div id="grouping-edit-${event.id}" style="display:none;"><select  id="grouping-edit-input-${event.id}"></select></div></td>
-  <td><div id="year-${event.id}">${event.year}</div><div id="category-edit-${event.id}" style="display:none;"><input  id="category-edit-input-${event.id}"  type="text" value="${event.year}"></input></div></td>
-  <td><div id="active-${event.id}"></div><div id="active-edit-${event.id}" style="display:none;"><input  id="active-edit-input-${event.id}" type = "checkbox"></input></div></td> 
+   <#assign active = "No">
+  <#if event.active == 1>
+  	<#assign active = "Yes">
+  </#if>
+  <tr id="row-${event.id}" class = "active">
+  <td><img id="editIcon-${event.id}" src="../images/pencil.png" style="width:24px;height:24px;" onClick="editEvent(${event.id},'events');"><img id="saveIcon-${event.id}" src="../images/save.png" style="width:24px;height:24px;display:none;" onClick="saveTag(${event.id},'events');"></td>
+  <td><div id="event-${event.id}">${event.eventId}</div><div id="event-edit-${event.id}" style="display:none;"><input  id="event-edit-input-${event.id}"  type="text" value="${event.id}"></input></div></td>
+  <td><div id="eventDate-${event.id}">${event.eventDate}</div><div id="eventDate-edit-${event.id}" style="display:none;"><select  id="eventDate-edit-input-${event.id}"></select></div></td>
+  <td><div id="year-${event.id}">${event.year}</div><div id="year-edit-${event.id}" style="display:none;"><input  id="year-edit-input-${event.id}"  type="text" value="${event.year}"></input></div></td>
+  <td><div id="active-${event.id}">${active}</div><div id="active-edit-${event.id}" style="display:none;">
+  <#if event.active == 1>
+  	<input  id="active-edit-input-${event.id}"  type="checkbox" checked value="${event.active!0}"></input>
+  <#else>
+  	<input  id="active-edit-input-${event.id}"  type="checkbox" value="${event.active!0}"></input>
+  </#if></div></td> 
  
   </div></td>
   <td><img id="deleteIcon-${event.id}" src="../images/delete.png" style="width:24px;height:24px;" onClick="deleteTag(${event.id});"></td>

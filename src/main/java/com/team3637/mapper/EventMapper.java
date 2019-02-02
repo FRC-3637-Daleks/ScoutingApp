@@ -29,7 +29,7 @@ public class EventMapper implements RowMapper<Event> {
 		Event event = new Event();
 		event.setId(resultSet.getInt("id"));
 		event.setEventId(resultSet.getString("event_id"));
-		event.setActive(resultSet.getBoolean("active"));
+		event.setActive(resultSet.getInt("active"));
 		event.setYear(resultSet.getInt("year"));
 		event.setEventDate(resultSet.getDate("event_date"));
 		return event;

@@ -5,12 +5,20 @@ import java.util.Date;
 public class Event {
 	private String eventId;
 	private Integer year;
-	private Boolean active;
+	private Integer active;
 	private Date eventDate;
 	private Integer id;
 
 	public Integer getId() {
 		return id;
+	}
+
+	public Integer getActive() {
+		return active;
+	}
+
+	public void setActive(Integer active) {
+		this.active = active;
 	}
 
 	public void setId(Integer id) {
@@ -39,13 +47,5 @@ public class Event {
 
 	public void setYear(Integer year) {
 		this.year = year;
-	}
-
-	public Boolean getActive() {
-		return active;
-	}
-
-	public void setActive(Boolean active) {
-		this.active = active;
 	}
 }
