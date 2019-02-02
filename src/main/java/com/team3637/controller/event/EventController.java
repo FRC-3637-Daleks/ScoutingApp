@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.util.Date;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +34,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.team3637.model.Event;
+import com.team3637.service.EventService;
+
 @Controller
 public class EventController {
 
@@ -42,38 +47,35 @@ public class EventController {
 
 	@RequestMapping(value = "/deleteEvent", method = RequestMethod.GET)
 	public void deleteTag(@RequestParam("id") Integer id, HttpServletResponse response) {
-		tagService.deleteEvent(id);
+		eventService.deleteEvent(id);
 		response.setStatus(200);
 	}
 
 	@RequestMapping(value = "/saveEvent", method = RequestMethod.GET)
 	@ResponseBody
-	public Integer saveTag(@RequestParam("id") Integer id, @RequestParam("tag") String tag,
-			@RequestParam("type") String type, @RequestParam("category") String category,
-			@RequestParam("grouping") String grouping, @RequestParam("inputType") String inputType,
-			@RequestParam("pointValue") Float pointValue, @RequestParam("isRankingPoint") Integer isRankingPoint,
-			@RequestParam("maxValue") Integer maxValue, HttpServletResponse response) {
-		return tagService.saveTag(id, tag, type, category, grouping, inputType, pointValue, isRankingPoint, maxValue);
+	public Integer saveTag(@RequestParam("id") Integer id, @RequestParam("event_id") String eventId,
+			@RequestParam("active") Boolean active, @RequestParam("year") Integer year,
+			@RequestParam("event_date") Date eventDate, HttpServletResponse response) {
+		return eventService.saveEvent(id, eventId, active, year, eventDate);
 	}
 
 	@RequestMapping("/export/csv")
 	@ResponseBody
 	public String exportCSV() throws IOException {
-		String file = "matches.csv";
+		String file = "events.csv";
 		File exportDirectory = new File(context.getRealPath("/") + "/export");
 		if (!exportDirectory.exists())
 			exportDirectory.mkdir();
 		String filePath = exportDirectory.getAbsolutePath() + "/" + file;
-		matchService.exportCSV(filePath);
+		eventService.exportCSV(filePath);
 		return new String(Files.readAllBytes(FileSystems.getDefault().getPath(filePath)));
 	}
 
 	@RequestMapping(value = "/manageEvents", method = RequestMethod.GET)
-	public String manageTags(Model model) {
+	public String manageEvents(Model model) {
+		List<Event> events = eventService.getEvents();
+		model.addAttribute("events", events);
 
-		model.addAttribute("teamTags", tagService.getTeamTags());
-		model.addAttribute("matchTags", tagService.getMatchTags());
 		return "manageEvents";
-
 	}
 }

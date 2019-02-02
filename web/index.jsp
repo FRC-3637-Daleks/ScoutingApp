@@ -37,7 +37,7 @@
                 <li><a href="${pageContext.request.contextPath}/s/">Schedule</a></li>
                 <li><a href="${pageContext.request.contextPath}/t/">Teams</a></li>
                 <li><a href="${pageContext.request.contextPath}/m/manageTags">Tags</a></li>
-                <li><a href="${pageContext.request.contextPath}/manageEvents">Events</a></li>
+                <li><a href="${pageContext.request.contextPath}/event/manageEvents">Events</a></li>
                 <li><a href="${pageContext.request.contextPath}/io/">IO</a></li>
                 <li><a href="${pageContext.request.contextPath}/analytics/teamAnalyticsByMatch">Analytics</a></li>
             </ul>

@@ -14,22 +14,24 @@
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.team3637.service;
+package com.team3637.mapper;
 
-import java.util.Date;
-import java.util.List;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.springframework.jdbc.core.RowMapper;
 
 import com.team3637.model.Event;
 
-public interface EventService extends Service {
-
-	List<Event> getEvents();
-
-	void createEvent(Event event);
-
-	void deleteEvent(Integer id);
-
-	void updateInsertEvent(Event event);
-
-	Integer saveEvent(Integer id, String eventId, Boolean active, Integer year, Date event_date);
+public class EventMapper implements RowMapper<Event> {
+	@Override
+	public Event mapRow(ResultSet resultSet, int rowNum) throws SQLException {
+		Event event = new Event();
+		event.setId(resultSet.getInt("id"));
+		event.setEventId(resultSet.getString("event_id"));
+		event.setActive(resultSet.getBoolean("active"));
+		event.setYear(resultSet.getInt("year"));
+		event.setEventDate(resultSet.getDate("event_date"));
+		return event;
+	}
 }

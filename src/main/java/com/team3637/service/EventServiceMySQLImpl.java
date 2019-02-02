@@ -16,12 +16,25 @@
  */
 package com.team3637.service;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVRecord;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import com.team3637.mapper.EventMapper;
 import com.team3637.model.Event;
 
 public class EventServiceMySQLImpl implements EventService {
@@ -34,44 +47,103 @@ public class EventServiceMySQLImpl implements EventService {
 
 	@Override
 	public void exportCSV(String outputFile) {
-		// TODO Auto-generated method stub
-
+		List<Event> data = getEvents();
+		FileWriter fileWriter = null;
+		CSVPrinter csvFilePrinter = null;
+		try {
+			fileWriter = new FileWriter(outputFile);
+			csvFilePrinter = new CSVPrinter(fileWriter, CSVFormat.DEFAULT.withRecordSeparator("\n"));
+			for (Event event : data) {
+				List<Object> line = new ArrayList<>();
+				for (Field field : Event.class.getDeclaredFields()) {
+					field.setAccessible(true);
+					Object value = field.get(event);
+					line.add(value);
+				}
+				csvFilePrinter.printRecord(line);
+			}
+		} catch (IOException | IllegalAccessException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (fileWriter != null) {
+					fileWriter.flush();
+					fileWriter.close();
+				}
+				if (csvFilePrinter != null) {
+					csvFilePrinter.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
 	public void importCSV(String inputFile) throws Exception {
-		// TODO Auto-generated method stub
-
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		try {
+			String csvData = new String(Files.readAllBytes(FileSystems.getDefault().getPath(inputFile)));
+			csvData = csvData.replaceAll("\\r", "");
+			CSVParser parser = CSVParser.parse(csvData, CSVFormat.DEFAULT.withRecordSeparator("\n"));
+			for (CSVRecord record : parser) {
+				Event event = new Event();
+				event.setId(Integer.parseInt(record.get(0)));
+				event.setEventId(record.get(1));
+				event.setActive(Boolean.parseBoolean(record.get(2)));
+				event.setYear(Integer.parseInt(record.get(3)));
+				event.setEventDate(format.parse(record.get(4)));
+				updateInsertEvent(event);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public List<Event> getEvents() {
-		// TODO Auto-generated method stub
-		return null;
+		String SQL = "SELECT id, event_id, active, year, event_date " + "FROM scoutingtags.event "
+				+ "ORDER BY event_date";
+		return jdbcTemplateObject.query(SQL, new EventMapper());
 	}
 
 	@Override
 	public void createEvent(Event event) {
-		String SQL = "INSERT INTO event (event_id, active, year, event, event_date) VALUES (?, ?, ?, ?, ?, ?, ?);";
-		jdbcTemplateObject.update(SQL, tag.getTag(), tag.getCategory(), tag.getGrouping(), tag.getType(),
-				tag.getInputType(), tag.getIsRankingPoint(), tag.getMaxValue());
+		String SQL = "INSERT INTO event (event_id, active, year, event_date) VALUES (?, ?, ?, ?, ?);";
+		jdbcTemplateObject.update(SQL, event.getEventId(), event.getActive(), event.getYear(), event.getEventDate());
 	}
 
 	@Override
 	public void deleteEvent(Integer id) {
-		// TODO Auto-generated method stub
-
+		//@formatter:off
+		String SQL = "DELETE FROM scoutingtags.event WHERE id=?";
+		//@formatter:on
+		jdbcTemplateObject.update(SQL, id);
 	}
 
 	@Override
 	public void updateInsertEvent(Event event) {
-		// TODO Auto-generated method stub
-
+		String SQL = "UPDATE scoutingtags.event SET event_id=?, active=?, year=?, event_date=?, WHERE id=?";
+		int updatedRows = jdbcTemplateObject.update(SQL, event.getEventId(), event.getActive(), event.getYear(),
+				event.getEventDate(), event.getId());
+		if (updatedRows < 1) {
+			String insertSQL = "insert into scoutingtags.event (id, event_id, active, year, event_date) values (?, ?, ?, ?, ?)";
+			jdbcTemplateObject.update(insertSQL, event.getId(), event.getEventId(), event.getActive(), event.getYear(),
+					event.getEventDate(), event.getId());
+		}
 	}
 
 	@Override
-	public Integer saveEvent(Integer id, Integer year, Boolean active) {
-		// TODO Auto-generated method stub
+	public Integer saveEvent(Integer id, String eventId, Boolean active, Integer year, Date event_date) {
+		String SQL = "UPDATE scoutingtags.event SET event_id=?, active=?, year=?, event_date=?, WHERE id=?";
+		int rowsUpdated = jdbcTemplateObject.update(SQL, eventId, active, year, event_date, id);
+		if (rowsUpdated < 1) {
+			String sqlInsert = "INSERT INTO scoutingtags.events (event_id, active, event_date, id, year) VALUES (?, ?, ?, ?, (select year from scoutingtags.competition_year where active = 1))";
+			jdbcTemplateObject.update(sqlInsert, eventId, active, year, event_date, id);
+			id = jdbcTemplateObject.queryForObject(
+					"select id from scoutingtags.events where event_id = ? and year = (select year from scoutingtags.competition_year where active = 1)",
+					Integer.class, eventId);
+		}
 		return null;
 	}
 }
