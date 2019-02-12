@@ -31,5 +31,5 @@ public interface EventService extends Service {
 
 	void updateInsertEvent(Event event);
 
-	Integer saveEvent(Integer id, String eventId, Boolean active, Integer year, Date event_date);
+	Integer saveEvent(Integer id, String eventId, Date event_date, Integer year, Boolean active);
 }

@@ -46,17 +46,17 @@ public class EventController {
 	private ServletContext context;
 
 	@RequestMapping(value = "/deleteEvent", method = RequestMethod.GET)
-	public void deleteTag(@RequestParam("id") Integer id, HttpServletResponse response) {
+	public void deleteEvent(@RequestParam("id") Integer id, HttpServletResponse response) {
 		eventService.deleteEvent(id);
 		response.setStatus(200);
 	}
 
 	@RequestMapping(value = "/saveEvent", method = RequestMethod.GET)
 	@ResponseBody
-	public Integer saveTag(@RequestParam("id") Integer id, @RequestParam("event_id") String eventId,
-			@RequestParam("active") Boolean active, @RequestParam("year") Integer year,
-			@RequestParam("event_date") Date eventDate, HttpServletResponse response) {
-		return eventService.saveEvent(id, eventId, active, year, eventDate);
+	public Integer saveEvent(@RequestParam("id") Integer id, @RequestParam("event") String eventId,
+			@RequestParam("eventDate") Date eventDate, @RequestParam("year") Integer year,
+			@RequestParam("active") Boolean active, HttpServletResponse response) {
+		return eventService.saveEvent(id, eventId, eventDate, year, active);
 	}
 
 	@RequestMapping("/export/csv")

@@ -134,14 +134,14 @@ public class EventServiceMySQLImpl implements EventService {
 	}
 
 	@Override
-	public Integer saveEvent(Integer id, String eventId, Boolean active, Integer year, Date event_date) {
-		String SQL = "UPDATE scoutingtags.event SET event_id=?, active=?, year=?, event_date=?, WHERE id=?";
-		int rowsUpdated = jdbcTemplateObject.update(SQL, eventId, active, year, event_date, id);
+	public Integer saveEvent(Integer id, String eventId, Date event_date, Integer year, Boolean active) {
+		String SQL = "UPDATE scoutingtags.event SET event_id=?, active=?, year=?, event_date=? WHERE id=?";
+		int rowsUpdated = jdbcTemplateObject.update(SQL, id, eventId, active, year, event_date);
 		if (rowsUpdated < 1) {
-			String sqlInsert = "INSERT INTO scoutingtags.events (event_id, active, event_date, id, year) VALUES (?, ?, ?, ?, (select year from scoutingtags.competition_year where active = 1))";
+			String sqlInsert = "INSERT INTO scoutingtags.event (event_id, active, event_date, id, year) VALUES (?, ?, ?, ?, ?)";
 			jdbcTemplateObject.update(sqlInsert, eventId, active, year, event_date, id);
 			id = jdbcTemplateObject.queryForObject(
-					"select id from scoutingtags.events where event_id = ? and year = (select year from scoutingtags.competition_year where active = 1)",
+					"select id from scoutingtags.event where event_id = ? and year = (select year from scoutingtags.competition_year where active = 1)",
 					Integer.class, eventId);
 		}
 		return null;

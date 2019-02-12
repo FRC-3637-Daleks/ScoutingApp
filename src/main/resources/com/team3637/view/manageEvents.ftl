@@ -114,19 +114,21 @@ function toggle(target) {
 		hide(target);
 	}
 }
- 
+
+var newEventId = 0;
+
 function deleteEvent(eventId) {
       if (confirm("Are you sure you want to delete this event ("+      $( "#event-" + eventId )[0].innerHTML + ")?" ))
       {
            if (eventId < 0)
-               $('#row-'+tagId).remove();
+               $('#row-'+eventId).remove();
            else    
                $.ajax({
                   url: "../m/deleteEvent?id="+eventId,  
                   type: 'GET',
                   cache: false,
                   success: function (result) {
-                       $('#row-'+tagId).remove();
+                       $('#row-'+eventId).remove();
                   },
                  error: function () { 
                        alert( "Error occurred deleting event." );
@@ -142,7 +144,7 @@ function isInt(value) {
 }   
 
 var inputTypeOptions = ["checkbox", "incremental"]; 
-var neweventId = 0;
+var newEventId = 0;
  
 function editEvent(eventId) {
       $( "#editIcon-" + eventId )[0].style.display =  'none';  
@@ -152,8 +154,10 @@ function editEvent(eventId) {
       $( "#active-" + eventId )[0].style.display =  'none';
       $( "#saveIcon-" + eventId )[0].style.display =  'block'; 
       $( "#event-edit-" + eventId )[0].style.display =  'block';
-      $( "#eventDate-" + eventId )[0].style.display =  'block';
-      $( "#year-" + eventId )[0].style.display =  'block';
+      $( "#eventDate-edit-" + eventId )[0].style.display =  'block';
+      $( "#year-edit-" + eventId )[0].style.display =  'block';
+      $( "#active-edit-" + eventId )[0].style.display =  'block';
+
       
 } 
 
@@ -165,34 +169,35 @@ function saveEvent(eventId) {
          var year = $( "#year-edit-input-" + eventId )[0].value;
          var active = $( "#active-edit-input-" + eventId )[0].value;
          $.ajax({
-              url: "../m/saveEvent?id="+eventId+"&event="+event+"&eventDate="+eventDate+"&year="+year+"&active="+active,
+              url: "../event/saveEvent?id="+eventId+"&event="+event+"&eventDate="+eventDate+"&year="+year+"&active="+active,
               type: 'GET',
               cache: false,
               success: function (result) {
-                   var neweEventId = result;
+                   var newEventId = result;
                    if (eventId < 0)
                    {
                        $( "#row-" + eventId ).attr("id", "row-"+newEventId);    
-                       $( "#editIcon-" + eventId ).attr("onclick", "editevent('"+neweventId+"','"+type+"');");       
-                       $( "#editIcon-" + eventId ).attr("id", "editIcon-"+neweventId);    
-                       $( "#saveIcon-" + eventId ).attr("onclick", "saveevent('"+neweventId+"','"+type+"');");                           
-                       $( "#saveIcon-" + eventId ).attr("id", "saveIcon-"+neweventId);             
-                       $( "#deleteIcon-" + eventId ).attr("onclick", "deleteevent('"+neweventId+"');");                            
-                       $( "#deleteIcon-" + eventId ).attr("id", "deleteIcon-"+neweventId);          
-                       $( "#event-" + eventId ).attr("id", "event-"+neweventId);  
-                       $( "#eventDate-" + eventId ).attr("id", "eventDate-"+neweventId);  
-                       $( "#year-" + eventId ).attr("id", "year-"+neweventId);   
-                       $( "#active-" + eventId ).attr("id", "active-"+neweventId);
-                       $( "#event-edit-" + eventId ).attr("id", "event-edit-"+neweventId);
-                       $( "#eventDate-edit-" + eventId ).attr("id", "eventDate-edit-"+neweventId); 
-                       $( "#year-edit-" + eventId ).attr("id", "year-edit-"+neweventId);
-                       $( "#active-edit-" + eventId ).attr("id", "active-edit-"+neweventId);           
-                       eventId = neweventId;
+                       $( "#editIcon-" + eventId ).attr("onclick", "editEvent('"+newEventId+"');");       
+                       $( "#editIcon-" + eventId ).attr("id", "editIcon-"+newEventId);    
+                       $( "#saveIcon-" + eventId ).attr("onclick", "saveEvent('"+newEventId+"');");                           
+                       $( "#saveIcon-" + eventId ).attr("id", "saveIcon-"+newEventId);             
+                       $( "#deleteIcon-" + eventId ).attr("onclick", "deleteEvent('"+newEventId+"');");                            
+                       $( "#deleteIcon-" + eventId ).attr("id", "deleteIcon-"+newEventId);          
+                       $( "#eventId-" + eventId ).attr("id", "eventId-"+newEventId);  
+                       $( "#eventDate-" + eventId ).attr("id", "eventDate-"+newEventId);  
+                       $( "#year-" + eventId ).attr("id", "year-"+newEventId);   
+                       $( "#active-" + eventId ).attr("id", "active-"+newEventId);
+                       $( "#eventId-edit-" + eventId ).attr("id", "eventId-edit-"+newEventId);
+                       $( "#eventDate-edit-" + eventId ).attr("id", "eventDate-edit-"+newEventId); 
+                       $( "#year-edit-" + eventId ).attr("id", "year-edit-"+newEventId);
+                       $( "#active-edit-" + eventId ).attr("id", "active-edit-"+newEventId);           
+                       eventId = newEventId;
                    }             
                    $( "#event-" + eventId )[0].innerHTML = event;
                    $( "#eventDate-" + eventId )[0].innerHTML = eventDate;
                    $( "#year-" + eventId )[0].innerHTML = year;
-                   $( "#active-" + eventId )[0].innerHTML = active;                 
+                   $( "#active-" + eventId )[0].innerHTML = active; 
+                 },                
               error: function () { 
                    alert( "Error occurred saving event." );
               }
@@ -217,12 +222,13 @@ function cancelEditevent(eventId) {
 
 function createNewEvent() {
    var eventId = newEventId -1;
-   var newRow = '<tr id="row-'+EventId+'">' +
-  '<td><img id="editIcon-'+eventId+'" src="../images/pencil.png" style="width:24px;height:24px;" onClick="editevent(\''+eventId\');"><img id="saveIcon-'+eventId+'" src="../images/save.png" style="width:24px;height:24px;display:none;" onClick="saveevent(\''+eventId\');"></td>' +
+   var newRow = '<tr id="row-'+eventId+'">' +
+  '<td><img id="editIcon-'+eventId+'" src="../images/pencil.png" style="width:24px;height:24px;" onClick="editevent(\''+eventId+'\');"><img id="saveIcon-'+eventId+'" src="../images/save.png" style="width:24px;height:24px;display:none;" onClick="saveEvent(\''+eventId+'\');"></td>' +
   '<td><div id="event-'+eventId+'"></div><div id="event-edit-'+eventId+'" style="display:none;"><input  id="event-edit-input-'+eventId+'"  type="text"></input></div></td>' +
-  '<td><div id="eventDate-'+eventId+'"></div><div id="eventDate-edit-'+eventId+'" style="display:none;"><select  id="eventDate-edit-input-'+eventId+'"></select></div></td>' +
+  '<td><div id="eventDate-'+eventId+'"></div><div id="eventDate-edit-'+eventId+'" style="display:none;"><input  id="eventDate-edit-input-'+eventId+'"></input></div></td>' +
   '<td><div id="year-'+eventId+'"></div><div id="year-edit-'+eventId+'" style="display:none;"><input  id="year-edit-input-'+eventId+'"  type="text"></input></div></td>' +
-  '<td><div id="active-'+eventId+'"></div><div id="active-edit-'+eventId+'" style="display:none;"><select  id="active-edit-input-'+eventId+'"></select></div></td>' +
+  '<td><div id="active-'+eventId+'"></div><div id="active-edit-'+eventId+'" style="display:none;"><input  id="active-edit-input-'+eventId+'" type = "checkbox"></input></div></td>' +
+  '<td><img id="deleteIcon-'+eventId+'" src="../images/delete.png" style="width:24px;height:24px;" onClick="deleteTag(\''+eventId+'\');"></td>' +
   '</tr> '
    $('#events tr:first').after(newRow);
    editEvent(eventId);
@@ -238,7 +244,7 @@ function createNewEvent() {
         </div>
         <div id="navbar" class="collapse navbar-collapse"> 
         	<ul class="nav navbar-nav"> 
-                <li><a href="#" onclick="createNewMatchTag();">New Event</a></li>
+                <li><a href="#" onclick="createNewEvent();">New Event</a></li>
            	</ul> 
             <ul class="nav navbar-nav"> 
                 <li><a href="../">Back</a></li>
@@ -252,7 +258,7 @@ function createNewEvent() {
 <div class = "typeTitle"  onclick="toggle('events');">Events</div>
 <table class = "tagTable" id="events"> 
   <tr>
-    <th  class="icon"></th>      
+    <th class="icon"></th>      
     <th>Event</th>
     <th>Event Date</th>
     <th>Year</th> 
@@ -265,19 +271,18 @@ function createNewEvent() {
   	<#assign active = "Yes">
   </#if>
   <tr id="row-${event.id}" class = "active">
-  <td><img id="editIcon-${event.id}" src="../images/pencil.png" style="width:24px;height:24px;" onClick="editEvent(${event.id},'events');"><img id="saveIcon-${event.id}" src="../images/save.png" style="width:24px;height:24px;display:none;" onClick="saveTag(${event.id},'events');"></td>
-  <td><div id="event-${event.id}">${event.eventId}</div><div id="event-edit-${event.id}" style="display:none;"><input  id="event-edit-input-${event.id}"  type="text" value="${event.id}"></input></div></td>
-  <td><div id="eventDate-${event.id}">${event.eventDate}</div><div id="eventDate-edit-${event.id}" style="display:none;"><select  id="eventDate-edit-input-${event.id}"></select></div></td>
+  <td><img id="editIcon-${event.id}" src="../images/pencil.png" style="width:24px;height:24px;" onClick="editEvent(${event.id},'events');"><img id="saveIcon-${event.id}" src="../images/save.png" style="width:24px;height:24px;display:none;" onClick="saveEvent(${event.id},'events');"></td>
+  <td><div id="event-${event.id}">${event.eventId}</div><div id="event-edit-${event.id}" style="display:none;"><input  id="event-edit-input-${event.id}"  type="text" value="${event.eventId}"></input></div></td>
+  <td><div id="eventDate-${event.id}">${event.eventDate}</div><div id="eventDate-edit-${event.id}" style="display:none;"><input  id="eventDate-edit-input-${event.id}"></input></div></td>
   <td><div id="year-${event.id}">${event.year}</div><div id="year-edit-${event.id}" style="display:none;"><input  id="year-edit-input-${event.id}"  type="text" value="${event.year}"></input></div></td>
   <td><div id="active-${event.id}">${active}</div><div id="active-edit-${event.id}" style="display:none;">
   <#if event.active == 1>
   	<input  id="active-edit-input-${event.id}"  type="checkbox" checked value="${event.active!0}"></input>
   <#else>
   	<input  id="active-edit-input-${event.id}"  type="checkbox" value="${event.active!0}"></input>
-  </#if></div></td> 
- 
+  </#if></div></td>  
   </div></td>
-  <td><img id="deleteIcon-${event.id}" src="../images/delete.png" style="width:24px;height:24px;" onClick="deleteTag(${event.id});"></td>
+  <td><img id="deleteIcon-${event.id}" src="../images/delete.png" style="width:24px;height:24px;" onClick="deleteEvent(${event.id});"></td>
   </tr> 
   </#list>
 </table>
